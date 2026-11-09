@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: guaridaimpresionante
+  profiles:
+    default: dev
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 40MB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  banner:
+    titulo: "Ideas que toman forma, capa a capa"
+    mensaje: "Aquí viven mis creaciones 3D. Crea tu cuenta, elige una pieza y échame una mano a mantener viva la impresora y a cubrir el coste del filamento."
+  cloudinary:
+    folder: guarida3d/productos

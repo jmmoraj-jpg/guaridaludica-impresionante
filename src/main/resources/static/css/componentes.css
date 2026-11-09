@@ -1,0 +1,120 @@
+/* Botones */
+.btn-pill {
+    border-radius: 999px;
+    padding: .55rem 1.5rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+}
+.btn-salmon { background: var(--salmon); color: #5a2a18; }
+.btn-salmon:hover { background: #ee8664; color: #4a2012; }
+.btn-menta { background: var(--menta); color: #0f3d2e; }
+.btn-menta:hover { background: #4cb995; color: #0f3d2e; }
+.btn-borde { background: transparent; border-color: #b9b0a4; color: var(--texto); }
+.btn-borde:hover { background: #fff; border-color: var(--texto); color: var(--texto); }
+
+/* Etiquetas */
+.etiqueta {
+    display: inline-block;
+    padding: .25rem .8rem;
+    border-radius: 999px;
+    font-size: .85rem;
+    background: #fbeae6;
+    color: #7a2f1c;
+}
+.mat-pla { background: #ecebff; color: #3d3585; }
+.mat-petg { background: #e1f5ee; color: #0f5a43; }
+.mat-resina { background: #fbefd9; color: #6b4300; }
+.etiqueta-neutra { background: #fff; border: 2px solid var(--borde); color: var(--texto); }
+
+/* Tonos pastel (fondo de las imágenes de relleno) */
+.tono-0 { background: var(--salmon-claro); }
+.tono-1 { background: var(--menta-claro); }
+.tono-2 { background: var(--lila-claro); }
+.tono-3 { background: #fbd9a0; }
+
+/* Etiquetas de tiempo y categoría */
+.etiqueta-tiempo { background: #d9f4ea; color: #0f5a43; }
+.etiqueta-categoria { background: #fde7bd; color: #6b4300; }
+
+/* Botón verde desactivado: que no se vea gris plano */
+.btn-menta:disabled,
+.btn-menta.disabled {
+    background: var(--menta-claro);
+    border-color: var(--menta-claro);
+    color: #3f6f5f;
+    opacity: 1;
+}
+
+/* Favoritos */
+.btn-fav {
+    background: #fff;
+    border-color: var(--salmon-claro);
+    color: var(--texto);
+}
+.btn-fav:hover { background: #fff1ec; border-color: var(--salmon); color: var(--texto); }
+.btn-fav .corazon { color: var(--salmon); font-size: 1.15em; display: inline-block; }
+.btn-fav.activo { background: var(--salmon-claro); border-color: var(--salmon); }
+.btn-fav.activo .corazon { animation: latido .6s ease; }
+@keyframes latido {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.6); }
+    100% { transform: scale(1); }
+}
+
+/* Título con subrayado de rotulador */
+.titulo-marcador {
+    display: inline-block;
+    background: linear-gradient(transparent 62%, var(--marcador, var(--amarillo)) 62%);
+}
+.marcador-menta { --marcador: var(--menta-claro); }
+.marcador-lila { --marcador: var(--lila-claro); }
+.marcador-salmon { --marcador: var(--salmon-claro); }
+
+/* Formas decorativas detrás de una tarjeta */
+.con-formas { position: relative; isolation: isolate; }
+.con-formas::before {
+    content: "";
+    position: absolute;
+    width: 90px; height: 90px;
+    border-radius: 50%;
+    background: var(--menta);
+    top: -22px; right: -22px;
+    z-index: -1;
+}
+.con-formas::after {
+    content: "";
+    position: absolute;
+    width: 100px; height: 90px;
+    background: var(--amarillo);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    bottom: -24px; left: -24px;
+    z-index: -1;
+}
+/* Variante: círculo lila arriba a la izquierda, triángulo salmón abajo a la derecha */
+.formas-b::before { background: var(--lila); top: -22px; left: -22px; right: auto; }
+.formas-b::after { background: var(--salmon); bottom: -24px; right: -24px; left: auto; }
+@media (max-width: 767px) {
+    .con-formas::before { top: -12px; right: -8px; }
+    .con-formas::after { bottom: -14px; left: -8px; }
+    .formas-b::before { top: -12px; left: -8px; right: auto; }
+    .formas-b::after { bottom: -14px; right: -8px; left: auto; }
+}
+
+/* Corazón redondo para las tarjetas */
+.btn-corazon {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--salmon-claro);
+    background: #fff;
+    color: var(--salmon);
+    font-size: 1.4rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .15s, background .15s;
+}
+.btn-corazon:hover { transform: scale(1.12); background: #fff1ec; color: var(--salmon); }
+.btn-corazon.activo { background: var(--salmon-claro); border-color: var(--salmon); animation: latido .6s ease; }

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/layout :: head(${pieza.nombre})}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <a class="volver" th:href="@{/#catalogo}">← Volver al catálogo</a>
+
+        <div class="row g-5 mt-1">
+            <div class="col-md-6">
+                <div class="con-formas">
+                    <div id="carruselPieza" class="carousel slide carrusel-pieza"
+                        th:if="${!#lists.isEmpty(pieza.imagenes)}" data-bs-ride="carousel">
+                        <div class="carousel-indicators" th:if="${pieza.imagenes.size() > 1}">
+                            <button type="button" data-bs-target="#carruselPieza"
+                                th:each="i, st : ${pieza.imagenesCarrusel}" th:data-bs-slide-to="${st.index}"
+                                th:classappend="${st.first} ? 'active'"
+                                th:aria-label="'Imagen ' + ${st.count}"></button>
+                        </div>
+                        <div class="carousel-inner">
+                            <div class="carousel-item" th:each="i, st : ${pieza.imagenesCarrusel}"
+                                th:classappend="${st.first} ? 'active'">
+                                <div class="carrusel-marco">
+                                    <img th:src="${i.urlGrande}" th:alt="${pieza.nombre}">
+                                </div>
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carruselPieza"
+                            data-bs-slide="prev" th:if="${pieza.imagenes.size() > 1}">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Anterior</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carruselPieza"
+                            data-bs-slide="next" th:if="${pieza.imagenes.size() > 1}">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Siguiente</span>
+                        </button>
+                    </div>
+
+                    <div class="detalle-img" th:classappend="${'tono-' + (pieza.id % 4)}"
+                        th:if="${#lists.isEmpty(pieza.imagenes)}">
+                        <span>🧊</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h1 class="display-6 fw-bold mb-3 titulo-marcador" th:text="${pieza.nombre}">Nombre</h1>
+
+                <div class="datos d-flex flex-wrap gap-2 mb-3">
+                    <span class="etiqueta" th:if="${pieza.material != null}" th:text="${pieza.material}"
+                        th:classappend="${'mat-' + #strings.toLowerCase(pieza.material)}">PLA</span>
+                    <span class="etiqueta etiqueta-tiempo" th:if="${pieza.tiempoTexto != null}"
+                        th:text="${pieza.tiempoTexto}">6 h</span>
+                    <span class="etiqueta etiqueta-categoria" th:if="${pieza.categoria != null}"
+                        th:text="${pieza.categoria}">Figuras</span>
+                </div>
+
+                <p class="lead text-secondary" th:text="${pieza.descripcion}">Descripción</p>
+
+                <div class="caja-solicitar">
+                    <h5 class="mb-2">¿Te gusta esta pieza?</h5>
+
+                    <div class="mb-3">
+                        <form sec:authorize="isAuthenticated()" th:action="@{/favoritos/{id}(id=${pieza.id})}"
+                            method="post" class="d-inline">
+                            <input type="hidden" name="volver" th:value="${'/pieza/' + pieza.id}">
+                            <button type="submit" class="btn btn-pill btn-fav"
+                                th:classappend="${esFavorito} ? 'activo'">
+                                <span class="corazon" th:text="${esFavorito} ? '♥' : '♡'">♡</span>
+                                <span th:text="${esFavorito} ? 'En favoritos' : 'Añadir a favoritos'">Añadir a
+                                    favoritos</span>
+                            </button>
+                        </form>
+                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-pill btn-fav">
+                            <span class="corazon">♡</span> Añadir a favoritos
+                        </a>
+                    </div>
+
+                    <div sec:authorize="!isAuthenticated()">
+                        <p class="text-secondary">Crea tu cuenta gratis o entra para poder solicitarla.</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a th:href="@{/registro}" class="btn btn-pill btn-menta">Crear mi cuenta</a>
+                            <a th:href="@{/login}" class="btn btn-pill btn-borde">Entrar</a>
+                        </div>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()">
+                        <p class="text-secondary">Muy pronto podrás solicitarla desde aquí.</p>
+                        <button type="button" class="btn btn-pill btn-menta" disabled>Solicitar esta pieza</button>
+                    </div>
+
+                    <p class="small text-secondary mt-3 mb-0">
+                        Esta web no es una tienda: las piezas se ofrecen como apoyo al creador para mantener la
+                        impresora.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+
+</html>

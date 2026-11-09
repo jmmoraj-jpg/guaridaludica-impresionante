@@ -1,0 +1,23 @@
+/* Login, registro y formularios de administración */
+.auth { max-width: 460px; margin: 2.5rem auto; }
+.auth-card {
+    background: #fff;
+    border: 2px solid var(--borde);
+    border-radius: 26px;
+    padding: 2rem;
+}
+.auth-card label { font-weight: 600; margin-bottom: .3rem; }
+.auth-card .form-control,
+.auth-card .form-select {
+    border-radius: 14px;
+    border: 2px solid var(--borde);
+    padding: .65rem 1rem;
+    background-color: var(--crema);
+}
+.auth-card .form-control:focus,
+.auth-card .form-select:focus {
+    border-color: var(--menta);
+    box-shadow: 0 0 0 .2rem rgba(94, 201, 166, .25);
+}
+.error-campo { color: #b3402a; font-size: .88rem; margin-top: .3rem; }
+.auth .auth-card { border: 3px solid var(--lila-claro); }

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Mis favoritos')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <h2 class="titulo-marcador marcador-salmon mb-2">Mis favoritos</h2>
+    <p class="text-secondary mb-4">Guarda aquí las piezas que te gusten y tómate tu tiempo para decidir.</p>
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        <div class="col" th:each="p, iter : ${productos}">
+            <article class="pieza" th:classappend="${'borde-' + (iter.index % 4)}">
+                <a class="enlace-interno" th:href="@{/pieza/{id}(id=${p.id})}">
+                    <div class="pieza-img" th:classappend="${'tono-' + (iter.index % 4)}">
+                        <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" th:alt="${p.nombre}">
+                        <span th:if="${p.imagenUrl == null}">🧊</span>
+                    </div>
+                    <h5 th:text="${p.nombre}">Nombre</h5>
+                    <span class="etiqueta" th:if="${p.etiqueta != null}" th:text="${p.etiqueta}"
+                          th:classappend="${p.material != null} ? ${'mat-' + #strings.toLowerCase(p.material)}">PLA · 6 h</span>
+                </a>
+                <div class="d-grid gap-2 mt-3">
+                    <button type="button" class="btn btn-pill btn-menta btn-sm" disabled>Escribir sobre esta pieza</button>
+                    <form th:action="@{/favoritos/{id}(id=${p.id})}" method="post">
+                        <input type="hidden" name="volver" value="/favoritos">
+                        <button type="submit" class="btn btn-pill btn-fav btn-sm w-100">
+                            <span class="corazon">♥</span> Quitar de favoritos
+                        </button>
+                    </form>
+                </div>
+            </article>
+        </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(productos)}" class="text-center py-5">
+        <p class="lead text-secondary">Aún no tienes favoritos 💜</p>
+        <a th:href="@{/#catalogo}" class="btn btn-pill btn-menta">Ver el catálogo</a>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

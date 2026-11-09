@@ -1,0 +1,51 @@
+.volver { color: var(--gris); text-decoration: none; }
+.volver:hover { color: var(--texto); }
+
+.detalle-img {
+    aspect-ratio: 1 / 1;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6rem;
+    overflow: hidden;
+}
+
+/* Carrusel */
+.carrusel-pieza {
+    border-radius: 28px;
+    overflow: hidden;
+    border: 3px solid var(--lila);
+    background: #fff;
+}
+.carrusel-marco {
+    height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+}
+.carrusel-marco img { max-width: 100%; max-height: 100%; object-fit: contain; }
+@media (max-width: 767px) { .carrusel-marco { height: 320px; } }
+
+.carrusel-pieza .carousel-control-prev-icon,
+.carrusel-pieza .carousel-control-next-icon {
+    background-color: var(--salmon);
+    border-radius: 50%;
+    background-size: 55%;
+    padding: 1.1rem;
+}
+.carrusel-pieza .carousel-indicators [data-bs-target] {
+    background-color: var(--salmon);
+    height: 6px;
+    border-radius: 999px;
+}
+
+/* Caja de solicitar */
+.caja-solicitar {
+    background: #fff;
+    border: 3px solid var(--lila-claro);
+    border-radius: 24px;
+    padding: 1.4rem;
+    margin-top: 1.5rem;
+}

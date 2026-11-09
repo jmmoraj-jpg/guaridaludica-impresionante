@@ -1,0 +1,27 @@
+/* Navbar */
+.navbar-guarida {
+    background: var(--crema);
+    padding: .9rem 0;
+    border-bottom: 5px solid transparent;
+    border-image: linear-gradient(90deg, var(--salmon), var(--amarillo), var(--menta), var(--lila)) 1;
+}
+.navbar-guarida .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    font-weight: 700;
+    color: var(--texto);
+}
+.navbar-guarida .navbar-brand img { height: 48px; }
+.navbar-guarida .nav-link { color: var(--gris); font-size: 1.05rem; padding: .5rem 1rem; }
+.navbar-guarida .nav-link:hover { color: var(--texto); }
+
+/* Pie */
+.pie {
+    border-top: 5px solid transparent;
+    border-image: linear-gradient(90deg, var(--lila), var(--menta), var(--amarillo), var(--salmon)) 1;
+    text-align: center;
+    padding: 1.2rem 1rem;
+    color: var(--gris);
+    font-size: .95rem;
+}
