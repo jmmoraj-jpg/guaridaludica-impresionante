@@ -12,7 +12,7 @@
     font-weight: 700;
     color: var(--texto);
 }
-.navbar-guarida .navbar-brand img { height: 48px; }
+.navbar-guarida .navbar-brand img { height: 75px; }
 .navbar-guarida .nav-link { color: var(--gris); font-size: 1.05rem; padding: .5rem 1rem; }
 .navbar-guarida .nav-link:hover { color: var(--texto); }
 
