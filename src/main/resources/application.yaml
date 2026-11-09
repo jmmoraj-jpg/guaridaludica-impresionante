@@ -18,5 +18,6 @@ app:
   banner:
     titulo: "Ideas que toman forma, capa a capa"
     mensaje: "Aquí viven mis creaciones 3D. Crea tu cuenta, elige una pieza y échame una mano a mantener viva la impresora y a cubrir el coste del filamento."
+    advertencia: "Esta web no es una tienda: las piezas se ofrecen como apoyo al creador para mantener la impresora."
   cloudinary:
     folder: guarida3d/productos

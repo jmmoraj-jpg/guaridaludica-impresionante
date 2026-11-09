@@ -25,6 +25,9 @@ public class CatalogoController {
     @Value("${app.banner.mensaje}")
     private String bannerMensaje;
 
+    @Value("${app.banner.advertencia}")
+    private String bannerAdvertencia;
+
     public CatalogoController(ProductoRepository productoRepository, FavoritoService favoritoService) {
         this.productoRepository = productoRepository;
         this.favoritoService = favoritoService;
@@ -39,6 +42,7 @@ public class CatalogoController {
 
         model.addAttribute("bannerTitulo", bannerTitulo);
         model.addAttribute("bannerMensaje", bannerMensaje);
+        model.addAttribute("bannerAdvertencia", bannerAdvertencia);
         model.addAttribute("categorias", CATEGORIAS);
         model.addAttribute("categoriaActual", cat);
         model.addAttribute("productos", cat == null

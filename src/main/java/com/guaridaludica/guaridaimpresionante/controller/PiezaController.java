@@ -6,6 +6,7 @@ import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 
 import java.security.Principal;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,9 @@ public class PiezaController {
 
     private final ProductoRepository productoRepository;
     private final FavoritoRepository favoritoRepository;
+
+    @Value("${app.banner.advertencia}")
+    private String bannerAdvertencia;
 
     public PiezaController(ProductoRepository productoRepository, FavoritoRepository favoritoRepository) {
         this.productoRepository = productoRepository;
@@ -33,6 +37,7 @@ public class PiezaController {
                 && favoritoRepository.existsByUsuarioEmailIgnoreCaseAndProductoId(principal.getName(), id);
         model.addAttribute("pieza", pieza);
         model.addAttribute("esFavorito", esFavorito);
+        model.addAttribute("bannerAdvertencia", bannerAdvertencia);
         return "pieza";
     }
 }
