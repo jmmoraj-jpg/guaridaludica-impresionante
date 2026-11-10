@@ -86,11 +86,6 @@ public class Producto {
         return lista;
     }
 
-    // TEMPORAL: solo sirve para migrar las categorías antiguas. Se borra cuando la
-    // migración esté hecha
-    @Column(name = "categoria", length = 50)
-    private String categoriaAntigua;
-
     @ManyToMany
     @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
     @OrderBy("orden ASC, nombre ASC")

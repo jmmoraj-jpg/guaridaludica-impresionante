@@ -87,7 +87,7 @@
 
                     <form sec:authorize="isAuthenticated()" class="fav-flotante"
                         th:action="@{/favoritos/{id}(id=${p.id})}" method="post">
-                        <input type="hidden" name="volver" th:value="@{/(categoria=${categoriaActual?.slug})}">
+                        <input type="hidden" name="volver" th:value="@{/(categoria=${categoriaActual?.slug},pagina=${pagina})}">
                         <button type="submit" class="btn-corazon" aria-label="Favorito"
                             th:classappend="${favoritosIds.contains(p.id)} ? 'activo'"
                             th:text="${favoritosIds.contains(p.id)} ? '♥' : '♡'">♡</button>
@@ -97,6 +97,7 @@
                 </div>
             </div>
         </div>
+        <th:block th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/', ${extraPaginacion}, '#catalogo')}"></th:block>
         <p th:if="${#lists.isEmpty(productos)}" class="text-secondary">No hay piezas en esta categoría todavía.</p>
     </main>
 

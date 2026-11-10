@@ -45,7 +45,6 @@ public class DataInicializer implements CommandLineRunner {
     @Transactional
     public void run(String... args) {
         crearAdmin();
-        migrarCategoriasAntiguas();
         if (env.acceptsProfiles(Profiles.of("dev"))) {
             crearPiezasDeEjemplo();
         }
@@ -61,18 +60,6 @@ public class DataInicializer implements CommandLineRunner {
         admin.setPassword(passwordEncoder.encode(adminPassword));
         admin.setRol(Rol.ADMIN);
         usuarioRepository.save(admin);
-    }
-
-    // Pasa la categoría de texto de cada pieza a la tabla de categorías (solo actúa si queda algo por migrar)
-    private void migrarCategoriasAntiguas() {
-        for (Producto p : productoRepository.findAll()) {
-            String nombre = p.getCategoriaAntigua();
-            if (nombre == null || nombre.isBlank()) {
-                continue;
-            }
-            p.getCategorias().add(categoriaService.obtenerOCrear(nombre));
-            p.setCategoriaAntigua(null);
-        }
     }
 
     // Solo en dev y solo si la tabla está vacía

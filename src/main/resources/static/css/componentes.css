@@ -24,7 +24,6 @@
 .mat-pla { background: #ecebff; color: #3d3585; }
 .mat-petg { background: #e1f5ee; color: #0f5a43; }
 .mat-resina { background: #fbefd9; color: #6b4300; }
-.etiqueta-neutra { background: #fff; border: 2px solid var(--borde); color: var(--texto); }
 
 /* Tonos pastel (fondo de las imágenes de relleno) */
 .tono-0 { background: var(--salmon-claro); }
@@ -120,3 +119,30 @@
 .btn-corazon.activo { background: var(--salmon-claro); border-color: var(--salmon); animation: latido .6s ease; }
 a.etiqueta { text-decoration: none; }
 a.etiqueta-categoria:hover { background: var(--amarillo); color: #6b4300; }
+/* Paginación */
+.paginacion {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: .4rem;
+    margin: 2rem 0 1rem;
+}
+.pag-enlace {
+    min-width: 42px;
+    height: 42px;
+    padding: 0 .9rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid var(--borde);
+    color: var(--texto);
+    text-decoration: none;
+    font-weight: 600;
+}
+a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
+.pag-enlace.activo { background: var(--menta); border-color: var(--menta); color: #0f3d2e; }
+.pag-enlace.desactivado { opacity: .45; }
+.pag-puntos { color: var(--gris); padding: 0 .2rem; }

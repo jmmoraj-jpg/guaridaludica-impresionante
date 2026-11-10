@@ -1,6 +1,9 @@
 package com.guaridaludica.guaridaimpresionante.repository;
 
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -10,8 +13,6 @@ import java.util.Optional;
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
 
     List<Categoria> findAllByOrderByOrdenAscNombreAsc();
-
-    Optional<Categoria> findBySlug(String slug);
 
     Optional<Categoria> findByNombreIgnoreCase(String nombre);
 
@@ -28,4 +29,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
             order by c.orden asc, c.nombre asc
             """)
     List<Categoria> visiblesConPiezas();
+
+    Page<Categoria> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 }

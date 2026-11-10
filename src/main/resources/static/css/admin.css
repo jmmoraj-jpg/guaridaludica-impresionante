@@ -31,3 +31,8 @@
     padding: .6rem 1rem;
     background: var(--crema);
 }
+.buscador-admin .form-control {
+    border-radius: 999px;
+    border: 2px solid var(--borde);
+    padding: .55rem 1.1rem;
+}

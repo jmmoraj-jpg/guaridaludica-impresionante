@@ -3,7 +3,14 @@ package com.guaridaludica.guaridaimpresionante.controller;
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.service.CategoriaService;
+import com.guaridaludica.guaridaimpresionante.util.Paginas;
+
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/admin/categorias")
 public class AdminCategoriaController {
+    private static final int POR_PAGINA = 15;
 
     private final CategoriaRepository categoriaRepository;
     private final CategoriaService categoriaService;
@@ -26,10 +34,29 @@ public class AdminCategoriaController {
     }
 
     @GetMapping
-    public String listar(Model model) {
-        model.addAttribute("categorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
+    public String listar(@RequestParam(defaultValue = "1") int pagina,
+            @RequestParam(required = false) String q,
+            Model model) {
         model.addAttribute("form", new CategoriaForm());
+        cargarListado(model, pagina, q);
         return "admin/categorias";
+    }
+
+    private void cargarListado(Model model, int pagina, String q) {
+        String busqueda = (q == null || q.isBlank()) ? null : q.trim();
+
+        Page<Categoria> page = Paginas.pedir(pagina, i -> {
+            Pageable pageable = PageRequest.of(i, POR_PAGINA,
+                    Sort.by("orden").ascending().and(Sort.by("nombre").ascending()));
+            return busqueda == null
+                    ? categoriaRepository.findAll(pageable)
+                    : categoriaRepository.findByNombreContainingIgnoreCase(busqueda, pageable);
+        });
+
+        model.addAttribute("categorias", page.getContent());
+        Paginas.atributos(model, page);
+        model.addAttribute("q", busqueda);
+        model.addAttribute("extraPaginacion", Paginas.extraBusqueda(busqueda));
     }
 
     @GetMapping("/{id}/editar")
@@ -51,7 +78,7 @@ public class AdminCategoriaController {
         }
         if (result.hasErrors()) {
             if (form.getId() == null) {
-                model.addAttribute("categorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
+                cargarListado(model, 1, null);
                 return "admin/categorias";
             }
             return "admin/categoria-form";

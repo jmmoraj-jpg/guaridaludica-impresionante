@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="paginacion(actual, total, ruta, extra, ancla)">
+    <nav class="paginacion" th:if="${total > 1}" aria-label="Paginación">
+
+        <a class="pag-enlace" th:if="${actual > 1}"
+           th:href="@{${ruta + '?pagina=' + (actual - 1) + extra + ancla}}">‹ Anterior</a>
+        <span class="pag-enlace desactivado" th:unless="${actual > 1}">‹ Anterior</span>
+
+        <th:block th:each="n : ${#numbers.sequence(1, total)}">
+            <span class="pag-puntos"
+                  th:if="${(n == 2 and actual > 4) or (n == total - 1 and actual < total - 3)}">…</span>
+            <a class="pag-enlace" th:if="${n == 1 or n == total or (n >= actual - 2 and n <= actual + 2)}"
+               th:classappend="${n == actual} ? 'activo'"
+               th:aria-current="${n == actual} ? 'page'"
+               th:href="@{${ruta + '?pagina=' + n + extra + ancla}}" th:text="${n}">1</a>
+        </th:block>
+
+        <a class="pag-enlace" th:if="${actual < total}"
+           th:href="@{${ruta + '?pagina=' + (actual + 1) + extra + ancla}}">Siguiente ›</a>
+        <span class="pag-enlace desactivado" th:unless="${actual < total}">Siguiente ›</span>
+    </nav>
+</th:block>
+
+</body>
+</html>
