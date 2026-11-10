@@ -13,6 +13,7 @@
         </div>
 
         <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+        <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
 
         <form th:action="@{/admin/productos}" method="get" class="buscador-admin d-flex gap-2 mb-3">
             <input type="search" name="q" th:value="${q}" class="form-control" placeholder="Buscar pieza por nombre…">

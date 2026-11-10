@@ -66,20 +66,16 @@
                 <div class="caja-solicitar">
                     <h5 class="mb-2">¿Te gusta esta pieza?</h5>
 
-                    <div class="mb-3">
-                        <form sec:authorize="isAuthenticated()" th:action="@{/favoritos/{id}(id=${pieza.id})}"
-                            method="post" class="d-inline">
-                            <input type="hidden" name="volver" th:value="${'/pieza/' + pieza.id}">
-                            <button type="submit" class="btn btn-pill btn-fav"
-                                th:classappend="${esFavorito} ? 'activo'">
-                                <span class="corazon" th:text="${esFavorito} ? '♥' : '♡'">♡</span>
-                                <span th:text="${esFavorito} ? 'En favoritos' : 'Añadir a favoritos'">Añadir a
-                                    favoritos</span>
-                            </button>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/conversaciones/nueva}" method="post" class="d-inline">
+                            <input type="hidden" name="productoId" th:value="${pieza.id}">
+                            <button type="submit" class="btn btn-pill btn-menta">Escribir sobre esta pieza</button>
                         </form>
-                        <a sec:authorize="!isAuthenticated()" th:href="@{/login}" class="btn btn-pill btn-fav">
-                            <span class="corazon">♡</span> Añadir a favoritos
-                        </a>
+                        <button type="button" class="btn btn-pill btn-menta ms-1" disabled>Solicitar esta pieza</button>
+                        <p class="text-secondary small mt-2 mb-0">
+                            Pregunta lo que quieras, sin compromiso. Muy pronto podrás solicitarla desde la
+                            conversación.
+                        </p>
                     </div>
 
                     <div sec:authorize="!isAuthenticated()">
@@ -90,10 +86,10 @@
                         </div>
                     </div>
 
-                    <div sec:authorize="isAuthenticated()">
+                    <!--<div sec:authorize="isAuthenticated()">
                         <p class="text-secondary">Muy pronto podrás solicitarla desde aquí.</p>
                         <button type="button" class="btn btn-pill btn-menta" disabled>Solicitar esta pieza</button>
-                    </div>
+                    </div>-->
 
                     <p class="small text-secondary mt-3 mb-0">
                         <span th:text="${bannerAdvertencia}">Advertencia</span>

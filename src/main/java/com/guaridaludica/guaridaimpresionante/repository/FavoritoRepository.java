@@ -22,4 +22,6 @@ public interface FavoritoRepository extends JpaRepository<Favorito, Long> {
 
     @Query("select f.producto.id from Favorito f where lower(f.usuario.email) = lower(:email)")
     Set<Long> idsProducto(@Param("email") String email);
+
+    void deleteByProductoId(Long productoId);
 }

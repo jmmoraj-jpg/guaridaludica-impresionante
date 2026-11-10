@@ -105,8 +105,11 @@ public class AdminProductoController {
 
     @PostMapping("/{id}/borrar")
     public String borrar(@PathVariable Long id, RedirectAttributes redirect) {
-        servicioProductoAdminService.borrar(id);
-        redirect.addFlashAttribute("mensaje", "Pieza borrada");
+        if (servicioProductoAdminService.borrar(id)) {
+            redirect.addFlashAttribute("mensaje", "Pieza borrada");
+        } else {
+            redirect.addFlashAttribute("error", "No se puede borrar una pieza con conversaciones. Puedes ocultarla.");
+        }
         return "redirect:/admin/productos";
     }
 

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Mis mensajes')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <h2 class="titulo-marcador marcador-lila mb-4">Mis mensajes</h2>
+
+    <a class="fila-conv" th:each="c : ${conversaciones}" th:href="@{/conversaciones/{id}(id=${c.id})}">
+        <img th:if="${c.producto.imagenUrl != null}" th:src="${c.producto.imagenUrl}" class="fila-img" alt="">
+        <div class="fila-img hilo-placeholder" th:if="${c.producto.imagenUrl == null}">🧊</div>
+        <div class="flex-grow-1">
+            <div class="fw-bold">
+                <span class="nuevo-punto" th:if="${c.sinLeerUsuario}" title="Mensaje nuevo"></span>
+                <span th:text="${c.producto.nombre}">Pieza</span>
+            </div>
+            <div class="small text-secondary"
+                 th:text="${c.ultimoResumen != null} ? ${c.ultimoResumen} : 'Conversación sin mensajes'">Resumen</div>
+        </div>
+        <div class="text-end">
+            <span class="etiqueta" th:text="${c.estado.etiqueta}"
+                  th:classappend="${'estado-' + #strings.toLowerCase(c.estado.name())}">Consulta</span>
+            <div class="small text-secondary mt-1"
+                 th:text="${#temporals.format(c.ultimaActividad, 'dd/MM/yyyy HH:mm')}">fecha</div>
+        </div>
+    </a>
+
+    <div th:if="${conversaciones.isEmpty()}" class="text-center py-5">
+        <p class="lead text-secondary">Todavía no tienes conversaciones 💜</p>
+        <p class="text-secondary">Guarda piezas en favoritos y escríbenos sobre la que te guste.</p>
+        <a th:href="@{/favoritos}" class="btn btn-pill btn-menta">Ver mis favoritos</a>
+    </div>
+
+    <th:block th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/conversaciones', '', '')}"></th:block>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

@@ -4,6 +4,8 @@ import com.guaridaludica.guaridaimpresionante.controller.ProductoForm;
 import com.guaridaludica.guaridaimpresionante.model.ImagenProducto;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
+import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
+import com.guaridaludica.guaridaimpresionante.repository.FavoritoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +21,16 @@ public class ProductoAdminService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ConversacionRepository conversacionRepository;
+    private final FavoritoRepository favoritoRepository;
     private final CloudinaryService cloudinary;
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-            CloudinaryService cloudinary) {
+            ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository, CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.conversacionRepository = conversacionRepository;
+        this.favoritoRepository = favoritoRepository;
         this.cloudinary = cloudinary;
     }
 
@@ -99,11 +105,16 @@ public class ProductoAdminService {
     }
 
     @Transactional
-    public void borrar(Long id) {
+    public boolean borrar(Long id) {
+        if (conversacionRepository.existsByProductoId(id)) {
+            return false; // con conversaciones no se borra: se puede ocultar
+        }
+        favoritoRepository.deleteByProductoId(id);
         productoRepository.findWithImagenesById(id).ifPresent(p -> {
             p.getImagenes().forEach(i -> cloudinary.borrar(i.getPublicId()));
             productoRepository.delete(p);
         });
+        return true;
     }
 
     // "nueva-2" = tercer archivo subido ahora; "15" = imagen ya existente con id 15

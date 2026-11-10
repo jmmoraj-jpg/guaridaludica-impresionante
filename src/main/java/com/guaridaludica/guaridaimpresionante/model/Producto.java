@@ -38,8 +38,10 @@ public class Producto {
 
     private boolean visible = true;
 
-    // @Column(length = 50)
-    // private String categoria; // Figuras, Juguetes, Decoración, Regalos
+    @ManyToMany
+    @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    @OrderBy("orden ASC, nombre ASC")
+    private Set<Categoria> categorias = new LinkedHashSet<>();
 
     public String getTiempoTexto() {
         if (tiempoImpresionMinutos == null)
@@ -85,9 +87,4 @@ public class Producto {
         }
         return lista;
     }
-
-    @ManyToMany
-    @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-    @OrderBy("orden ASC, nombre ASC")
-    private Set<Categoria> categorias = new LinkedHashSet<>();
 }

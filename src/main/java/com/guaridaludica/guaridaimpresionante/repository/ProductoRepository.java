@@ -27,7 +27,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
     Page<Producto> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"imagenes", "categorias"})
+    @EntityGraph(attributePaths = {"imagenes"})
     Optional<Producto> findWithImagenesById(Long id);
 
     @Query("select p from Producto p join p.categorias c where c.id = :id")

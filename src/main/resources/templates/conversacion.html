@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Mensajes')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <a class="volver" th:href="@{/conversaciones}">← Mis mensajes</a>
+    <div class="row justify-content-center mt-3 con-formas formas-b">
+        <div class="col-lg-8">
+            <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+<script th:src="@{/js/conversacion.js}"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <th:block th:fragment="hilo(conv, vistaGuarida, accion)">
+        <div class="hilo-cabecera">
+            <img th:if="${conv.producto.imagenUrl != null}" th:src="${conv.producto.imagenUrl}" class="fila-img" alt="">
+            <div class="fila-img hilo-placeholder" th:if="${conv.producto.imagenUrl == null}">🧊</div>
+            <div class="flex-grow-1">
+                <div class="fw-bold" th:text="${conv.producto.nombre}">Pieza</div>
+                <div class="small text-secondary" th:if="${vistaGuarida}"
+                    th:text="'Conversación con ' + ${conv.usuario.nombre}">Conversación con ...</div>
+                <a class="small" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver la pieza</a>
+            </div>
+            <span class="etiqueta" th:text="${conv.estado.etiqueta}"
+                th:classappend="${'estado-' + #strings.toLowerCase(conv.estado.name())}">Consulta</span>
+        </div>
+
+        <div class="hilo">
+            <p class="text-secondary text-center my-4" th:if="${conv.mensajes.isEmpty()}"
+                th:text="${vistaGuarida} ? 'Aún no hay mensajes.' : 'Escribe tu primera pregunta sobre esta pieza, sin compromiso 💜'">
+                Aún no hay mensajes.
+            </p>
+            <div class="burbuja" th:each="m : ${conv.mensajes}"
+                th:classappend="${m.deLaGuarida == vistaGuarida} ? 'burbuja-mia' : 'burbuja-otro'">
+                <span th:text="${m.texto}">Texto</span>
+                <small th:text="${(vistaGuarida ? m.autor.nombre : (m.deLaGuarida ? 'La Guarida' : 'Tú'))
+                              + ' · ' + #temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Autor · fecha</small>
+            </div>
+        </div>
+
+        <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
+
+        <form id="formMensaje" class="hilo-form" th:action="@{${accion}}" method="post">
+            <textarea name="texto" rows="3" maxlength="2000" class="form-control mb-2"
+                placeholder="Escribe tu mensaje… (Ctrl+Enter para enviar)" required></textarea>
+            <button type="submit" class="btn btn-pill btn-menta">Enviar</button>
+        </form>
+    </th:block>
+
+</body>
+
+</html>

@@ -15,6 +15,7 @@
     <link rel="stylesheet" th:href="@{/css/pieza.css}">
     <link rel="stylesheet" th:href="@{/css/formularios.css}">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" th:href="@{/css/conversaciones.css}">
 </head>
 
 <body>
@@ -39,6 +40,9 @@
                     <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                         <a class="nav-link" th:href="@{/admin/categorias}">Categorías</a>
                     </li>
+                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">
+                        <a class="nav-link" th:href="@{/admin/mensajes}">Bandeja</a>
+                    </li>
                     <th:block sec:authorize="!isAuthenticated()">
                         <li class="nav-item"><a class="nav-link" th:href="@{/login}">Entrar</a></li>
                         <li class="nav-item ms-lg-2"><a class="btn btn-pill btn-salmon" th:href="@{/registro}">Únete</a>
@@ -46,6 +50,7 @@
                     </th:block>
                     <th:block sec:authorize="isAuthenticated()">
                         <li class="nav-item"><a class="nav-link" th:href="@{/favoritos}">♥ Favoritos</a></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/conversaciones}">✉ Mensajes</a></li>
                         <li class="nav-item"><span class="nav-link" sec:authentication="name">usuario</span></li>
                         <li class="nav-item ms-lg-2">
                             <form th:action="@{/logout}" method="post">
