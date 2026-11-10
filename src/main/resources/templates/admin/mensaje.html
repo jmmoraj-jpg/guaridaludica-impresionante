@@ -4,18 +4,48 @@
 <head th:replace="~{fragments/layout :: head('Conversación')}"></head>
 
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<main class="container py-4">
-    <a class="volver" th:href="@{/admin/mensajes}">← Volver a la bandeja</a>
-    <div class="row justify-content-center mt-3">
-        <div class="col-lg-8">
-            <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+    <main class="container py-4">
+        <a class="volver" th:href="@{/admin/mensajes}">← Volver a la bandeja</a>
+        <div class="row justify-content-center mt-3">
+            <div class="col-lg-8">
+
+                <div class="caja-estado">
+                    <span class="small text-secondary" th:if="${conv.estado.name() == 'CONSULTA'}">
+                        Esperando a que el usuario la solicite.
+                    </span>
+                    <span class="small text-secondary"
+                        th:if="${conv.estado.siguientesParaEquipo().isEmpty() and conv.estado.name() != 'CONSULTA'}"
+                        th:text="'Conversación cerrada: ' + ${conv.estado.etiqueta}">Cerrada</span>
+                    <th:block th:each="e : ${conv.estado.siguientesParaEquipo()}">
+                        <form th:if="${e.name() == 'ACEPTADA'}"
+                            th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
+                            class="d-flex gap-2 align-items-center">
+                            <input type="hidden" name="estado" value="ACEPTADA">
+                            <input type="number" name="precio" step="0.01" min="0.01" required class="form-control"
+                                style="width: 8rem" placeholder="Precio €">
+                            <button type="submit" class="btn btn-pill btn-menta">Aceptar</button>
+                        </form>
+                        <form th:unless="${e.name() == 'ACEPTADA'}"
+                            th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
+                            th:attr="data-confirmar=${e.name() == 'CANCELADA'} ? '¿Seguro que quieres cancelar? No se puede deshacer.' : null">
+                            <input type="hidden" name="estado" th:value="${e.name()}">
+                            <button type="submit" class="btn btn-pill"
+                                th:classappend="${e.name() == 'CANCELADA'} ? 'btn-borde' : 'btn-menta'"
+                                th:text="${e.name() == 'CANCELADA'} ? 'Cancelar' : 'Pasar a ' + ${e.etiqueta}">Pasar
+                                a</button>
+                        </form>
+                    </th:block>
+                </div>
+
+                <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<th:block th:replace="~{fragments/layout :: footer}"></th:block>
-<script th:src="@{/js/conversacion.js}"></script>
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/conversacion.js}"></script>
 </body>
+
 </html>

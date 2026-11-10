@@ -12,6 +12,11 @@
                 <div class="small text-secondary" th:if="${vistaGuarida}"
                     th:text="'Conversación con ' + ${conv.usuario.nombre}">Conversación con ...</div>
                 <a class="small" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver la pieza</a>
+
+                <div class="small fw-bold" th:if="${conv.precio != null}"
+                    th:text="'Precio acordado: ' + ${#numbers.formatDecimal(conv.precio, 1, 'POINT', 2, 'COMMA')} + ' €'">
+                    Precio acordado
+                </div>
             </div>
             <span class="etiqueta" th:text="${conv.estado.etiqueta}"
                 th:classappend="${'estado-' + #strings.toLowerCase(conv.estado.name())}">Consulta</span>
@@ -32,11 +37,16 @@
 
         <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
 
-        <form id="formMensaje" class="hilo-form" th:action="@{${accion}}" method="post">
+        <form id="formMensaje" class="hilo-form" th:unless="${conv.estado.cerrada}" th:action="@{${accion}}"
+            method="post">
             <textarea name="texto" rows="3" maxlength="2000" class="form-control mb-2"
                 placeholder="Escribe tu mensaje… (Ctrl+Enter para enviar)" required></textarea>
             <button type="submit" class="btn btn-pill btn-menta">Enviar</button>
         </form>
+
+        <p class="text-center text-secondary small my-3" th:if="${conv.estado.cerrada}">
+            Esta conversación está cerrada. Si quieres otra pieza, escríbenos desde su ficha.
+        </p>
     </th:block>
 
 </body>

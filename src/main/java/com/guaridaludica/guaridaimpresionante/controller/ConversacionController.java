@@ -1,6 +1,7 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.model.Conversacion;
+import com.guaridaludica.guaridaimpresionante.model.EstadoConversacion;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
 import com.guaridaludica.guaridaimpresionante.service.ConversacionService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
@@ -24,16 +25,16 @@ public class ConversacionController {
     private final ConversacionRepository conversacionRepository;
 
     public ConversacionController(ConversacionService servicio,
-                                  ConversacionRepository conversacionRepository) {
+            ConversacionRepository conversacionRepository) {
         this.servicio = servicio;
         this.conversacionRepository = conversacionRepository;
     }
 
     @GetMapping
     public String lista(@RequestParam(defaultValue = "1") int pagina,
-                        Principal principal, Model model) {
-        Page<Conversacion> page = Paginas.pedir(pagina, i ->
-                conversacionRepository.findByUsuarioEmailIgnoreCase(principal.getName(),
+            Principal principal, Model model) {
+        Page<Conversacion> page = Paginas.pedir(pagina,
+                i -> conversacionRepository.findByUsuarioEmailIgnoreCase(principal.getName(),
                         PageRequest.of(i, POR_PAGINA, Sort.by(Sort.Direction.DESC, "ultimaActividad"))));
         model.addAttribute("conversaciones", page.getContent());
         Paginas.atributos(model, page);
@@ -42,7 +43,33 @@ public class ConversacionController {
 
     @PostMapping("/nueva")
     public String nueva(@RequestParam Long productoId, Principal principal) {
-        Conversacion c = servicio.iniciar(principal.getName(), productoId);
+        Conversacion existente = servicio.buscarAbierta(principal.getName(), productoId);
+        if (existente != null) {
+            return "redirect:/conversaciones/" + existente.getId();
+        }
+        return "redirect:/conversaciones/nueva/" + productoId;
+    }
+
+    @GetMapping("/nueva/{productoId}")
+    public String redactar(@PathVariable Long productoId, Principal principal, Model model) {
+        Conversacion existente = servicio.buscarAbierta(principal.getName(), productoId);
+        if (existente != null) {
+            return "redirect:/conversaciones/" + existente.getId();
+        }
+        model.addAttribute("conv", servicio.borrador(principal.getName(), productoId));
+        model.addAttribute("vistaGuarida", false);
+        model.addAttribute("accion", "/conversaciones/nueva/" + productoId + "/mensajes");
+        return "conversacion";
+    }
+
+    @PostMapping("/nueva/{productoId}/mensajes")
+    public String enviarPrimero(@PathVariable Long productoId, @RequestParam String texto,
+            Principal principal, RedirectAttributes redirect) {
+        Conversacion c = servicio.iniciarConMensaje(principal.getName(), productoId, texto);
+        if (c == null) {
+            redirect.addFlashAttribute("error", "Escribe un mensaje (máximo 2000 caracteres).");
+            return "redirect:/conversaciones/nueva/" + productoId;
+        }
         return "redirect:/conversaciones/" + c.getId();
     }
 
@@ -56,9 +83,19 @@ public class ConversacionController {
 
     @PostMapping("/{id}/mensajes")
     public String enviar(@PathVariable Long id, @RequestParam String texto,
-                         Principal principal, RedirectAttributes redirect) {
+            Principal principal, RedirectAttributes redirect) {
         if (!servicio.enviarComoUsuario(id, principal.getName(), texto)) {
-            redirect.addFlashAttribute("error", "Escribe un mensaje (máximo 2000 caracteres).");
+             redirect.addFlashAttribute("error",
+                "No se pudo enviar. Comprueba que el mensaje no esté vacío (máximo 2000 caracteres) y que la conversación siga abierta.");
+        }
+        return "redirect:/conversaciones/" + id;
+    }
+
+    @PostMapping("/{id}/estado")
+    public String cambiarEstado(@PathVariable Long id, @RequestParam EstadoConversacion estado,
+            Principal principal, RedirectAttributes redirect) {
+        if (!servicio.cambiarEstadoComoUsuario(id, principal.getName(), estado)) {
+            redirect.addFlashAttribute("error", "No se puede hacer ese cambio en este momento.");
         }
         return "redirect:/conversaciones/" + id;
     }

@@ -26,7 +26,8 @@ public class ProductoAdminService {
     private final CloudinaryService cloudinary;
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-            ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository, CloudinaryService cloudinary) {
+            ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository,
+            CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.conversacionRepository = conversacionRepository;
@@ -54,10 +55,15 @@ public class ProductoAdminService {
 
         // 1. Imágenes marcadas para eliminar
         if (eliminar != null && !eliminar.isEmpty()) {
-            List<ImagenProducto> aBorrar = p.getImagenes().stream()
-                    .filter(i -> eliminar.contains(i.getId()))
-                    .toList();
-            aBorrar.forEach(i -> cloudinary.borrar(i.getPublicId()));
+            List<ImagenProducto> aBorrar = new ArrayList<>();
+            for (ImagenProducto i : p.getImagenes()) {
+                if (eliminar.contains(i.getId())) {
+                    aBorrar.add(i);
+                }
+            }
+            for (ImagenProducto i : aBorrar) {
+                cloudinary.borrar(i.getPublicId());
+            }
             p.getImagenes().removeAll(aBorrar);
         }
 

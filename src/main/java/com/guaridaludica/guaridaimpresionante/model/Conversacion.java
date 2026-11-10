@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,11 @@ public class Conversacion {
     @Column(length = 140)
     private String ultimoResumen;
 
-    private boolean sinLeerUsuario;    // la guarida ha escrito y el usuario aún no lo ha abierto
-    private boolean sinLeerGuarida;    // el usuario ha escrito y la guarida aún no lo ha abierto
+    @Column(precision = 8, scale = 2)
+    private BigDecimal precio;
+
+    private boolean sinLeerUsuario; // la guarida ha escrito y el usuario aún no lo ha abierto
+    private boolean sinLeerGuarida; // el usuario ha escrito y la guarida aún no lo ha abierto
 
     @OneToMany(mappedBy = "conversacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("fecha ASC, id ASC")

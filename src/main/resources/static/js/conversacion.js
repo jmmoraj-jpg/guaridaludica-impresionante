@@ -1,4 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Confirmación en los formularios que la piden (cancelar)
+    const confirmables = document.querySelectorAll('form[data-confirmar]');
+    for (const f of confirmables) {
+        f.addEventListener('submit', function (e) {
+            if (!confirm(f.dataset.confirmar)) {
+                e.preventDefault();
+            }
+        });
+    }
+
     const form = document.getElementById('formMensaje');
     if (!form) return;
     const texto = form.querySelector('textarea');

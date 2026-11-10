@@ -4,18 +4,36 @@
 <head th:replace="~{fragments/layout :: head('Mensajes')}"></head>
 
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<main class="container py-4">
-    <a class="volver" th:href="@{/conversaciones}">← Mis mensajes</a>
-    <div class="row justify-content-center mt-3 con-formas formas-b">
-        <div class="col-lg-8">
-            <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+    <main class="container py-4">
+        <a class="volver" th:href="@{/conversaciones}">← Mis mensajes</a>
+        <div class="row justify-content-center mt-3 con-formas formas-b">
+            <div class="col-lg-8">
+
+                <div class="caja-estado" th:if="${conv.id != null}">
+                    <form th:if="${conv.estado.usuarioPuedeSolicitar}"
+                        th:action="@{/conversaciones/{id}/estado(id=${conv.id})}" method="post">
+                        <input type="hidden" name="estado" value="SOLICITADA">
+                        <button type="submit" class="btn btn-pill btn-menta">Solicitar esta pieza</button>
+                    </form>
+                    <form th:if="${conv.estado.usuarioPuedeCancelar}"
+                        th:action="@{/conversaciones/{id}/estado(id=${conv.id})}" method="post"
+                        data-confirmar="¿Seguro que quieres cancelar? No se puede deshacer.">
+                        <input type="hidden" name="estado" value="CANCELADA">
+                        <button type="submit" class="btn btn-pill btn-borde">Cancelar</button>
+                    </form>
+                    <span class="small text-secondary" th:unless="${conv.estado.usuarioPuedeCancelar}"
+                        th:text="'Estado: ' + ${conv.estado.etiqueta}">Estado</span>
+                </div>
+
+                <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+            </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<th:block th:replace="~{fragments/layout :: footer}"></th:block>
-<script th:src="@{/js/conversacion.js}"></script>
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/conversacion.js}"></script>
 </body>
+
 </html>

@@ -34,15 +34,7 @@
                 <ul class="navbar-nav ms-auto align-items-lg-center">
                     <li class="nav-item"><a class="nav-link" th:href="@{/#catalogo}">Catálogo</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/#como-funciona}">Cómo funciona</a></li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/productos}">Piezas</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                        <a class="nav-link" th:href="@{/admin/categorias}">Categorías</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">
-                        <a class="nav-link" th:href="@{/admin/mensajes}">Bandeja</a>
-                    </li>
+
                     <th:block sec:authorize="!isAuthenticated()">
                         <li class="nav-item"><a class="nav-link" th:href="@{/login}">Entrar</a></li>
                         <li class="nav-item ms-lg-2"><a class="btn btn-pill btn-salmon" th:href="@{/registro}">Únete</a>
@@ -50,7 +42,29 @@
                     </th:block>
                     <th:block sec:authorize="isAuthenticated()">
                         <li class="nav-item"><a class="nav-link" th:href="@{/favoritos}">♥ Favoritos</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/conversaciones}">✉ Mensajes</a></li>
+                        <li class="nav-item" th:with="n=${@avisos.deUsuario(#authentication.name)}">
+                            <a class="nav-link" th:href="@{/conversaciones}">✉ Mensajes
+                                <span class="aviso-nuevo" th:if="${n > 0}" th:text="${n}">1</span>
+                            </a>
+                        </li>
+
+                        <!-- Solo administración -->
+                        <li class="nav-item dropdown" sec:authorize="hasAnyRole('ADMIN','ENCARGADO')"
+                            th:with="n=${@avisos.deEquipo()}">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">Administración
+                                <span class="aviso-nuevo" th:if="${n > 0}" th:text="${n}">1</span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <!-- Piezas y Categorías igual que antes -->
+                                <li sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">
+                                    <a class="dropdown-item" th:href="@{/admin/mensajes}">Bandeja
+                                        <span class="aviso-nuevo" th:if="${n > 0}" th:text="${n}">1</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item"><span class="nav-link" sec:authentication="name">usuario</span></li>
                         <li class="nav-item ms-lg-2">
                             <form th:action="@{/logout}" method="post">

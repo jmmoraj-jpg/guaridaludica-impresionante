@@ -75,16 +75,20 @@
 
 /* Burbujas de chat con estilo orgánico y divertido */
 .burbuja {
-    max-width: 78%;
-    padding: .9rem 1.2rem;
+    max-width: 70%;
+    padding: .6rem 1rem;
     border-radius: 20px;
-    white-space: pre-wrap;
+    white-space: normal;
     overflow-wrap: anywhere;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     font-size: 0.95rem;
     line-height: 1.4;
     position: relative;
     animation: fadeInBubble 0.2s ease-out;
+}
+
+.burbuja span {
+    white-space: pre-wrap;
 }
 
 @keyframes fadeInBubble {
@@ -102,7 +106,7 @@
 .burbuja small {
     display: block;
     opacity: 0.6;
-    margin-top: 0.4rem;
+    margin-top: 0.2rem;
     font-size: 0.75rem;
 }
 
@@ -184,4 +188,30 @@
     border-radius: 24px;
     padding: 1.5rem;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+}
+
+.aviso-nuevo {
+    display: inline-block;
+    min-width: 1.3rem;
+    padding: 0 .4rem;
+    border-radius: 999px;
+    background: var(--salmon);
+    color: #fff;
+    font-size: .75rem;
+    font-weight: 700;
+    line-height: 1.3rem;
+    text-align: center;
+    margin-left: .25rem;
+}
+
+.caja-estado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    align-items: center;
+    background: #fff;
+    border: 2px solid var(--borde);
+    border-radius: 20px;
+    padding: .8rem 1.2rem;
+    margin-bottom: 1.5rem;
 }

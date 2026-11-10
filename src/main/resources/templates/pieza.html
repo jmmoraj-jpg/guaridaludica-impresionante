@@ -71,10 +71,8 @@
                             <input type="hidden" name="productoId" th:value="${pieza.id}">
                             <button type="submit" class="btn btn-pill btn-menta">Escribir sobre esta pieza</button>
                         </form>
-                        <button type="button" class="btn btn-pill btn-menta ms-1" disabled>Solicitar esta pieza</button>
                         <p class="text-secondary small mt-2 mb-0">
-                            Pregunta lo que quieras, sin compromiso. Muy pronto podrás solicitarla desde la
-                            conversación.
+                            Pregunta lo que quieras, sin compromiso. Cuando lo tengáis claro, podrás solicitarla desde la conversación.
                         </p>
                     </div>
 
@@ -85,11 +83,6 @@
                             <a th:href="@{/login}" class="btn btn-pill btn-borde">Entrar</a>
                         </div>
                     </div>
-
-                    <!--<div sec:authorize="isAuthenticated()">
-                        <p class="text-secondary">Muy pronto podrás solicitarla desde aquí.</p>
-                        <button type="button" class="btn btn-pill btn-menta" disabled>Solicitar esta pieza</button>
-                    </div>-->
 
                     <p class="small text-secondary mt-3 mb-0">
                         <span th:text="${bannerAdvertencia}">Advertencia</span>

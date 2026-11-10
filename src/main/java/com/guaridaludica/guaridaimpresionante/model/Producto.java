@@ -1,9 +1,7 @@
 package com.guaridaludica.guaridaimpresionante.model;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -41,7 +39,7 @@ public class Producto {
     @ManyToMany
     @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
     @OrderBy("orden ASC, nombre ASC")
-    private Set<Categoria> categorias = new LinkedHashSet<>();
+    private List<Categoria> categorias = new ArrayList<>();
 
     public String getTiempoTexto() {
         if (tiempoImpresionMinutos == null)
