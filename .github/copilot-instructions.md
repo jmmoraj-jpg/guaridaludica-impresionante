@@ -1,0 +1,1 @@
+Generate all git commit messages in Spanish.

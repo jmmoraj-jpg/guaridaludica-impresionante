@@ -4,97 +4,114 @@
 <head th:replace="~{fragments/layout :: head('Pieza')}"></head>
 
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<main class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="auth-card">
-                <h2 class="mb-3" th:text="${form.id == null} ? 'Nueva pieza' : 'Editar pieza'">Pieza</h2>
+    <main class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="auth-card">
+                    <h2 class="mb-3" th:text="${form.id == null} ? 'Nueva pieza' : 'Editar pieza'">Pieza</h2>
 
-                <form th:action="@{/admin/productos/guardar}" th:object="${form}"
-                      method="post" enctype="multipart/form-data" novalidate>
-                    <input type="hidden" th:field="*{id}">
+                    <form th:action="@{/admin/productos/guardar}" th:object="${form}" method="post"
+                        enctype="multipart/form-data" novalidate>
+                        <input type="hidden" th:field="*{id}">
 
-                    <div class="mb-3">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control">
-                        <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="descripcion">Descripción</label>
-                        <textarea id="descripcion" th:field="*{descripcion}" rows="3" class="form-control"></textarea>
-                        <div class="error-campo" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label for="categoria">Categoría</label>
-                            <select id="categoria" th:field="*{categoria}" class="form-select">
-                                <option value="">Sin categoría</option>
-                                <option th:each="c : ${categorias}" th:value="${c}" th:text="${c}">Figuras</option>
-                            </select>
+                        <div class="mb-3">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control">
+                            <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
                         </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="material">Material</label>
-                            <input type="text" id="material" th:field="*{material}" class="form-control" list="materiales">
-                            <datalist id="materiales">
-                                <option value="PLA"></option>
-                                <option value="PETG"></option>
-                                <option value="Resina"></option>
-                                <option value="TPU"></option>
-                            </datalist>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="tiempo">Tiempo (minutos)</label>
-                            <input type="number" id="tiempo" th:field="*{tiempoImpresionMinutos}" min="0" class="form-control">
-                            <div class="error-campo" th:if="${#fields.hasErrors('tiempoImpresionMinutos')}"
-                                 th:errors="*{tiempoImpresionMinutos}"></div>
-                        </div>
-                    </div>
 
-                    <div class="form-check mb-4">
-                        <input type="checkbox" id="visible" th:field="*{visible}" class="form-check-input">
-                        <label for="visible" class="form-check-label">Visible en el catálogo</label>
-                    </div>
+                        <div class="mb-3">
+                            <label for="descripcion">Descripción</label>
+                            <textarea id="descripcion" th:field="*{descripcion}" rows="3"
+                                class="form-control"></textarea>
+                            <div class="error-campo" th:if="${#fields.hasErrors('descripcion')}"
+                                th:errors="*{descripcion}"></div>
+                        </div>
 
-                    <!-- Imágenes ya subidas -->
-                    <div class="mb-4" th:if="${!#lists.isEmpty(imagenes)}">
-                        <label>Imágenes actuales</label>
-                        <div class="galeria-admin">
-                            <div class="img-admin" th:each="i : ${imagenes}">
-                                <img th:src="${i.urlMiniatura}" alt="">
-                                <label class="form-check">
-                                    <input type="radio" name="portada" th:value="${i.id}" th:checked="${i.portada}"> Portada
-                                </label>
-                                <label class="form-check">
-                                    <input type="checkbox" name="eliminar" th:value="${i.id}"> Eliminar
-                                </label>
+                        <div class="row">
+                            <div class="mb-4">
+                                <label>Categorías</label>
+                                <input type="search" id="buscarCategorias" class="form-control mb-2"
+                                    placeholder="Buscar categoría…" autocomplete="off"
+                                    th:if="${!todasCategorias.isEmpty()}">
+                                <div class="lista-categorias" id="listaCategoriasForm">
+                                    <div class="form-check" th:each="c : ${todasCategorias}">
+                                        <input type="checkbox" class="form-check-input" th:id="${'cat-' + c.id}"
+                                            name="categoriaIds" th:value="${c.id}"
+                                            th:checked="${form.categoriaIds.contains(c.id)}">
+                                        <label class="form-check-label" th:for="${'cat-' + c.id}"
+                                            th:text="${c.visible} ? ${c.nombre} : ${c.nombre + ' (oculta)'}">Nombre</label>
+                                    </div>
+                                    <p class="text-secondary mb-0" th:if="${todasCategorias.isEmpty()}">
+                                        Aún no hay categorías. <a th:href="@{/admin/categorias}">Crear una</a>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="material">Material</label>
+                                <input type="text" id="material" th:field="*{material}" class="form-control"
+                                    list="materiales">
+                                <datalist id="materiales">
+                                    <option value="PLA"></option>
+                                    <option value="PETG"></option>
+                                    <option value="Resina"></option>
+                                    <option value="TPU"></option>
+                                </datalist>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="tiempo">Tiempo (minutos)</label>
+                                <input type="number" id="tiempo" th:field="*{tiempoImpresionMinutos}" min="0"
+                                    class="form-control">
+                                <div class="error-campo" th:if="${#fields.hasErrors('tiempoImpresionMinutos')}"
+                                    th:errors="*{tiempoImpresionMinutos}"></div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Imágenes nuevas -->
-                    <div class="mb-4">
-                        <label for="nuevas">Añadir imágenes</label>
-                        <input type="file" id="nuevas" name="nuevas" class="form-control" accept="image/*" multiple>
-                        <div id="previas" class="galeria-admin mt-3"></div>
-                    </div>
+                        <div class="form-check mb-4">
+                            <input type="checkbox" id="visible" th:field="*{visible}" class="form-check-input">
+                            <label for="visible" class="form-check-label">Visible en el catálogo</label>
+                        </div>
 
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-pill btn-menta">Guardar</button>
-                        <a th:href="@{/admin/productos}" class="btn btn-pill btn-borde">Cancelar</a>
-                    </div>
-                </form>
+                        <!-- Imágenes ya subidas -->
+                        <div class="mb-4" th:if="${!#lists.isEmpty(imagenes)}">
+                            <label>Imágenes actuales</label>
+                            <div class="galeria-admin">
+                                <div class="img-admin" th:each="i : ${imagenes}">
+                                    <img th:src="${i.urlMiniatura}" alt="">
+                                    <label class="form-check">
+                                        <input type="radio" name="portada" th:value="${i.id}" th:checked="${i.portada}">
+                                        Portada
+                                    </label>
+                                    <label class="form-check">
+                                        <input type="checkbox" name="eliminar" th:value="${i.id}"> Eliminar
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Imágenes nuevas -->
+                        <div class="mb-4">
+                            <label for="nuevas">Añadir imágenes</label>
+                            <input type="file" id="nuevas" name="nuevas" class="form-control" accept="image/*" multiple>
+                            <div id="previas" class="galeria-admin mt-3"></div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-pill btn-menta">Guardar</button>
+                            <a th:href="@{/admin/productos}" class="btn btn-pill btn-borde">Cancelar</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
-<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 
-<script th:src="@{/js/admin-producto-form.js}"></script>
+    <script th:src="@{/js/admin-producto-form.js}"></script>
 
 </body>
+
 </html>

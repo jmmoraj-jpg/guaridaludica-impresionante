@@ -3,6 +3,7 @@ package com.guaridaludica.guaridaimpresionante.service;
 import com.guaridaludica.guaridaimpresionante.controller.ProductoForm;
 import com.guaridaludica.guaridaimpresionante.model.ImagenProducto;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
+import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +18,19 @@ import java.util.List;
 public class ProductoAdminService {
 
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
     private final CloudinaryService cloudinary;
 
-    public ProductoAdminService(ProductoRepository productoRepository, CloudinaryService cloudinary) {
+    public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
+            CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
         this.cloudinary = cloudinary;
     }
 
     @Transactional
     public Producto guardar(ProductoForm form, List<MultipartFile> nuevas,
-                            List<Long> eliminar, String portada) {
+            List<Long> eliminar, String portada) {
 
         Producto p = (form.getId() == null)
                 ? new Producto()
@@ -34,7 +38,10 @@ public class ProductoAdminService {
 
         p.setNombre(form.getNombre().trim());
         p.setDescripcion(vacioANulo(form.getDescripcion()));
-        p.setCategoria(vacioANulo(form.getCategoria()));
+        p.getCategorias().clear();
+        if (form.getCategoriaIds() != null && !form.getCategoriaIds().isEmpty()) {
+            p.getCategorias().addAll(categoriaRepository.findAllById(form.getCategoriaIds()));
+        }
         p.setMaterial(vacioANulo(form.getMaterial()));
         p.setTiempoImpresionMinutos(form.getTiempoImpresionMinutos());
         p.setVisible(form.isVisible());
@@ -48,7 +55,8 @@ public class ProductoAdminService {
             p.getImagenes().removeAll(aBorrar);
         }
 
-        // 2. Imágenes nuevas (se guarda la posición de cada una para poder elegirla como portada)
+        // 2. Imágenes nuevas (se guarda la posición de cada una para poder elegirla
+        // como portada)
         List<ImagenProducto> porIndice = new ArrayList<>();
         int orden = p.getImagenes().stream().mapToInt(ImagenProducto::getOrden).max().orElse(-1) + 1;
         if (nuevas != null) {

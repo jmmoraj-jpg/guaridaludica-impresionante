@@ -2,6 +2,7 @@ package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.model.ImagenProducto;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
+import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.service.ProductoAdminService;
 import jakarta.validation.Valid;
@@ -20,13 +21,13 @@ import java.util.List;
 @RequestMapping("/admin/productos")
 public class AdminProductoController {
 
-    private static final List<String> CATEGORIAS = List.of("Figuras", "Juguetes", "Decoración", "Regalos");
-
     private final ProductoRepository productoRepository;
+    private final CategoriaRepository categoriaRepository;
     private final ProductoAdminService servicioProductoAdminService;
 
-    public AdminProductoController(ProductoRepository productoRepository, ProductoAdminService servicioProductoAdminService) {
+    public AdminProductoController(ProductoRepository productoRepository, CategoriaRepository categoriaRepository, ProductoAdminService servicioProductoAdminService) {
         this.productoRepository = productoRepository;
+        this.categoriaRepository = categoriaRepository;
         this.servicioProductoAdminService = servicioProductoAdminService;
     }
 
@@ -63,7 +64,7 @@ public class AdminProductoController {
                     ? List.of()
                     : productoRepository.findWithImagenesById(form.getId())
                         .map(Producto::getImagenes).orElse(List.of());
-            model.addAttribute("categorias", CATEGORIAS);
+            model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
             model.addAttribute("imagenes", existentes);
             return "admin/producto-form";
         }
@@ -88,6 +89,6 @@ public class AdminProductoController {
     private void prepararFormulario(Model model, ProductoForm form, List<ImagenProducto> imagenes) {
         model.addAttribute("form", form);
         model.addAttribute("imagenes", imagenes);
-        model.addAttribute("categorias", CATEGORIAS);
+        model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
     }
 }

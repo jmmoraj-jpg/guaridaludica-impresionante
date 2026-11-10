@@ -1,7 +1,9 @@
 package com.guaridaludica.guaridaimpresionante.model;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -36,8 +38,8 @@ public class Producto {
 
     private boolean visible = true;
 
-    @Column(length = 50)
-    private String categoria; // Figuras, Juguetes, Decoración, Regalos
+    // @Column(length = 50)
+    // private String categoria; // Figuras, Juguetes, Decoración, Regalos
 
     public String getTiempoTexto() {
         if (tiempoImpresionMinutos == null)
@@ -83,4 +85,14 @@ public class Producto {
         }
         return lista;
     }
+
+    // TEMPORAL: solo sirve para migrar las categorías antiguas. Se borra cuando la
+    // migración esté hecha
+    @Column(name = "categoria", length = 50)
+    private String categoriaAntigua;
+
+    @ManyToMany
+    @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    @OrderBy("orden ASC, nombre ASC")
+    private Set<Categoria> categorias = new LinkedHashSet<>();
 }

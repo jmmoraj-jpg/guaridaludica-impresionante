@@ -45,8 +45,27 @@
     <main class="container" id="catalogo">
         <nav class="filtros" aria-label="Categorías">
             <a class="filtro" th:classappend="${categoriaActual == null} ? 'activo'" th:href="@{/}">Todo</a>
-            <a class="filtro" th:each="c : ${categorias}" th:text="${c}"
-                th:classappend="${c == categoriaActual} ? 'activo'" th:href="@{/(categoria=${c})}">Categoría</a>
+
+            <a class="filtro" th:each="c : ${categoriasPrincipales}" th:text="${c.nombre}"
+                th:classappend="${categoriaActual != null and c.slug == categoriaActual.slug} ? 'activo'"
+                th:href="@{/(categoria=${c.slug})}">Categoría</a>
+
+            <div class="dropdown" th:if="${!categoriasExtra.isEmpty()}">
+                <button type="button" id="botonMasCategorias" class="filtro dropdown-toggle" data-bs-toggle="dropdown"
+                    data-bs-auto-close="outside" aria-expanded="false">
+                    Más categorías
+                </button>
+                <div class="dropdown-menu filtro-menu p-2">
+                    <input type="search" id="buscarCategoria" class="form-control mb-2" placeholder="Buscar categoría…"
+                        autocomplete="off">
+                    <ul class="list-unstyled mb-0 filtro-lista" id="listaCategorias">
+                        <li th:each="c : ${categoriasExtra}">
+                            <a class="dropdown-item" th:href="@{/(categoria=${c.slug})}"
+                                th:text="${c.nombre}">Categoría</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </nav>
 
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
@@ -68,7 +87,7 @@
 
                     <form sec:authorize="isAuthenticated()" class="fav-flotante"
                         th:action="@{/favoritos/{id}(id=${p.id})}" method="post">
-                        <input type="hidden" name="volver" th:value="@{/(categoria=${categoriaActual})}">
+                        <input type="hidden" name="volver" th:value="@{/(categoria=${categoriaActual?.slug})}">
                         <button type="submit" class="btn-corazon" aria-label="Favorito"
                             th:classappend="${favoritosIds.contains(p.id)} ? 'activo'"
                             th:text="${favoritosIds.contains(p.id)} ? '♥' : '♡'">♡</button>
@@ -100,6 +119,7 @@
     </section>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/catalogo-categorias.js}"></script>
 </body>
 
 </html>

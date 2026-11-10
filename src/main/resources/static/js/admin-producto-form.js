@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
+    iniciarVistaPreviaImagenes();
+    iniciarBuscadorCategorias();
+});
+
+function iniciarVistaPreviaImagenes() {
     const input = document.getElementById('nuevas');
     const contenedor = document.getElementById('previas');
     if (!input || !contenedor) return;
@@ -30,4 +35,26 @@ document.addEventListener('DOMContentLoaded', function () {
             contenedor.appendChild(caja);
         });
     });
-});
+}
+
+function iniciarBuscadorCategorias() {
+    const buscador = document.getElementById('buscarCategorias');
+    const lista = document.getElementById('listaCategoriasForm');
+    if (!buscador || !lista) return;
+
+    function normalizar(t) {
+        return t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    }
+
+    buscador.addEventListener('input', function () {
+        const texto = normalizar(buscador.value);
+        lista.querySelectorAll('.form-check').forEach(function (fila) {
+            fila.hidden = !normalizar(fila.textContent).includes(texto);
+        });
+    });
+
+    // Enter en el buscador no debe enviar el formulario
+    buscador.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') e.preventDefault();
+    });
+}

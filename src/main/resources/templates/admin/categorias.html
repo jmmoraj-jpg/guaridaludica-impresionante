@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/layout :: head('Categorías')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <h2 class="mb-3">Categorías</h2>
+
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+
+        <div class="auth-card mb-4">
+            <h5 class="mb-3">Nueva categoría</h5>
+            <form th:action="@{/admin/categorias/guardar}" th:object="${form}" method="post" novalidate>
+                <div class="row g-3 align-items-start">
+                    <div class="col-md-6">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control">
+                        <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="orden">Orden (opcional)</label>
+                        <input type="number" id="orden" th:field="*{orden}" min="0" class="form-control">
+                    </div>
+                    <div class="col-md-3 pt-md-4">
+                        <button type="submit" class="btn btn-pill btn-menta w-100">Crear</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="tabla-admin">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Orden</th>
+                        <th>Nombre</th>
+                        <th>Enlace</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${categorias}">
+                        <td th:text="${c.orden}">1</td>
+                        <td th:text="${c.nombre}">Nombre</td>
+                        <td class="text-secondary small" th:text="${'/?categoria=' + c.slug}">/?categoria=figuras</td>
+                        <td>
+                            <span class="etiqueta mat-petg" th:if="${c.visible}">Visible</span>
+                            <span class="etiqueta" th:unless="${c.visible}">Oculta</span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/admin/categorias/{id}/editar(id=${c.id})}"
+                                class="btn btn-sm btn-pill btn-borde">Editar</a>
+                            <form th:action="@{/admin/categorias/{id}/visibilidad(id=${c.id})}" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-pill btn-borde"
+                                    th:text="${c.visible} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
+                            </form>
+                            <form th:action="@{/admin/categorias/{id}/borrar(id=${c.id})}" method="post"
+                                class="d-inline"
+                                onsubmit="return confirm('¿Borrar esta categoría? Se quitará de las piezas que la tengan.')">
+                                <button type="submit" class="btn btn-sm btn-pill btn-borde">Borrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p th:if="${#lists.isEmpty(categorias)}" class="text-secondary p-3 mb-0">Todavía no hay categorías.</p>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+
+</html>

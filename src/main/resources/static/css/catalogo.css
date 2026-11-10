@@ -49,3 +49,8 @@
 .pieza-wrap { position: relative; height: 100%; }
 .fav-flotante { position: absolute; top: 1.2rem; right: 1.2rem; z-index: 2; margin: 0; }
 .enlace-interno { display: block; color: inherit; text-decoration: none; }
+/* Desplegable "Más categorías" */
+button.filtro { font: inherit; cursor: pointer; }
+.filtro-menu { min-width: 260px; border: 2px solid var(--borde); border-radius: 18px; }
+.filtro-menu .form-control { border-radius: 999px; border: 2px solid var(--borde); }
+.filtro-lista { max-height: 260px; overflow-y: auto; }

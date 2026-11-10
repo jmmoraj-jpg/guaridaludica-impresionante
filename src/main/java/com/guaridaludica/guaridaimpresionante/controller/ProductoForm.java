@@ -1,5 +1,10 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import com.guaridaludica.guaridaimpresionante.model.Categoria;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -20,8 +25,7 @@ public class ProductoForm {
     @Size(max = 1000, message = "Máximo 1000 caracteres")
     private String descripcion;
 
-    @Size(max = 50)
-    private String categoria;
+    private Set<Long> categoriaIds = new LinkedHashSet<>();
 
     @Size(max = 50)
     private String material;
@@ -36,7 +40,8 @@ public class ProductoForm {
         f.setId(p.getId());
         f.setNombre(p.getNombre());
         f.setDescripcion(p.getDescripcion());
-        f.setCategoria(p.getCategoria());
+        f.setCategoriaIds(p.getCategorias().stream().map(Categoria::getId)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
         f.setMaterial(p.getMaterial());
         f.setTiempoImpresionMinutos(p.getTiempoImpresionMinutos());
         f.setVisible(p.isVisible());

@@ -1,54 +1,66 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="~{fragments/layout :: head('Administración')}"></head>
 
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<main class="container py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="mb-0">Piezas</h2>
-        <a th:href="@{/admin/productos/nuevo}" class="btn btn-pill btn-menta">Nueva pieza</a>
-    </div>
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Piezas</h2>
+            <a th:href="@{/admin/productos/nuevo}" class="btn btn-pill btn-menta">Nueva pieza</a>
+        </div>
 
-    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
-    <div class="tabla-admin">
-        <table class="table align-middle mb-0">
-            <thead>
-            <tr><th></th><th>Nombre</th><th>Categoría</th><th>Estado</th><th class="text-end">Acciones</th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="p : ${productos}">
-                <td style="width: 80px">
-                    <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" class="mini" alt="">
-                </td>
-                <td th:text="${p.nombre}">Nombre</td>
-                <td th:text="${p.categoria != null} ? ${p.categoria} : '—'">Categoría</td>
-                <td>
-                    <span class="etiqueta mat-petg" th:if="${p.visible}">Visible</span>
-                    <span class="etiqueta" th:unless="${p.visible}">Oculta</span>
-                </td>
-                <td class="text-end">
-                    <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}" class="btn btn-sm btn-pill btn-borde">Editar</a>
-                    <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-pill btn-borde"
-                                th:text="${p.visible} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
-                    </form>
-                    <form th:action="@{/admin/productos/{id}/borrar(id=${p.id})}" method="post" class="d-inline"
-                          onsubmit="return confirm('¿Borrar esta pieza y todas sus imágenes?')">
-                        <button type="submit" class="btn btn-sm btn-pill btn-borde">Borrar</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <p th:if="${#lists.isEmpty(productos)}" class="text-secondary p-3 mb-0">Todavía no hay piezas.</p>
-    </div>
-</main>
+        <div class="tabla-admin">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Nombre</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th class="text-end">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${productos}">
+                        <td style="width: 80px">
+                            <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" class="mini" alt="">
+                        </td>
+                        <td th:text="${p.nombre}">Nombre</td>
+                        <td>
+                            <span class="etiqueta etiqueta-categoria me-1" th:each="c : ${p.categorias}"
+                                th:text="${c.nombre}">Cat</span>
+                            <span class="text-secondary" th:if="${p.categorias.isEmpty()}">—</span>
+                        </td>
+                        <td>
+                            <span class="etiqueta mat-petg" th:if="${p.visible}">Visible</span>
+                            <span class="etiqueta" th:unless="${p.visible}">Oculta</span>
+                        </td>
+                        <td class="text-end">
+                            <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"
+                                class="btn btn-sm btn-pill btn-borde">Editar</a>
+                            <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post"
+                                class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-pill btn-borde"
+                                    th:text="${p.visible} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
+                            </form>
+                            <form th:action="@{/admin/productos/{id}/borrar(id=${p.id})}" method="post" class="d-inline"
+                                onsubmit="return confirm('¿Borrar esta pieza y todas sus imágenes?')">
+                                <button type="submit" class="btn btn-sm btn-pill btn-borde">Borrar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <p th:if="${#lists.isEmpty(productos)}" class="text-secondary p-3 mb-0">Todavía no hay piezas.</p>
+        </div>
+    </main>
 
-<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 </body>
+
 </html>

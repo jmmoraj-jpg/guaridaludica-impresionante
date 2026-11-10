@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Editar categoría')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="auth-card">
+                <h2 class="mb-3">Editar categoría</h2>
+
+                <form th:action="@{/admin/categorias/guardar}" th:object="${form}" method="post" novalidate>
+                    <input type="hidden" th:field="*{id}">
+
+                    <div class="mb-3">
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" th:field="*{nombre}" class="form-control">
+                        <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="orden">Orden</label>
+                        <input type="number" id="orden" th:field="*{orden}" min="0" class="form-control">
+                        <div class="error-campo" th:if="${#fields.hasErrors('orden')}" th:errors="*{orden}"></div>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input type="checkbox" id="visible" th:field="*{visible}" class="form-check-input">
+                        <label for="visible" class="form-check-label">Visible en el catálogo</label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-pill btn-menta">Guardar</button>
+                        <a th:href="@{/admin/categorias}" class="btn btn-pill btn-borde">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

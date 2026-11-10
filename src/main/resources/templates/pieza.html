@@ -55,8 +55,10 @@
                         th:classappend="${'mat-' + #strings.toLowerCase(pieza.material)}">PLA</span>
                     <span class="etiqueta etiqueta-tiempo" th:if="${pieza.tiempoTexto != null}"
                         th:text="${pieza.tiempoTexto}">6 h</span>
-                    <span class="etiqueta etiqueta-categoria" th:if="${pieza.categoria != null}"
-                        th:text="${pieza.categoria}">Figuras</span>
+                    <th:block th:each="c : ${pieza.categorias}">
+                        <a class="etiqueta etiqueta-categoria" th:if="${c.visible}" th:href="@{/(categoria=${c.slug})}"
+                            th:text="${c.nombre}">Figuras</a>
+                    </th:block>
                 </div>
 
                 <p class="lead text-secondary" th:text="${pieza.descripcion}">Descripción</p>
