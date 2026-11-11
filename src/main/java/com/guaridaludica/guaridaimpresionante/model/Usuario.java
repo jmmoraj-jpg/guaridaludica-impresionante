@@ -25,7 +25,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
-    private String password;   // siempre cifrada (BCrypt)
+    private String password; // siempre cifrada (BCrypt)
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -33,4 +33,8 @@ public class Usuario {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    // Cuándo aceptó la política de privacidad (vacío en los usuarios anteriores a
+    // este cambio)
+    private LocalDateTime fechaAceptacionPrivacidad;
 }

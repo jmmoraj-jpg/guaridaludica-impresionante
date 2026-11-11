@@ -146,3 +146,45 @@ a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
 .pag-enlace.activo { background: var(--menta); border-color: var(--menta); color: #0f3d2e; }
 .pag-enlace.desactivado { opacity: .45; }
 .pag-puntos { color: var(--gris); padding: 0 .2rem; }
+/* Formas decorativas sueltas (página de privacidad) */
+.privacidad { position: relative; isolation: isolate; overflow-x: clip; }
+.deco { position: absolute; z-index: -1; }
+
+.deco-cuadro {
+    width: 110px; height: 110px;
+    background: var(--lila);
+    border-radius: 26px;
+    transform: rotate(-10deg);
+    top: 30px; left: -30px;
+}
+.deco-circulo {
+    width: 90px; height: 90px;
+    background: var(--menta);
+    border-radius: 50%;
+    top: 140px; right: -20px;
+}
+.deco-triangulo {
+    width: 110px; height: 95px;
+    background: var(--amarillo);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    transform: rotate(8deg);
+    bottom: 60px; left: 10px;
+}
+.deco-circulo-2 {
+    width: 60px; height: 60px;
+    background: var(--salmon);
+    border-radius: 50%;
+    bottom: 30px; right: 40px;
+}
+.deco-cuadro-2 {
+    width: 50px; height: 50px;
+    background: var(--salmon-claro);
+    border-radius: 14px;
+    transform: rotate(15deg);
+    top: 55%; left: -10px;
+}
+
+/* En pantallas pequeñas se aclaran para que no estorben al texto */
+@media (max-width: 767px) {
+    .deco { opacity: .35; }
+}

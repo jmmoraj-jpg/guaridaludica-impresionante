@@ -1,5 +1,6 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,4 +26,7 @@ public class RegistroForm {
 
     @NotBlank(message = "Repite la contraseña")
     private String confirmarPassword;
+
+    @AssertTrue(message = "Debes aceptar la política de privacidad")
+    private boolean aceptaPrivacidad;
 }

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Política de privacidad')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="container py-4">
+    <span class="deco deco-cuadro" aria-hidden="true"></span>
+    <span class="deco deco-circulo" aria-hidden="true"></span>
+    <span class="deco deco-triangulo" aria-hidden="true"></span>
+    <span class="deco deco-circulo-2" aria-hidden="true"></span>
+    <span class="deco deco-cuadro-2" aria-hidden="true"></span>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h2 class="mb-4 titulo-marcador marcador-lila">Política de privacidad</h2>
+
+            <h5>Quién es el responsable</h5>
+            <p>Jesús Manuel Mora Jurado, creador de La Guarida Impresionante. Contacto: jmmoraj@gmail.com.</p>
+
+            <h5>Qué datos guardamos</h5>
+            <p>Tu nombre, tu email y tu contraseña (que se guarda cifrada, nunca en claro), la fecha en que
+                creaste la cuenta y aceptaste esta política, tus piezas favoritas y los mensajes que
+                intercambias con nosotros sobre las piezas.</p>
+
+            <h5>Para qué los usamos</h5>
+            <p>Para que puedas entrar en tu cuenta, guardar favoritos, escribirnos sobre una pieza y seguir
+                tu solicitud. No los usamos para publicidad ni los vendemos.</p>
+
+            <h5>Con quién los compartimos</h5>
+            <p>No cedemos tus datos a terceros. Solo los trata el proveedor que aloja la web y su base de
+                datos, que actúa por nuestra cuenta para que el servicio funcione.</p>
+
+            <h5>Cuánto tiempo los conservamos</h5>
+            <p>Mientras tengas la cuenta. Si quieres que la borremos, escríbenos y la eliminaremos junto
+                con tus mensajes y favoritos.</p>
+
+            <h5>Tus derechos</h5>
+            <p>Puedes pedirnos acceder a tus datos, corregirlos, borrarlos, limitar su uso, oponerte a él o
+                llevártelos, escribiendo a jmmoraj@gmail.com. Si crees que no hemos tratado bien tus datos, puedes
+                reclamar ante la Agencia Española de Protección de Datos (aepd.es).</p>
+
+            <p class="text-secondary small mt-4">Esta web no es una tienda: las piezas se ofrecen como apoyo
+                al creador para mantener la impresora.</p>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

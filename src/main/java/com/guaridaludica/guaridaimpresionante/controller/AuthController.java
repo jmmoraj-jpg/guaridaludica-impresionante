@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Controller
@@ -38,7 +39,7 @@ public class AuthController {
 
     @PostMapping("/registro")
     public String procesarRegistro(@Valid @ModelAttribute("registro") RegistroForm form,
-                                   BindingResult result) {
+            BindingResult result) {
         if (!Objects.equals(form.getPassword(), form.getConfirmarPassword())) {
             result.rejectValue("confirmarPassword", "no.coincide", "Las contraseñas no coinciden");
         }
@@ -55,8 +56,14 @@ public class AuthController {
         u.setEmail(form.getEmail().trim().toLowerCase());
         u.setPassword(passwordEncoder.encode(form.getPassword()));
         u.setRol(Rol.USUARIO);
+        u.setFechaAceptacionPrivacidad(LocalDateTime.now());
         usuarioRepository.save(u);
 
         return "redirect:/login?registrado";
+    }
+
+    @GetMapping("/privacidad")
+    public String privacidad() {
+        return "privacidad";
     }
 }

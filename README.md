@@ -1,23 +1,49 @@
 # La Guarida Impresionante
 
-Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas en 3D. Los visitantes pueden explorar el catálogo, guardar sus piezas favoritas y, más adelante, escribir al creador para pedirlas y ayudar a cubrir el coste del filamento y el mantenimiento de la impresora.
+Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas en 3D. Los visitantes pueden explorar el catálogo, guardar sus piezas favoritas y escribir al creador para pedirlas y ayudar a cubrir el coste del filamento y el mantenimiento de la impresora.
 
-> Esta web **no es una tienda**: no hay precios ni pasarela de pago. Las piezas se ofrecen como apoyo al creador.
+> Esta web **no es una tienda**: no hay pasarela de pago ni precios públicos. El precio se acuerda en la conversación con cada persona y las piezas se ofrecen como apoyo al creador.
 
 ## Funcionalidades
 
 **Parte pública y de usuario**
-- Catálogo de piezas con filtros por categoría.
+- Catálogo de piezas con filtros por categoría, buscador de categorías y paginación.
 - Detalle de cada pieza con carrusel de imágenes de tamaño fijo, material, tiempo de impresión y categoría.
-- Registro e inicio de sesión (contraseñas cifradas con BCrypt).
+- Registro e inicio de sesión (contraseñas cifradas con BCrypt). El registro exige aceptar la política de privacidad y guarda la fecha de aceptación.
 - Favoritos: corazón en las tarjetas y en el detalle, y página "Mis favoritos".
+- Conversaciones con el creador sobre una pieza: la conversación se crea al enviar el primer mensaje, y desde ella se puede **solicitar** o **cancelar** la pieza.
+- Seguimiento de la solicitud: estado, precio acordado y avisos de mensajes sin leer en el menú y en "Mis mensajes".
+- Home dinámica: etiqueta amarilla de **novedad** y tarjeta con las piezas que se están imprimiendo, su avance y la cola de solicitudes.
+- Página de política de privacidad (`/privacidad`).
 - Diseño colorido, responsive y con Bootstrap 5.
 
-**Administración** (solo rol `ADMIN`)
-- Listado de piezas, con opción de ocultar, mostrar y borrar.
-- Alta y edición de piezas con varias imágenes, elección de la imagen de portada y vista previa antes de guardar.
+**Administración** (roles `ADMIN` y `ENCARGADO`, según se indica)
+- Piezas (`ADMIN`): listado con opción de ocultar, mostrar y borrar; alta y edición con varias imágenes, elección de la portada, vista previa y casilla de **novedad**.
+- Categorías (`ADMIN`): alta, edición, orden y visibilidad.
+- Impresora (`ADMIN`): lista de piezas que se están imprimiendo (hasta 4), con buscador para elegirlas y porcentaje de avance editable.
+- Bandeja de mensajes (`ADMIN` y `ENCARGADO`): responder a los usuarios, aceptar solicitudes fijando el precio y hacer avanzar el estado.
 - Las imágenes se suben a Cloudinary, en una carpeta propia del proyecto.
 - Creación automática del administrador inicial al arrancar.
+
+## Solicitudes y estados
+
+Cada conversación tiene un estado que avanza así:
+
+```
+CONSULTA → SOLICITADA → ACEPTADA → EN_IMPRESION → LISTA → ENTREGADA
+```
+
+| Paso | Quién lo hace |
+|---|---|
+| Consulta → Solicitada | La persona usuaria, desde la conversación |
+| Solicitada → Aceptada | El equipo, indicando el precio acordado |
+| Aceptada → En impresión → Lista → Entregada | El equipo |
+| Cancelar | El usuario hasta que se acepta; el equipo, antes de la entrega |
+
+- Cada cambio de estado y cada mensaje activa el aviso de "sin leer" de la otra parte.
+- Una conversación **entregada** o **cancelada** queda cerrada y ya no admite mensajes.
+- Si alguien vuelve a escribir sobre una pieza con la conversación cerrada, empieza una conversación nueva.
+- Solo el dueño de una conversación puede abrirla desde la parte de usuario.
 
 ## Tecnologías
 
@@ -37,21 +63,25 @@ Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas
 src/main/java/com/guaridaludica/guaridaimpresionante/
 ├── config/        Seguridad, Cloudinary y carga inicial de datos
 ├── controller/    Controladores web y formularios
-├── model/         Entidades JPA (Producto, ImagenProducto, Usuario, Favorito, Rol)
+├── model/         Entidades JPA (Producto, ImagenProducto, Categoria, Usuario, Favorito,
+│                  Conversacion, Mensaje, Impresion) y enumerados (Rol, EstadoConversacion)
 ├── repository/    Repositorios Spring Data
 ├── security/      UserDetailsService
-└── service/       Lógica de negocio (Cloudinary, administración, favoritos)
+├── service/       Lógica de negocio (conversaciones, impresiones, avisos, administración,
+│                  favoritos, categorías y Cloudinary)
+└── util/          Utilidades (paginación)
 
 src/main/resources/
 ├── application.yaml          Configuración común
 ├── application-dev.yaml      Perfil de desarrollo (no se sube al repositorio)
 ├── application-prod.yaml     Perfil de producción (variables de entorno)
 ├── static/
-│   ├── css/                  Estilos por módulos (base, componentes, layout, home, catalogo, pieza, formularios, admin)
+│   ├── css/                  Estilos por módulos (base, componentes, layout, home, catalogo,
+│   │                         pieza, formularios, admin, conversaciones)
 │   ├── js/                   Scripts por pantalla
 │   └── img/                  Logos y favicon
 └── templates/
-    ├── fragments/            Cabecera, navbar y pie reutilizables
+    ├── fragments/            Cabecera, navbar, pie, hilo de mensajes y paginación reutilizables
     └── admin/                Pantallas de administración
 ```
 
@@ -127,7 +157,7 @@ Se activa con la variable `SPRING_PROFILES_ACTIVE=prod`. Todos los datos sensibl
 | `CLOUDINARY_API_KEY` | API key de Cloudinary |
 | `CLOUDINARY_API_SECRET` | API secret de Cloudinary |
 
-En producción `ddl-auto` está en `validate`: las tablas deben existir antes de arrancar.
+En producción `ddl-auto` está en `validate`: las tablas y columnas deben existir antes de arrancar. Cada vez que se añade una entidad o un campo (por ejemplo, las tablas `conversaciones`, `mensajes` e `impresiones`, o las columnas `novedad`, `precio` y `fecha_aceptacion_privacidad`), hay que crearlo también en la base de datos de producción antes de desplegar.
 
 El endpoint `/actuator/health` es público y sirve para comprobar que la aplicación está viva (por ejemplo, desde un servicio de monitorización externo).
 
@@ -135,11 +165,11 @@ El despliegue previsto es en [Render](https://render.com/) con PostgreSQL en la 
 
 ## Roles
 
-| Rol | Estado | Permisos |
-|---|---|---|
-| `USUARIO` | Implementado | Favoritos y, próximamente, consultas y solicitudes |
-| `ADMIN` | Implementado | Todo lo anterior y la gestión de piezas |
-| `ENCARGADO` | Previsto | Leer y responder mensajes, sin gestionar piezas |
+| Rol | Permisos |
+|---|---|
+| `USUARIO` | Favoritos, conversaciones y solicitudes de piezas |
+| `ENCARGADO` | Lo anterior y la bandeja de mensajes: leer, responder y cambiar el estado de las solicitudes. No gestiona piezas, categorías ni impresora |
+| `ADMIN` | Todo lo anterior y la gestión de piezas, categorías e impresora |
 
 ## Hoja de ruta
 
@@ -147,18 +177,22 @@ El despliegue previsto es en [Render](https://render.com/) con PostgreSQL en la 
 - [x] Registro, login y administrador inicial
 - [x] Administración de piezas con imágenes en Cloudinary
 - [x] Favoritos
-- [ ] Conversaciones y mensajes (empiezan como consulta y pasan a solicitud al confirmarlas)
-- [ ] Estados de la solicitud (solicitada, aceptada, en impresión, lista, entregada)
-- [ ] Rol `ENCARGADO` con bandeja de mensajes
-- [ ] Estado de la impresora editable desde administración
-- [ ] Casilla de política de privacidad en el registro y dirección opcional en los datos del usuario
+- [x] Conversaciones y mensajes con avisos de mensajes sin leer
+- [x] Estados de la solicitud y precio acordado
+- [x] Rol `ENCARGADO` con bandeja de mensajes
+- [x] Estado de la impresora editable desde administración
+- [x] Etiqueta de novedad dinámica en la home
+- [x] Casilla y página de política de privacidad
+- [ ] Dirección opcional en los datos del usuario
+- [ ] Botón "Borrar mi cuenta"
 - [ ] Despliegue en producción
 
 ## Seguridad
 
 - Las contraseñas se guardan cifradas con BCrypt.
 - Las credenciales de la base de datos y de Cloudinary nunca se suben al repositorio.
-- Las rutas `/admin/**` solo son accesibles para el rol `ADMIN`.
+- Las rutas `/admin/mensajes/**` son accesibles para `ADMIN` y `ENCARGADO`; el resto de `/admin/**`, solo para `ADMIN`.
+- Cada conversación solo la puede abrir su dueño o el equipo.
 
 ## Licencia
 
