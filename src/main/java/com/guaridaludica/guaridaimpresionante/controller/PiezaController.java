@@ -20,9 +20,6 @@ public class PiezaController {
     private final ProductoRepository productoRepository;
     private final FavoritoRepository favoritoRepository;
 
-    @Value("${app.banner.advertencia}")
-    private String bannerAdvertencia;
-
     public PiezaController(ProductoRepository productoRepository, FavoritoRepository favoritoRepository) {
         this.productoRepository = productoRepository;
         this.favoritoRepository = favoritoRepository;
@@ -37,7 +34,6 @@ public class PiezaController {
                 && favoritoRepository.existsByUsuarioEmailIgnoreCaseAndProductoId(principal.getName(), id);
         model.addAttribute("pieza", pieza);
         model.addAttribute("esFavorito", esFavorito);
-        model.addAttribute("bannerAdvertencia", bannerAdvertencia);
         return "pieza";
     }
 }
