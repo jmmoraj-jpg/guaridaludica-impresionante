@@ -12,4 +12,6 @@ public interface ImpresionRepository extends JpaRepository<Impresion, Long> {
     List<Impresion> todasConProducto();
 
     boolean existsByProductoId(Long productoId);
+
+    void deleteByProductoId(Long productoId);
 }

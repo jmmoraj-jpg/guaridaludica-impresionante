@@ -6,6 +6,7 @@ import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.FavoritoRepository;
+import com.guaridaludica.guaridaimpresionante.repository.ImpresionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +24,17 @@ public class ProductoAdminService {
     private final CategoriaRepository categoriaRepository;
     private final ConversacionRepository conversacionRepository;
     private final FavoritoRepository favoritoRepository;
+    private final ImpresionRepository impresionRepository;
     private final CloudinaryService cloudinary;
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
             ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository,
-            CloudinaryService cloudinary) {
+            ImpresionRepository impresionRepository, CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.conversacionRepository = conversacionRepository;
         this.favoritoRepository = favoritoRepository;
+        this.impresionRepository = impresionRepository;
         this.cloudinary = cloudinary;
     }
 
@@ -117,10 +120,15 @@ public class ProductoAdminService {
             return false; // con conversaciones no se borra: se puede ocultar
         }
         favoritoRepository.deleteByProductoId(id);
-        productoRepository.findWithImagenesById(id).ifPresent(p -> {
-            p.getImagenes().forEach(i -> cloudinary.borrar(i.getPublicId()));
+        impresionRepository.deleteByProductoId(id);
+
+        Producto p = productoRepository.findWithImagenesById(id).orElse(null);
+        if (p != null) {
+            for (ImagenProducto i : p.getImagenes()) {
+                cloudinary.borrar(i.getPublicId());
+            }
             productoRepository.delete(p);
-        });
+        }
         return true;
     }
 

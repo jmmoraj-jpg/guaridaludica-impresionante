@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Ups')}"></head>
+
+<body>
+<nav class="navbar navbar-guarida">
+    <div class="container">
+        <a class="navbar-brand" th:href="@{/}">
+            <img th:src="@{/img/logo-horizontal.svg}" alt="Logo de La Guarida Impresionante">
+        </a>
+    </div>
+</nav>
+
+<main class="container">
+    <div class="auth">
+        <div class="auth-card con-formas formas-b text-center">
+            <p class="error-codigo" th:text="${status}">404</p>
+
+            <th:block th:if="${status != null and status == 404}">
+                <h2 class="mb-3">Aquí no hay nada</h2>
+                <p class="text-secondary">La página que buscas no existe o la pieza ya no está disponible.</p>
+            </th:block>
+
+            <th:block th:if="${status != null and status == 403}">
+                <h2 class="mb-3">Zona reservada</h2>
+                <p class="text-secondary">No tienes permiso para entrar aquí.</p>
+            </th:block>
+
+            <th:block th:if="${status == null or (status != 404 and status != 403)}">
+                <h2 class="mb-3">Algo ha fallado</h2>
+                <p class="text-secondary">Ha habido un problema por nuestra parte. Inténtalo de nuevo en un momento.</p>
+            </th:block>
+
+            <a th:href="@{/}" class="btn btn-pill btn-menta mt-2">Volver al catálogo</a>
+        </div>
+    </div>
+</main>
+
+<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

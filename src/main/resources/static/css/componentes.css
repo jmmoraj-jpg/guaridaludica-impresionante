@@ -188,3 +188,12 @@ a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
 @media (max-width: 767px) {
     .deco { opacity: .35; }
 }
+
+/* Página de error */
+.error-codigo {
+    font-size: clamp(4rem, 14vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: .5rem;
+    color: var(--lila);
+}
