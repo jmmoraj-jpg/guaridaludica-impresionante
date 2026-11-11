@@ -24,4 +24,6 @@ public interface FavoritoRepository extends JpaRepository<Favorito, Long> {
     Set<Long> idsProducto(@Param("email") String email);
 
     void deleteByProductoId(Long productoId);
+
+    void deleteByUsuarioId(Long usuarioId);
 }

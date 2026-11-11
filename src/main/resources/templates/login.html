@@ -14,6 +14,7 @@
             <div th:if="${param.error}" class="alert alert-danger">Email o contraseña incorrectos.</div>
             <div th:if="${param.registrado}" class="alert alert-success">Cuenta creada. Ya puedes entrar.</div>
             <div th:if="${param.logout}" class="alert alert-info">Has cerrado sesión.</div>
+            <div th:if="${param.cuentaBorrada}" class="alert alert-info">Tu cuenta y tus datos se han borrado. Gracias por haber pasado por la guarida.</div>
 
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Mi cuenta')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <h2 class="titulo-marcador marcador-salmon mb-4">Mi cuenta</h2>
+
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+        <section class="mb-5">
+            <dl class="row">
+                <dt class="col-sm-3">Nombre</dt>
+                <dd class="col-sm-9" th:text="${usuario.nombre}">Nombre</dd>
+
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9" th:text="${usuario.email}">correo@ejemplo.com</dd>
+
+                <dt class="col-sm-3">Miembro desde</dt>
+                <dd class="col-sm-9" th:text="${#temporals.format(usuario.fechaRegistro, 'dd/MM/yyyy')}">01/01/2026</dd>
+            </dl>
+        </section>
+
+        <!-- Borrar cuenta: solo para usuarios normales -->
+        <section class="border border-danger rounded p-4" th:if="${usuario.rol.name() == 'USUARIO'}">
+            <h5 class="text-danger">Borrar mi cuenta</h5>
+            <p class="text-secondary mb-3">
+                Se eliminarán tu cuenta, tus favoritos y tus conversaciones con la guarida. Esta acción no se puede
+                deshacer.
+            </p>
+            <button type="button" class="btn btn-pill btn-outline-danger" data-bs-toggle="modal"
+                data-bs-target="#modalBorrar">
+                Borrar mi cuenta
+            </button>
+        </section>
+
+        <p class="text-secondary" th:unless="${usuario.rol.name() == 'USUARIO'}">
+            Las cuentas del equipo no se pueden borrar desde aquí.
+        </p>
+    </main>
+
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="modalBorrar" tabindex="-1" aria-labelledby="modalBorrarTitulo" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="@{/cuenta/borrar}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalBorrarTitulo">¿Seguro que quieres irte?</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Para confirmar, escribe tu contraseña.</p>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="password" name="password" required
+                                autocomplete="current-password">
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="confirmar" name="confirmar"
+                                value="true" required>
+                            <label class="form-check-label" for="confirmar">
+                                Entiendo que se borrará todo y que no se puede deshacer
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-pill btn-borde" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-pill btn-danger">Borrar definitivamente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+
+</html>

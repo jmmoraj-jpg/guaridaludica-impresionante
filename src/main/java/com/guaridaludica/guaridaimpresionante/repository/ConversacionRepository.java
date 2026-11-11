@@ -38,4 +38,8 @@ public interface ConversacionRepository extends JpaRepository<Conversacion, Long
   long countBySinLeerGuaridaTrue();
 
   long countByEstadoIn(Collection<EstadoConversacion> estados);
+
+  List<Conversacion> findByUsuarioId(Long usuarioId);
+
+  boolean existsByUsuarioIdAndEstadoIn(Long usuarioId, Collection<EstadoConversacion> estados);
 }

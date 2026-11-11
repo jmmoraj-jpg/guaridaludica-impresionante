@@ -76,7 +76,7 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item"><span class="nav-link" sec:authentication="name">usuario</span></li>
+                        <li class="nav-item"><a class="nav-link" th:href="@{/cuenta}" sec:authentication="name">usuario</a></li>
                         <li class="nav-item ms-lg-2">
                             <form th:action="@{/logout}" method="post">
                                 <button type="submit" class="btn btn-pill btn-borde">Salir</button>
