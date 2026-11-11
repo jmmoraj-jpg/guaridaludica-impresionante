@@ -52,6 +52,7 @@ public class ProductoAdminService {
         p.setMaterial(vacioANulo(form.getMaterial()));
         p.setTiempoImpresionMinutos(form.getTiempoImpresionMinutos());
         p.setVisible(form.isVisible());
+        p.setNovedad(form.isNovedad());
 
         // 1. Imágenes marcadas para eliminar
         if (eliminar != null && !eliminar.isEmpty()) {

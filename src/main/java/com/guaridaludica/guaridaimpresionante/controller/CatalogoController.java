@@ -1,10 +1,13 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
+import com.guaridaludica.guaridaimpresionante.model.EstadoConversacion;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
+import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.service.FavoritoService;
+import com.guaridaludica.guaridaimpresionante.service.ImpresionService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +33,9 @@ public class CatalogoController {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ConversacionRepository conversacionRepository;
     private final FavoritoService favoritoService;
+    private final ImpresionService impresionService;
 
     @Value("${app.banner.titulo}")
     private String bannerTitulo;
@@ -40,10 +45,14 @@ public class CatalogoController {
 
     public CatalogoController(ProductoRepository productoRepository,
             CategoriaRepository categoriaRepository,
-            FavoritoService favoritoService) {
+            ConversacionRepository conversacionRepository,
+            FavoritoService favoritoService,
+            ImpresionService impresionService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.conversacionRepository = conversacionRepository;
         this.favoritoService = favoritoService;
+        this.impresionService = impresionService;
     }
 
     @GetMapping("/")
@@ -80,6 +89,13 @@ public class CatalogoController {
         model.addAttribute("favoritosIds", principal == null
                 ? Set.<Long>of()
                 : favoritoService.idsFavoritos(principal.getName()));
+
+        List<EstadoConversacion> enEspera = List.of(EstadoConversacion.SOLICITADA, EstadoConversacion.ACEPTADA);
+        model.addAttribute("impresiones", impresionService.enCurso());
+        model.addAttribute("cola", conversacionRepository.countByEstadoIn(enEspera));
+        model.addAttribute("novedad",
+                productoRepository.findFirstByNovedadTrueAndVisibleTrueOrderByIdDesc().orElse(null));
+
         return "index";
     }
 }

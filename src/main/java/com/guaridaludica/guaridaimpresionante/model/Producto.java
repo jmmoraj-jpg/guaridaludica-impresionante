@@ -41,6 +41,9 @@ public class Producto {
     @OrderBy("orden ASC, nombre ASC")
     private List<Categoria> categorias = new ArrayList<>();
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean novedad;
+
     public String getTiempoTexto() {
         if (tiempoImpresionMinutos == null)
             return null;

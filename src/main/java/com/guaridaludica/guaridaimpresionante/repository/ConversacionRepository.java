@@ -36,4 +36,6 @@ public interface ConversacionRepository extends JpaRepository<Conversacion, Long
   long countByUsuarioEmailIgnoreCaseAndSinLeerUsuarioTrue(String email);
 
   long countBySinLeerGuaridaTrue();
+
+  long countByEstadoIn(Collection<EstadoConversacion> estados);
 }

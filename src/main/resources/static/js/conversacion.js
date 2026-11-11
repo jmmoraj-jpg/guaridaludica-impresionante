@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Confirmación en los formularios que la piden (cancelar)
+    // Confirmación en los formularios que la piden (cancelar, terminada...)
     const confirmables = document.querySelectorAll('form[data-confirmar]');
     for (const f of confirmables) {
+        // Si ya se registró (script cargado dos veces), no se repite
+        if (f.dataset.confirmacionLista) {
+            continue;
+        }
+        f.dataset.confirmacionLista = 'si';
         f.addEventListener('submit', function (e) {
             if (!confirm(f.dataset.confirmar)) {
                 e.preventDefault();

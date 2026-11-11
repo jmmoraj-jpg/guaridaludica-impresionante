@@ -6,6 +6,7 @@ import com.guaridaludica.guaridaimpresionante.model.Usuario;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.UsuarioRepository;
 import com.guaridaludica.guaridaimpresionante.service.CategoriaService;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.env.Environment;
@@ -30,10 +31,10 @@ public class DataInicializer implements CommandLineRunner {
     private String adminPassword;
 
     public DataInicializer(UsuarioRepository usuarioRepository,
-                           ProductoRepository productoRepository,
-                           CategoriaService categoriaService,
-                           PasswordEncoder passwordEncoder,
-                           Environment env) {
+            ProductoRepository productoRepository,
+            CategoriaService categoriaService,
+            PasswordEncoder passwordEncoder,
+            Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.productoRepository = productoRepository;
         this.categoriaService = categoriaService;
@@ -76,7 +77,7 @@ public class DataInicializer implements CommandLineRunner {
     }
 
     private Producto nuevaPieza(String nombre, String descripcion, String material,
-                                int minutos, String... categorias) {
+            int minutos, String... categorias) {
         Producto p = new Producto();
         p.setNombre(nombre);
         p.setDescripcion(descripcion);

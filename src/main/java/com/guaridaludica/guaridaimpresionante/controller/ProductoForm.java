@@ -35,6 +35,8 @@ public class ProductoForm {
 
     private boolean visible = true;
 
+    private boolean novedad;
+
     public static ProductoForm desde(Producto p) {
         ProductoForm f = new ProductoForm();
         f.setId(p.getId());
@@ -45,6 +47,7 @@ public class ProductoForm {
         f.setMaterial(p.getMaterial());
         f.setTiempoImpresionMinutos(p.getTiempoImpresionMinutos());
         f.setVisible(p.isVisible());
+        f.setNovedad(p.isNovedad());
         return f;
     }
 }

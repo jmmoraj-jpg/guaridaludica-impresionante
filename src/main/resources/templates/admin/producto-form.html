@@ -74,6 +74,11 @@
                             <label for="visible" class="form-check-label">Visible en el catálogo</label>
                         </div>
 
+                        <div class="form-check mb-4">
+                            <input type="checkbox" id="novedad" th:field="*{novedad}" class="form-check-input">
+                            <label for="novedad" class="form-check-label">Mostrar como novedad en la home</label>
+                        </div>
+
                         <!-- Imágenes ya subidas -->
                         <div class="mb-4" th:if="${!#lists.isEmpty(imagenes)}">
                             <label>Imágenes actuales</label>

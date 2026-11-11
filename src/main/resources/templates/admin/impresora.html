@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Impresora')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="auth-card">
+                    <h2 class="mb-3">Impresora</h2>
+
+                    <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+                    <div th:if="${error}" class="alert alert-warning" th:text="${error}"></div>
+
+                    <h5 class="mb-3">Imprimiendo ahora</h5>
+
+                    <p th:if="${impresiones.isEmpty()}" class="text-secondary">
+                        No hay nada en la impresora. En la home saldrá como "Impresora libre".
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3" th:each="i : ${impresiones}">
+                        <span class="fw-bold flex-grow-1" th:text="${i.producto.nombre}">Pieza</span>
+                        <form th:action="@{/admin/impresora/{id}/progreso(id=${i.id})}" method="post"
+                            class="d-flex gap-2 align-items-center">
+                            <input type="number" name="progreso" min="0" max="100" th:value="${i.progreso}"
+                                class="form-control" style="width: 6rem" aria-label="Avance en porcentaje">
+                            <span>%</span>
+                            <button type="submit" class="btn btn-pill btn-menta btn-sm">Guardar</button>
+                        </form>
+                        <form th:action="@{/admin/impresora/{id}/quitar(id=${i.id})}" method="post"
+                            data-confirmar="¿Quitar esta pieza de la impresora?">
+                            <button type="submit" class="btn btn-pill btn-borde btn-sm">Terminada</button>
+                        </form>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h5 class="mb-3">Añadir una pieza</h5>
+                    <form th:if="${impresiones.size() < max}" th:action="@{/admin/impresora/anadir}" method="post"
+                        class="row g-2 align-items-start">
+                        <div class="col-12 col-md-7">
+                            <input type="search" id="buscarPieza" class="form-control mb-2" placeholder="Buscar pieza…"
+                                autocomplete="off">
+                            <select name="productoId" id="listaPiezas" class="form-select" size="6" required>
+                                <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}">Pieza
+                                </option>
+                            </select>
+                            <p id="sinResultados" class="small text-secondary mt-1 mb-0 d-none">No hay piezas con ese
+                                nombre.</p>
+                        </div>
+                        <div class="col-12 col-md-5 d-flex gap-2 align-items-center">
+                            <input type="number" name="progreso" min="0" max="100" value="0" class="form-control"
+                                style="width: 6rem" aria-label="Avance en porcentaje">
+                            <span>%</span>
+                            <button type="submit" class="btn btn-pill btn-menta">Añadir</button>
+                        </div>
+                    </form>
+                    <p th:if="${impresiones.size() >= max}" class="text-secondary mb-0"
+                        th:text="'Máximo de ' + ${max} + ' piezas a la vez. Quita alguna para añadir otra.'">Máximo</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/conversacion.js}"></script>
+    <script th:src="@{/js/impresora.js}"></script>
+</body>
+
+</html>

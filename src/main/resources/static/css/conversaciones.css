@@ -215,3 +215,9 @@
     padding: .8rem 1.2rem;
     margin-bottom: 1.5rem;
 }
+
+/* En el hilo, el círculo baja para no tapar el enlace "Mis mensajes" */
+.formas-hilo.formas-b::before {
+    top: 50px;
+    left: 0;
+}
