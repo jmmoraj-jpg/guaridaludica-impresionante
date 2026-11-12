@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+    <!-- Tarjeta "Imprimiendo ahora". Usa las variables del modelo "impresiones" y "cola".
+         La pinta la portada (index.html) y también la ruta /impresora/tarjeta que consulta impresora-vivo.js -->
+    <div class="tarjeta-impresora" id="tarjetaImpresora" th:fragment="tarjeta" th:data-url="@{/impresora/tarjeta}">
+        <th:block th:if="${!impresiones.isEmpty()}">
+            <p class="fw-bold mb-2"><span class="punto"></span>Imprimiendo ahora</p>
+            <div class="impresion" th:each="i : ${impresiones}">
+                <div class="d-flex justify-content-between text-secondary">
+                    <span th:text="${i.producto.nombre}">Pieza</span>
+                    <span th:text="${i.progreso} + '%'">0%</span>
+                </div>
+                <div class="progreso">
+                    <div class="progreso-barra" th:style="'width: ' + ${i.progreso} + '%'"></div>
+                </div>
+            </div>
+            <div class="text-secondary mt-2 cola-texto"
+                th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola</div>
+        </th:block>
+        <th:block th:if="${impresiones.isEmpty()}">
+            <p class="fw-bold mb-1"><span class="punto punto-libre"></span>Impresora libre</p>
+            <p class="text-secondary mb-2">Elige una pieza y escríbeme, me pongo con ella.</p>
+            <div class="text-secondary cola-texto"
+                th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola</div>
+        </th:block>
+    </div>
+
+</body>
+
+</html>

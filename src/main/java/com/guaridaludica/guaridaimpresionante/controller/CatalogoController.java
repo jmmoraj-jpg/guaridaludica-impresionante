@@ -90,12 +90,24 @@ public class CatalogoController {
                 ? Set.<Long>of()
                 : favoritoService.idsFavoritos(principal.getName()));
 
-        List<EstadoConversacion> enEspera = List.of(EstadoConversacion.SOLICITADA, EstadoConversacion.ACEPTADA);
-        model.addAttribute("impresiones", impresionService.enCurso());
-        model.addAttribute("cola", conversacionRepository.countByEstadoIn(enEspera));
+        cargarImpresora(model);
         model.addAttribute("novedad",
                 productoRepository.findFirstByNovedadTrueAndVisibleTrueOrderByIdDesc().orElse(null));
 
         return "index";
+    }
+
+    // Solo la tarjeta de la impresora, para que impresora-vivo.js la actualice sin recargar la portada
+    @GetMapping("/impresora/tarjeta")
+    public String tarjetaImpresora(Model model) {
+        cargarImpresora(model);
+        return "fragments/impresora :: tarjeta";
+    }
+
+    // Impresiones en curso y solicitudes en cola: los mismos datos para la portada y para la tarjeta
+    private void cargarImpresora(Model model) {
+        List<EstadoConversacion> enEspera = List.of(EstadoConversacion.SOLICITADA, EstadoConversacion.ACEPTADA);
+        model.addAttribute("impresiones", impresionService.enCurso());
+        model.addAttribute("cola", conversacionRepository.countByEstadoIn(enEspera));
     }
 }

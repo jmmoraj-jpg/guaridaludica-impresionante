@@ -116,7 +116,11 @@
     transition: transform .15s, background .15s;
 }
 .btn-corazon:hover { transform: scale(1.12); background: #fff1ec; color: var(--salmon); }
-.btn-corazon.activo { background: var(--salmon-claro); border-color: var(--salmon); animation: latido .6s ease; }
+.btn-corazon.activo { background: var(--salmon-claro); border-color: var(--salmon); }
+/* El latido solo al pulsar (lo pone favoritos.js), no cada vez que carga la página */
+@media (prefers-reduced-motion: no-preference) {
+    .btn-corazon.latiendo { animation: latido .6s ease; }
+}
 a.etiqueta { text-decoration: none; }
 a.etiqueta-categoria:hover { background: var(--amarillo); color: #6b4300; }
 /* Paginación */

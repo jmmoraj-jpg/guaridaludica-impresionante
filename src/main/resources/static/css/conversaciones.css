@@ -221,3 +221,82 @@
     top: 50px;
     left: 0;
 }
+
+/* Seguimiento de la solicitud */
+.seguimiento {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0 0 1.5rem;
+}
+
+.seguimiento li {
+    flex: 1;
+    position: relative;
+    text-align: center;
+    font-size: .8rem;
+    color: var(--gris);
+}
+
+/* Tramo de línea que une cada fase con la anterior */
+.seguimiento li::before {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: -50%;
+    width: 100%;
+    height: 4px;
+    background: var(--borde);
+}
+
+.seguimiento li:first-child::before {
+    display: none;
+}
+
+.seg-punto {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin: 0 auto .35rem;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid var(--borde);
+}
+
+.seguimiento li.hecho::before,
+.seguimiento li.actual::before {
+    background: var(--menta);
+}
+
+.seguimiento li.hecho .seg-punto {
+    background: var(--menta);
+    border-color: var(--menta);
+}
+
+.seguimiento li.actual .seg-punto {
+    background: var(--salmon);
+    border-color: var(--salmon);
+    box-shadow: 0 0 0 5px var(--salmon-claro);
+}
+
+.seguimiento li.hecho,
+.seguimiento li.actual {
+    color: var(--texto);
+    font-weight: 600;
+}
+
+/* En móvil solo se escribe el nombre de la fase actual */
+@media (max-width: 575px) {
+    .seguimiento { margin-bottom: 2.4rem; }
+    .seg-nombre { display: none; }
+    .seguimiento li.actual .seg-nombre {
+        display: block;
+        position: absolute;
+        top: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+}

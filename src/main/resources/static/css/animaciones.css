@@ -1,0 +1,35 @@
+/* Animaciones de La Guarida Maker.
+   Una sola idea: las piezas "se imprimen" capa a capa, de abajo arriba,
+   y la barra de la impresora se llena con la impresión en curso.
+   Solo se activan si el visitante no ha pedido reducir el movimiento. */
+
+@media (prefers-reduced-motion: no-preference) {
+
+    /* Las tarjetas esperan ocultas hasta que animaciones.js les pone .impreso */
+    .js-anim .imprimir { visibility: hidden; }
+    .js-anim .imprimir.impreso {
+        visibility: visible;
+        animation: imprimir .45s steps(8, end) backwards;
+        animation-delay: var(--retraso, 0ms);
+    }
+    @keyframes imprimir {
+        from { clip-path: inset(100% 0 0 0); }
+        to   { clip-path: inset(0 0 0 0); }
+    }
+
+    /* Barra de progreso de la impresora */
+    .progreso-barra { animation: llenar 1.2s .3s ease-out backwards; transition: width .8s ease; }
+    @keyframes llenar {
+        from { clip-path: inset(0 100% 0 0 round 999px); }
+        to   { clip-path: inset(0 0 0 0 round 999px); }
+    }
+
+    /* Respuesta al pulsar el corazón */
+    .btn-corazon:active { transform: scale(.88); }
+}
+
+/* Tarjeta que sale de la lista de favoritos (favoritos.js) */
+.saliendo { opacity: 0; transition: opacity .25s ease; }
+@media (prefers-reduced-motion: no-preference) {
+    .saliendo { transform: scale(.92); transition: opacity .25s ease, transform .25s ease; }
+}

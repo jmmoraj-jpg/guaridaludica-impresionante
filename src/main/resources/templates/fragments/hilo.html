@@ -22,6 +22,17 @@
                 th:classappend="${'estado-' + #strings.toLowerCase(conv.estado.name())}">Consulta</span>
         </div>
 
+        <!-- Seguimiento de la solicitud (no se muestra si está cancelada) -->
+        <ol class="seguimiento" aria-label="Estado de la solicitud" th:if="${conv.estado.name() != 'CANCELADA'}"
+            th:with="actual=${conv.estado.ordinal()}, entregada=${conv.estado.name() == 'ENTREGADA'}">
+            <li th:each="n : ${#numbers.sequence(0, 5)}"
+                th:classappend="${n < actual or entregada} ? 'hecho' : (${n == actual} ? 'actual')">
+                <span class="seg-punto"></span>
+                <span class="seg-nombre"
+                    th:text="${#strings.arraySplit('Consulta,Solicitada,Aceptada,En impresión,Lista,Entregada', ',')[n]}">Consulta</span>
+            </li>
+        </ol>
+
         <div class="hilo">
             <p class="text-secondary text-center my-4" th:if="${conv.mensajes.isEmpty()}"
                 th:text="${vistaGuarida} ? 'Aún no hay mensajes.' : 'Escribe tu primera pregunta sobre esta pieza, sin compromiso 💜'">

@@ -27,30 +27,7 @@
                             <div class="forma forma-triangulo"></div>
                             <div class="forma forma-circulo"></div>
                         </div>
-                        <div class="tarjeta-impresora">
-                            <th:block th:if="${!impresiones.isEmpty()}">
-                                <p class="fw-bold mb-2"><span class="punto"></span>Imprimiendo ahora</p>
-                                <div class="impresion" th:each="i : ${impresiones}">
-                                    <div class="d-flex justify-content-between text-secondary">
-                                        <span th:text="${i.producto.nombre}">Pieza</span>
-                                        <span th:text="${i.progreso} + '%'">0%</span>
-                                    </div>
-                                    <div class="progreso">
-                                        <div class="progreso-barra" th:style="'width: ' + ${i.progreso} + '%'"></div>
-                                    </div>
-                                </div>
-                                <div class="text-secondary mt-2"
-                                    th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola
-                                </div>
-                            </th:block>
-                            <th:block th:if="${impresiones.isEmpty()}">
-                                <p class="fw-bold mb-1"><span class="punto punto-libre"></span>Impresora libre</p>
-                                <p class="text-secondary mb-2">Elige una pieza y escríbeme, me pongo con ella.</p>
-                                <div class="text-secondary"
-                                    th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola
-                                </div>
-                            </th:block>
-                        </div>
+                        <div th:replace="~{fragments/impresora :: tarjeta}"></div>
                     </div>
                 </div>
             </div>
@@ -139,6 +116,7 @@
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
     <script th:src="@{/js/catalogo-categorias.js}"></script>
+    <script th:src="@{/js/impresora-vivo.js}"></script>
 </body>
 
 </html>

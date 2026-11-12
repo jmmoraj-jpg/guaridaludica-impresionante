@@ -1,6 +1,7 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.service.FavoritoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,13 @@ public class FavoritoController {
     public String lista(Principal principal, Model model) {
         model.addAttribute("productos", favoritoService.productosFavoritos(principal.getName()));
         return "favoritos";
+    }
+
+    // Lo usa favoritos.js: cambia el favorito sin recargar la página
+    @PostMapping(value = "/favoritos/{productoId}", headers = "X-Requested-With=fetch")
+    public ResponseEntity<Void> alternarSinRecargar(@PathVariable Long productoId, Principal principal) {
+        favoritoService.alternar(principal.getName(), productoId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/favoritos/{productoId}")
