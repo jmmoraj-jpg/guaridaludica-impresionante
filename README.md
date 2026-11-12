@@ -1,4 +1,4 @@
-# La Guarida Impresionante
+# La Guarida Maker
 
 Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas en 3D. Los visitantes pueden explorar el catálogo, guardar sus piezas favoritas y escribir al creador para pedirlas y ayudar a cubrir el coste del filamento y el mantenimiento de la impresora.
 
