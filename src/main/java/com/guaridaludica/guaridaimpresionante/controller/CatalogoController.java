@@ -5,6 +5,7 @@ import com.guaridaludica.guaridaimpresionante.model.EstadoConversacion;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
+import com.guaridaludica.guaridaimpresionante.repository.FilamentoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.service.FavoritoService;
 import com.guaridaludica.guaridaimpresionante.service.ImpresionService;
@@ -34,6 +35,7 @@ public class CatalogoController {
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
     private final ConversacionRepository conversacionRepository;
+    private final FilamentoRepository filamentoRepository;
     private final FavoritoService favoritoService;
     private final ImpresionService impresionService;
 
@@ -46,11 +48,13 @@ public class CatalogoController {
     public CatalogoController(ProductoRepository productoRepository,
             CategoriaRepository categoriaRepository,
             ConversacionRepository conversacionRepository,
+            FilamentoRepository filamentoRepository,
             FavoritoService favoritoService,
             ImpresionService impresionService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.conversacionRepository = conversacionRepository;
+        this.filamentoRepository = filamentoRepository;
         this.favoritoService = favoritoService;
         this.impresionService = impresionService;
     }
@@ -93,7 +97,8 @@ public class CatalogoController {
         cargarImpresora(model);
         model.addAttribute("novedad",
                 productoRepository.findFirstByNovedadTrueAndVisibleTrueOrderByIdDesc().orElse(null));
-
+        model.addAttribute("filamentos", filamentoRepository.findByActivoTrue());
+        
         return "index";
     }
 
@@ -109,5 +114,6 @@ public class CatalogoController {
         List<EstadoConversacion> enEspera = List.of(EstadoConversacion.SOLICITADA, EstadoConversacion.ACEPTADA);
         model.addAttribute("impresiones", impresionService.enCurso());
         model.addAttribute("cola", conversacionRepository.countByEstadoIn(enEspera));
+        model.addAttribute("mensajeTaller", impresionService.obtenerMensajeTaller());
     }
 }

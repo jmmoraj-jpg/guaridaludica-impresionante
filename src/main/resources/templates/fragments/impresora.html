@@ -17,12 +17,21 @@
                     <div class="progreso-barra" th:style="'width: ' + ${i.progreso} + '%'"></div>
                 </div>
             </div>
-            <div class="text-secondary mt-2 cola-texto"
+            
+            <!-- Mensaje dinámico del taller -->
+            <div class="text-muted fst-italic small mt-2 mensaje-fade" th:if="${mensajeTaller != null}" th:text="${mensajeTaller}">Estado del taller...</div>
+
+            <div class="text-secondary mt-1 cola-texto"
                 th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola</div>
         </th:block>
+        
         <th:block th:if="${impresiones.isEmpty()}">
             <p class="fw-bold mb-1"><span class="punto punto-libre"></span>Impresora libre</p>
             <p class="text-secondary mb-2">Elige una pieza y escríbeme, me pongo con ella.</p>
+            
+            <!-- Mensaje dinámico del taller también cuando está libre -->
+            <div class="text-muted fst-italic small mb-2 mensaje-fade" th:if="${mensajeTaller != null}" th:text="${mensajeTaller}">Estado del taller...</div>
+
             <div class="text-secondary cola-texto"
                 th:text="'Cola: ' + ${cola} + (${cola} == 1 ? ' solicitud' : ' solicitudes')">Cola</div>
         </th:block>

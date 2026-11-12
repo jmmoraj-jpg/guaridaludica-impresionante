@@ -66,6 +66,9 @@
                                 <li sec:authorize="hasRole('ADMIN')">
                                     <a class="dropdown-item" th:href="@{/admin/impresora}">Impresora</a>
                                 </li>
+                                <li sec:authorize="hasRole('ADMIN')">
+                                    <a class="dropdown-item" th:href="@{/admin/filamentos}">Filamentos</a>
+                                </li>
 
                                 <!-- Piezas y Categorías igual que antes -->
                                 <li sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">

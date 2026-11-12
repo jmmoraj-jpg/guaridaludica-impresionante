@@ -17,6 +17,16 @@ public class ImpresionService {
     private final ImpresionRepository impresionRepository;
     private final ProductoRepository productoRepository;
 
+    // Frases divertidas de taller para dar vida a la impresora
+    private static final List<String> MENSAJES_TALLER = List.of(
+        "Calentando extrusor a 210ºC...",
+        "Nivelando la cama caliente con paciencia milimétrica...",
+        "Trazando perímetros con mimo y precisión...",
+        "Calculando soportes estratégicos para que no sufras...",
+        "Vigilando la sagrada primera capa como un halcón...",
+        "Fundiendo filamento y dando forma a las ideas..."
+    );
+
     public ImpresionService(ImpresionRepository impresionRepository,
                             ProductoRepository productoRepository) {
         this.impresionRepository = impresionRepository;
@@ -69,5 +79,14 @@ public class ImpresionService {
             return 100;
         }
         return progreso;
+    }
+
+    // Método para obtener una frase aleatoria del taller
+    public String obtenerMensajeTaller() {
+        if (MENSAJES_TALLER.isEmpty()) {
+            return "Imprimiendo sin pausa...";
+        }
+        int index = new java.util.Random().nextInt(MENSAJES_TALLER.size());
+        return MENSAJES_TALLER.get(index);
     }
 }

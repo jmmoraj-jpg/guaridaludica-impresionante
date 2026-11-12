@@ -1,8 +1,10 @@
 package com.guaridaludica.guaridaimpresionante.config;
 
+import com.guaridaludica.guaridaimpresionante.model.Filamento;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.model.Rol;
 import com.guaridaludica.guaridaimpresionante.model.Usuario;
+import com.guaridaludica.guaridaimpresionante.repository.FilamentoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.UsuarioRepository;
 import com.guaridaludica.guaridaimpresionante.service.CategoriaService;
@@ -20,6 +22,7 @@ public class DataInicializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
+    private final FilamentoRepository filamentoRepository;
     private final CategoriaService categoriaService;
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
@@ -32,11 +35,13 @@ public class DataInicializer implements CommandLineRunner {
 
     public DataInicializer(UsuarioRepository usuarioRepository,
             ProductoRepository productoRepository,
+            FilamentoRepository repository,
             CategoriaService categoriaService,
             PasswordEncoder passwordEncoder,
             Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.productoRepository = productoRepository;
+        this.filamentoRepository = repository;
         this.categoriaService = categoriaService;
         this.passwordEncoder = passwordEncoder;
         this.env = env;
@@ -48,7 +53,26 @@ public class DataInicializer implements CommandLineRunner {
         crearAdmin();
         if (env.acceptsProfiles(Profiles.of("dev"))) {
             crearPiezasDeEjemplo();
+            crearFilamentosDeEjemplo();
         }
+    }
+
+    private void crearFilamentosDeEjemplo() {
+        if (filamentoRepository.count() > 0) {
+            return;
+        }
+       
+        filamentoRepository.save(nuevoFilamento("PLA Negro Mate", "#212529")); 
+        filamentoRepository.save(nuevoFilamento("PLA Seda Oro", "#E6C687"));
+        filamentoRepository.save(nuevoFilamento("PLA Verde Menta", "#4EBA93"));
+        
+    };
+    
+    private Filamento nuevoFilamento(String nombre, String colorHex) {
+        Filamento filamento = new Filamento();
+        filamento.setNombre(nombre);
+        filamento.setColorHex(colorHex);
+        return filamento;
     }
 
     private void crearAdmin() {
