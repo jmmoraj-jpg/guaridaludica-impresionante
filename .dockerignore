@@ -1,0 +1,6 @@
+target/
+.git/
+.vscode/
+.idea/
+*.log
+src/main/resources/application-dev.yml

@@ -10,6 +10,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: guarida3d
     show-sql: false
 app:
   admin:
