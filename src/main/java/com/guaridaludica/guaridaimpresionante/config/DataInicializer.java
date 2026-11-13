@@ -105,7 +105,6 @@ public class DataInicializer implements CommandLineRunner {
         Producto p = new Producto();
         p.setNombre(nombre);
         p.setDescripcion(descripcion);
-        p.setMaterial(material);
         p.setTiempoImpresionMinutos(minutos);
         for (String c : categorias) {
             p.getCategorias().add(categoriaService.obtenerOCrear(c));

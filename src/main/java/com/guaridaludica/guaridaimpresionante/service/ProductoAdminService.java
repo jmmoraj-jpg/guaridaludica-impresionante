@@ -6,6 +6,7 @@ import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.FavoritoRepository;
+import com.guaridaludica.guaridaimpresionante.repository.FilamentoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ImpresionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
@@ -25,16 +26,18 @@ public class ProductoAdminService {
     private final ConversacionRepository conversacionRepository;
     private final FavoritoRepository favoritoRepository;
     private final ImpresionRepository impresionRepository;
+    private final FilamentoRepository filamentoRepository;
     private final CloudinaryService cloudinary;
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
             ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository,
-            ImpresionRepository impresionRepository, CloudinaryService cloudinary) {
+            ImpresionRepository impresionRepository, FilamentoRepository filamentoRepository, CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.conversacionRepository = conversacionRepository;
         this.favoritoRepository = favoritoRepository;
         this.impresionRepository = impresionRepository;
+        this.filamentoRepository = filamentoRepository;
         this.cloudinary = cloudinary;
     }
 
@@ -48,11 +51,16 @@ public class ProductoAdminService {
 
         p.setNombre(form.getNombre().trim());
         p.setDescripcion(vacioANulo(form.getDescripcion()));
+        // Categorías
         p.getCategorias().clear();
         if (form.getCategoriaIds() != null && !form.getCategoriaIds().isEmpty()) {
             p.getCategorias().addAll(categoriaRepository.findAllById(form.getCategoriaIds()));
         }
-        p.setMaterial(vacioANulo(form.getMaterial()));
+        // Filamentos compatibles
+        p.getFilamentos().clear();
+        if (form.getFilamentoIds() != null && !form.getFilamentoIds().isEmpty()) {
+            p.getFilamentos().addAll(filamentoRepository.findAllById(form.getFilamentoIds()));
+        }
         p.setTiempoImpresionMinutos(form.getTiempoImpresionMinutos());
         p.setVisible(form.isVisible());
         p.setNovedad(form.isNovedad());

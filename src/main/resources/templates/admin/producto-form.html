@@ -49,16 +49,28 @@
                                     </p>
                                 </div>
                             </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="material">Material</label>
-                                <input type="text" id="material" th:field="*{material}" class="form-control"
-                                    list="materiales">
-                                <datalist id="materiales">
-                                    <option value="PLA"></option>
-                                    <option value="PETG"></option>
-                                    <option value="Resina"></option>
-                                    <option value="TPU"></option>
-                                </datalist>
+
+                            <div class="mb-4">
+                                <label>Filamentos disponibles / recomendados</label>
+                                <div class="lista-categorias d-flex flex-wrap gap-3 pt-1">
+                                    <div class="form-check d-flex align-items-center gap-2"
+                                        th:each="f : ${todosFilamentos}">
+                                        <input type="checkbox" class="form-check-input mt-0" th:id="${'fil-' + f.id}"
+                                            name="filamentoIds" th:value="${f.id}"
+                                            th:checked="${form.filamentoIds.contains(f.id)}">
+                                        <label class="form-check-label d-flex align-items-center gap-2"
+                                            th:for="${'fil-' + f.id}">
+                                            <span class="rounded-circle d-inline-block shadow-sm"
+                                                th:style="'width: 14px; height: 14px; background-color: ' + ${f.colorHex} + ';'"></span>
+                                            <span
+                                                th:text="${f.activo} ? ${f.nombre} : ${f.nombre + ' (agotado)'}">Filamento</span>
+                                        </label>
+                                    </div>
+                                    <p class="text-secondary mb-0" th:if="${todosFilamentos.isEmpty()}">
+                                        Aún no hay filamentos registrados. <a th:href="@{/admin/filamentos}">Añadir
+                                            uno</a>
+                                    </p>
+                                </div>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="tiempo">Tiempo (minutos)</label>

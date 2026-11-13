@@ -50,9 +50,28 @@
             <div class="col-md-6">
                 <h1 class="display-6 fw-bold mb-3 titulo-marcador" th:text="${pieza.nombre}">Nombre</h1>
 
+                <div class="mb-4">
+                    <h5 class="text-muted mb-2"><i class="bi bi-palette"></i> Filamentos utilizados:</h5>
+
+                    <!-- Si la pieza tiene filamentos asociados -->
+                    <div class="d-flex flex-wrap gap-2" th:if="${pieza.filamentos != null and !pieza.filamentos.empty}">
+                        <span th:each="filamento : ${pieza.filamentos}"
+                            class="badge d-inline-flex align-items-center gap-2 px-3 py-2 border rounded-pill shadow-sm bg-white text-dark">
+                            <!-- Círculo con el color HEX real del filamento -->
+                            <span
+                                style="width: 14px; height: 14px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.15);"
+                                th:styleappend="'background-color: ' + ${filamento.colorHex}"></span>
+                            <span th:text="${filamento.nombre}" class="fw-semibold">PLA Rojo</span>
+                        </span>
+                    </div>
+
+                    <!-- Si por algún motivo no tiene ninguno asignado -->
+                    <p class="text-muted fst-italic" th:if="${pieza.filamentos == null or pieza.filamentos.empty}">
+                        Consúltanos los colores disponibles para esta pieza.
+                    </p>
+                </div>
+
                 <div class="datos d-flex flex-wrap gap-2 mb-3">
-                    <span class="etiqueta" th:if="${pieza.material != null}" th:text="${pieza.material}"
-                        th:classappend="${'mat-' + #strings.toLowerCase(pieza.material)}">PLA</span>
                     <span class="etiqueta etiqueta-tiempo" th:if="${pieza.tiempoTexto != null}"
                         th:text="${pieza.tiempoTexto}">6 h</span>
                     <th:block th:each="c : ${pieza.categorias}">
@@ -72,7 +91,8 @@
                             <button type="submit" class="btn btn-pill btn-menta">Escribir sobre esta pieza</button>
                         </form>
                         <p class="text-secondary small mt-2 mb-0">
-                            Pregunta lo que quieras, sin compromiso. Cuando lo tengáis claro, podrás solicitarla desde la conversación.
+                            Pregunta lo que quieras, sin compromiso. Cuando lo tengáis claro, podrás solicitarla desde
+                            la conversación.
                         </p>
                     </div>
 
@@ -83,7 +103,7 @@
                             <a th:href="@{/login}" class="btn btn-pill btn-borde">Entrar</a>
                         </div>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

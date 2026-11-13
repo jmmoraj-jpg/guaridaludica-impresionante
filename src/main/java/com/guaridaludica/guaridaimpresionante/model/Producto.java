@@ -1,7 +1,9 @@
 package com.guaridaludica.guaridaimpresionante.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -29,12 +31,14 @@ public class Producto {
     @OrderBy("orden ASC, id ASC")
     private List<ImagenProducto> imagenes = new ArrayList<>();
 
-    @Column(length = 50)
-    private String material; // PLA, PETG...
-
     private Integer tiempoImpresionMinutos;
 
     private boolean visible = true;
+
+    @ManyToMany
+    @JoinTable(name = "producto_filamento", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "filamento_id"))
+    @OrderBy("nombre ASC")
+    private Set<Filamento> filamentos = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
@@ -52,13 +56,6 @@ public class Producto {
         if (h == 0)
             return m + " min";
         return m == 0 ? h + " h" : h + " h " + m + " min";
-    }
-
-    public String getEtiqueta() {
-        String t = getTiempoTexto();
-        if (material != null && t != null)
-            return material + " · " + t;
-        return material != null ? material : t;
     }
 
     public void addImagen(ImagenProducto imagen) {

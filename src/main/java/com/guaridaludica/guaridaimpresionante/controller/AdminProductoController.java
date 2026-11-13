@@ -3,6 +3,7 @@ package com.guaridaludica.guaridaimpresionante.controller;
 import com.guaridaludica.guaridaimpresionante.model.ImagenProducto;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
+import com.guaridaludica.guaridaimpresionante.repository.FilamentoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
 import com.guaridaludica.guaridaimpresionante.service.ProductoAdminService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
@@ -32,12 +33,14 @@ public class AdminProductoController {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final FilamentoRepository filamentoRepository;
     private final ProductoAdminService servicioProductoAdminService;
 
     public AdminProductoController(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-            ProductoAdminService servicioProductoAdminService) {
+            FilamentoRepository filamentoRepository, ProductoAdminService servicioProductoAdminService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
+        this.filamentoRepository = filamentoRepository;
         this.servicioProductoAdminService = servicioProductoAdminService;
     }
 
@@ -89,6 +92,7 @@ public class AdminProductoController {
                     : productoRepository.findWithImagenesById(form.getId())
                             .map(Producto::getImagenes).orElse(List.of());
             model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
+            model.addAttribute("todosFilamentos", filamentoRepository.findAll());
             model.addAttribute("imagenes", existentes);
             return "admin/producto-form";
         }
@@ -117,5 +121,6 @@ public class AdminProductoController {
         model.addAttribute("form", form);
         model.addAttribute("imagenes", imagenes);
         model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
+        model.addAttribute("todosFilamentos", filamentoRepository.findAll());
     }
 }

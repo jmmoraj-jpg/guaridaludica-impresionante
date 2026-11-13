@@ -71,12 +71,23 @@
                             </div>
                             <h5 th:text="${p.nombre}">Nombre</h5>
                             <p class="pieza-desc" th:text="${p.descripcion}">Descripción</p>
-                            <span class="etiqueta" th:if="${p.etiqueta != null}" th:text="${p.etiqueta}"
-                                th:classappend="${p.material != null} ? ${'mat-' + #strings.toLowerCase(p.material)}">PLA
-                                · 6 h</span>
+
+                            <!-- Bloque de filamentos integrado dentro de la tarjeta -->
+                            <div class="mt-3 pt-2 border-top d-flex flex-wrap gap-1 align-items-center"
+                                th:if="${p.filamentos != null and !p.filamentos.empty}">
+                                <small class="text-muted me-1" style="font-size: 0.7rem;">Colores:</small>
+                                <span th:each="filamento : ${p.filamentos}"
+                                    class="d-inline-flex align-items-center gap-1 px-2 py-0.5 border rounded-pill bg-white"
+                                    style="font-size: 0.7rem;" th:title="${filamento.nombre}">
+                                    <span
+                                        style="width: 8px; height: 8px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.2);"
+                                        th:styleappend="'background-color: ' + ${filamento.colorHex}"></span>
+                                    <span th:text="${filamento.nombre}">PLA Rojo</span>
+                                </span>
+                            </div>
                         </article>
                     </a>
-
+                    <!-- Botón de favorito flotante -->
                     <form sec:authorize="isAuthenticated()" class="fav-flotante"
                         th:action="@{/favoritos/{id}(id=${p.id})}" method="post">
                         <input type="hidden" name="volver"

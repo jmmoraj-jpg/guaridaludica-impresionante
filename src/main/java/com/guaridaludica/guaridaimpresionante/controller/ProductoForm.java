@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
+import com.guaridaludica.guaridaimpresionante.model.Filamento;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -27,8 +28,7 @@ public class ProductoForm {
 
     private Set<Long> categoriaIds = new LinkedHashSet<>();
 
-    @Size(max = 50)
-    private String material;
+    private Set<Long> filamentoIds = new LinkedHashSet<>();
 
     @Min(value = 0, message = "No puede ser negativo")
     private Integer tiempoImpresionMinutos;
@@ -44,10 +44,11 @@ public class ProductoForm {
         f.setDescripcion(p.getDescripcion());
         f.setCategoriaIds(p.getCategorias().stream().map(Categoria::getId)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
-        f.setMaterial(p.getMaterial());
         f.setTiempoImpresionMinutos(p.getTiempoImpresionMinutos());
         f.setVisible(p.isVisible());
         f.setNovedad(p.isNovedad());
+        f.setFilamentoIds(p.getFilamentos().stream().map(Filamento::getId)
+                .collect(Collectors.toCollection(LinkedHashSet::new)));
         return f;
     }
 }
