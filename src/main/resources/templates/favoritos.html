@@ -18,16 +18,13 @@
                             <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" th:alt="${p.nombre}">
                             <span th:if="${p.imagenUrl == null}">🧊</span>
                         </div>
-                        <h5 th:text="${p.nombre}">Nombre</h5>
-                        <span class="etiqueta" th:if="${p.etiqueta != null}" th:text="${p.etiqueta}"
-                            th:classappend="${p.material != null} ? ${'mat-' + #strings.toLowerCase(p.material)}">PLA ·
-                            6 h</span>
+                        <h5 th:text="${p.nombre}" class="mt-2">Nombre</h5>
                     </a>
+
                     <div class="d-grid gap-2 mt-3">
                         <form th:action="@{/conversaciones/nueva}" method="post">
                             <input type="hidden" name="productoId" th:value="${p.id}">
-                            <button type="submit" class="btn btn-pill btn-menta btn-sm w-100">Escribir sobre esta
-                                pieza</button>
+                            <button type="submit" class="btn btn-pill btn-menta btn-sm w-100">Escribir sobre esta pieza</button>
                         </form>
                         <form th:action="@{/favoritos/{id}(id=${p.id})}" method="post">
                             <input type="hidden" name="volver" value="/favoritos">

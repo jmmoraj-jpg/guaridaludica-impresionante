@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Mi Cuenta - La Guarida Lúdica')}"></head>
+
+<body class="privacidad">
+
+    <!-- Formas geométricas decorativas de fondo (idénticas a la página de privacidad) -->
+    <span class="deco deco-cuadro" aria-hidden="true"></span>
+    <span class="deco deco-circulo" aria-hidden="true"></span>
+    <span class="deco deco-triangulo" aria-hidden="true"></span>
+    <span class="deco deco-circulo-2" aria-hidden="true"></span>
+    <span class="deco deco-cuadro-2" aria-hidden="true"></span>
+
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+
+        <!-- Cabecera de la sección -->
+        <div class="row mb-4">
+            <div class="col-lg-8">
+                <span class="badge-nuevo mb-2">⚡ Mi Zona Privada</span>
+                <h1 class="display-6 fw-bold mb-2 titulo-marcador marcador-menta">Configuración de tu cuenta</h1>
+                <p class="text-secondary lead fs-6">Gestiona tus datos personales, tus direcciones de envío y la
+                    seguridad de tu perfil.</p>
+            </div>
+        </div>
+
+        <!-- Alertas de éxito o error -->
+        <div th:if="${exito}" class="alert alert-success border-2 rounded-4 shadow-sm mb-4" role="alert"
+            style="border-color: var(--menta);">
+            <span th:text="${exito}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger border-2 rounded-4 shadow-sm mb-4" role="alert"
+            style="border-color: var(--salmon);">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row g-4">
+
+            <!-- Columna Izquierda: Datos y Direcciones -->
+            <div class="col-lg-8">
+
+                <!-- Tarjeta de Datos Personales -->
+                <div class="card auth-card mb-4 border-2 shadow-sm"
+                    style="border-color: var(--lila-claro); border-radius: 26px;">
+                    <div class="card-body p-4">
+                        <h4 class="fw-bold mb-3">👤 Información Personal</h4>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <span class="text-muted small d-block">Nombre de usuario</span>
+                                <span class="fw-bold fs-5 text-dark" th:text="${usuario.nombre}">Usuario</span>
+                            </div>
+                            <div class="col-sm-6">
+                                <span class="text-muted small d-block">Correo electrónico</span>
+                                <span class="fw-bold fs-5 text-dark"
+                                    th:text="${usuario.email}">correo@example.com</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Direcciones de Envío con el botón que abre el modal -->
+                <div class="card auth-card border-2 shadow-sm"
+                    style="border-color: var(--menta-claro); border-radius: 26px;">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="fw-bold mb-0">📍 Mis Direcciones de Envío</h4>
+                            <!-- Botón estilo píldora menta -->
+                            <button type="button" class="btn btn-pill btn-menta shadow-sm" data-bs-toggle="modal"
+                                data-bs-target="#modalNuevaDireccion">
+                                + Añadir dirección
+                            </button>
+                        </div>
+
+                        <!-- Listado de direcciones actuales -->
+                        <div class="row row-cols-1 row-cols-md-2 g-3">
+                            <div class="col" th:each="dir : ${direcciones}">
+                                <div class="card h-100 border-2 rounded-4 p-3 bg-white shadow-none"
+                                    th:style="${dir.principal} ? 'border-color: var(--menta); background-color: var(--crema) !important;' : 'border-color: var(--borde);'">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h6 class="fw-bold mb-0 text-truncate" th:text="${dir.nombreDestinatario}">
+                                            Destinatario</h6>
+                                        <span class="etiqueta mat-petg" th:if="${dir.principal}">Principal</span>
+                                    </div>
+                                    <p class="card-text mb-1 text-muted small"
+                                        th:text="${dir.calle + (dir.piso != null ? ', ' + dir.piso : '')}"></p>
+                                    <p class="card-text mb-3 text-muted small"
+                                        th:text="${dir.codigoPostal + ' ' + dir.ciudad + ' (' + dir.provincia + ')'}">
+                                    </p>
+
+                                    <div class="mt-auto text-end">
+                                        <a th:href="@{/perfil/direcciones/eliminar/{id}(id=${dir.id})}"
+                                            class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                            style="font-size: 0.75rem;"
+                                            onclick="return confirm('¿Estás seguro de que deseas eliminar esta dirección de envío?');">
+                                            Eliminar
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:if="${#lists.isEmpty(direcciones)}" class="col-12 text-center py-4 text-muted">
+                                <p class="mb-0">Aún no has guardado ninguna dirección. ¡Añade una para tus envíos!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Zona de Peligro -->
+            <div class="col-lg-4">
+                <div class="card border-2 shadow-sm h-100"
+                    style="border-color: var(--salmon-claro); border-radius: 26px; background: #fff;">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="fw-bold text-danger mb-3">⚠️ Zona de Peligro</h4>
+                        <p class="text-muted small mb-4">
+                            Borrar tu cuenta eliminará tus datos personales, favoritos y conversaciones pasadas (siempre
+                            que no tengas solicitudes activas en curso). Esta acción no se puede deshacer.
+                        </p>
+
+                        <form th:action="@{/perfil/cuenta/borrar}" method="post" class="mt-auto pt-2"
+                            onsubmit="return confirm('¿Estás seguro de que deseas borrar tu cuenta permanentemente?');">
+                            <div class="mb-3">
+                                <label for="password" class="form-label small fw-bold">Introduce tu contraseña:</label>
+                                <input type="password" class="form-control border-2" id="password" name="password"
+                                    style="border-color: var(--borde); border-radius: 14px;" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="confirmar" name="confirmar"
+                                    value="true" required>
+                                <label class="form-check-label small text-muted" for="confirmar">Confirmo que deseo
+                                    borrar la cuenta</label>
+                            </div>
+                            <button type="submit" class="btn btn-pill btn-salmon w-100 shadow-sm"
+                                style="background-color: var(--salmon); color: #fff;">Borrar mi cuenta</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL DE BOOTSTRAP PARA AÑADIR DIRECCIÓN -->
+    <div class="modal fade" id="modalNuevaDireccion" tabindex="-1" aria-labelledby="modalNuevaDireccionLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-2 shadow"
+                style="border-color: var(--borde); border-radius: 26px; background-color: var(--crema);">
+                <div class="modal-header border-0 pb-0 px-4 pt-4">
+                    <h5 class="modal-title fw-bold" id="modalNuevaDireccionLabel">📍 Nueva Dirección de Envío</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form th:action="@{/perfil/direcciones/guardar}" th:object="${nuevaDireccion}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Nombre y Apellidos del Destinatario</label>
+                            <input type="text" class="form-control border-2" th:field="*{nombreDestinatario}"
+                                placeholder="Ej. María García"
+                                style="border-color: var(--borde); border-radius: 14px; background: #fff;" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Calle y Número</label>
+                            <input type="text" class="form-control border-2" th:field="*{calle}"
+                                placeholder="Ej. Calle Mayor, 12"
+                                style="border-color: var(--borde); border-radius: 14px; background: #fff;" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Piso / Puerta (Opcional)</label>
+                            <input type="text" class="form-control border-2" th:field="*{piso}" placeholder="Ej. 3º B"
+                                style="border-color: var(--borde); border-radius: 14px; background: #fff;">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Ciudad</label>
+                                <input type="text" class="form-control border-2" th:field="*{ciudad}"
+                                    placeholder="Madrid"
+                                    style="border-color: var(--borde); border-radius: 14px; background: #fff;" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label small fw-bold">Código Postal</label>
+                                <input type="text" class="form-control border-2" th:field="*{codigoPostal}"
+                                    placeholder="28001"
+                                    style="border-color: var(--borde); border-radius: 14px; background: #fff;" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold">Provincia</label>
+                            <input type="text" class="form-control border-2" th:field="*{provincia}"
+                                placeholder="Madrid"
+                                style="border-color: var(--borde); border-radius: 14px; background: #fff;" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" th:field="*{principal}"
+                                id="modalPrincipalCheck">
+                            <label class="form-check-label small" for="modalPrincipalCheck">Marcar como dirección
+                                principal</label>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 pt-2">
+                            <button type="button" class="btn btn-pill btn-borde"
+                                data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-pill btn-menta">Guardar dirección</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+
+</html>
