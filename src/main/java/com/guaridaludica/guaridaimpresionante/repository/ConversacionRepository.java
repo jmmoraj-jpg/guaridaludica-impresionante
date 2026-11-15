@@ -42,4 +42,6 @@ public interface ConversacionRepository extends JpaRepository<Conversacion, Long
   List<Conversacion> findByUsuarioId(Long usuarioId);
 
   boolean existsByUsuarioIdAndEstadoIn(Long usuarioId, Collection<EstadoConversacion> estados);
+
+  Page<Conversacion>  findByEstado(EstadoConversacion estado, Pageable pageable);
 }

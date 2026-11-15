@@ -27,7 +27,7 @@ public class ProductoAdminService {
     private final FavoritoRepository favoritoRepository;
     private final ImpresionRepository impresionRepository;
     private final FilamentoRepository filamentoRepository;
-    private final CloudinaryService cloudinary;
+    private final CloudinaryService cloudinaryService;
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
             ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository,
@@ -38,7 +38,7 @@ public class ProductoAdminService {
         this.favoritoRepository = favoritoRepository;
         this.impresionRepository = impresionRepository;
         this.filamentoRepository = filamentoRepository;
-        this.cloudinary = cloudinary;
+        this.cloudinaryService = cloudinary;
     }
 
     @Transactional
@@ -74,7 +74,7 @@ public class ProductoAdminService {
                 }
             }
             for (ImagenProducto i : aBorrar) {
-                cloudinary.borrar(i.getPublicId());
+                cloudinaryService.borrar(i.getPublicId());
             }
             p.getImagenes().removeAll(aBorrar);
         }
@@ -91,7 +91,7 @@ public class ProductoAdminService {
                     continue;
                 }
                 try {
-                    CloudinaryService.ImagenSubida subida = cloudinary.subir(archivo);
+                    CloudinaryService.ImagenSubida subida = cloudinaryService.subir(archivo);
                     ImagenProducto img = new ImagenProducto();
                     img.setUrl(subida.url());
                     img.setPublicId(subida.publicId());
@@ -133,7 +133,7 @@ public class ProductoAdminService {
         Producto p = productoRepository.findWithImagenesById(id).orElse(null);
         if (p != null) {
             for (ImagenProducto i : p.getImagenes()) {
-                cloudinary.borrar(i.getPublicId());
+                cloudinaryService.borrar(i.getPublicId());
             }
             productoRepository.delete(p);
         }

@@ -25,9 +25,32 @@ public class Conversacion {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "producto_id")
+    // Ahora es opcional (nullable = true) para encargos libres
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "producto_id", nullable = true)
     private Producto producto;
+
+    // Nuevos campos para ideas personalizadas
+    @Column(name = "imagen1")
+    private String imagen1;
+
+    @Column(name = "imagen1_public_id")
+    private String imagen1PublicId;
+
+    @Column(name = "imagen2")
+    private String imagen2;
+
+    @Column(name = "imagen2_public_id")
+    private String imagen2PublicId;
+
+    @Column(name = "imagen3")
+    private String imagen3;
+
+    @Column(name = "imagen3_public_id")
+    private String imagen3PublicId;
+
+    @Column(length = 500)
+    private String enlaceReferencia;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -39,15 +62,14 @@ public class Conversacion {
     @Column(nullable = false)
     private LocalDateTime ultimaActividad = LocalDateTime.now();
 
-    // Resumen del último mensaje, para los listados sin cargar todo el hilo
     @Column(length = 140)
     private String ultimoResumen;
 
     @Column(precision = 8, scale = 2)
     private BigDecimal precio;
 
-    private boolean sinLeerUsuario; // la guarida ha escrito y el usuario aún no lo ha abierto
-    private boolean sinLeerGuarida; // el usuario ha escrito y la guarida aún no lo ha abierto
+    private boolean sinLeerUsuario;
+    private boolean sinLeerGuarida;
 
     @OneToMany(mappedBy = "conversacion", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("fecha ASC, id ASC")

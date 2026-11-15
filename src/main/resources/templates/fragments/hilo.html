@@ -5,13 +5,24 @@
 
     <th:block th:fragment="hilo(conv, vistaGuarida, accion)">
         <div class="hilo-cabecera">
-            <img th:if="${conv.producto.imagenUrl != null}" th:src="${conv.producto.imagenUrl}" class="fila-img" alt="">
-            <div class="fila-img hilo-placeholder" th:if="${conv.producto.imagenUrl == null}">🧊</div>
+            <!-- Si tiene producto del catálogo, muestra su imagen; si no, muestra la primera imagen subida o un placeholder -->
+            <img th:if="${conv.producto?.imagenUrl != null}" th:src="${conv.producto.imagenUrl}" class="fila-img" alt="">
+            <img th:if="${conv.producto == null and conv.imagen1 != null}" th:src="${conv.imagen1}" class="fila-img" alt="Propuesta personalizada">
+            <div class="fila-img hilo-placeholder" th:if="${conv.producto?.imagenUrl == null and conv.imagen1 == null}">🧊</div>
+            
             <div class="flex-grow-1">
-                <div class="fw-bold" th:text="${conv.producto.nombre}">Pieza</div>
+                <!-- Nombre del producto o título alternativo para personalizadas -->
+                <div class="fw-bold" th:text="${conv.producto != null ? conv.producto.nombre : '💡 Solicitud Personalizada'}">Pieza</div>
+                
                 <div class="small text-secondary" th:if="${vistaGuarida}"
                     th:text="'Conversación con ' + ${conv.usuario.nombre}">Conversación con ...</div>
-                <a class="small" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver la pieza</a>
+                
+                <!-- Enlace a la pieza del catálogo (solo si existe producto) -->
+                <a class="small" th:if="${conv.producto != null}" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver la pieza</a>
+                
+                <!-- Enlace de referencia externo (para propuestas personalizadas) -->
+                <a class="small d-block text-truncate" th:if="${conv.producto == null and conv.enlaceReferencia != null}" 
+                   th:href="${conv.enlaceReferencia}" target="_blank" rel="noopener">🔗 Ver enlace de referencia</a>
 
                 <div class="small fw-bold" th:if="${conv.precio != null}"
                     th:text="'Precio acordado: ' + ${#numbers.formatDecimal(conv.precio, 1, 'POINT', 2, 'COMMA')} + ' €'">
@@ -35,14 +46,14 @@
 
         <div class="hilo">
             <p class="text-secondary text-center my-4" th:if="${conv.mensajes.isEmpty()}"
-                th:text="${vistaGuarida} ? 'Aún no hay mensajes.' : 'Escribe tu primera pregunta sobre esta pieza, sin compromiso 💜'">
+                th:text="${vistaGuarida} ? 'Aún no hay mensajes.' : 'Escribe tu primera pregunta o detalla tu idea, sin compromiso 💜'">
                 Aún no hay mensajes.
             </p>
             <div class="burbuja" th:each="m : ${conv.mensajes}"
                 th:classappend="${m.deLaGuarida == vistaGuarida} ? 'burbuja-mia' : 'burbuja-otro'">
                 <span th:text="${m.texto}">Texto</span>
                 <small th:text="${(vistaGuarida ? m.autor.nombre : (m.deLaGuarida ? 'La Guarida' : 'Tú'))
-                              + ' · ' + #temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Autor · fecha</small>
+                            + ' · ' + #temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Autor · fecha</small>
             </div>
         </div>
 
@@ -56,7 +67,7 @@
         </form>
 
         <p class="text-center text-secondary small my-3" th:if="${conv.estado.cerrada}">
-            Esta conversación está cerrada. Si quieres otra pieza, escríbenos desde su ficha.
+            Esta conversación está cerrada. Si quieres otra pieza, escríbenos desde su ficha o solicita una nueva personalizada.
         </p>
     </th:block>
 

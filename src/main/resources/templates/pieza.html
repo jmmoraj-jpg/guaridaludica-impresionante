@@ -86,10 +86,22 @@
                     <h5 class="mb-2">¿Te gusta esta pieza?</h5>
 
                     <div sec:authorize="isAuthenticated()">
-                        <form th:action="@{/conversaciones/nueva}" method="post" class="d-inline">
-                            <input type="hidden" name="productoId" th:value="${pieza.id}">
-                            <button type="submit" class="btn btn-pill btn-menta">Escribir sobre esta pieza</button>
-                        </form>
+                        <div class="d-flex flex-wrap gap-2 align-items-center">
+                            <form th:action="@{/conversaciones/nueva}" method="post" class="m-0">
+                                <input type="hidden" name="productoId" th:value="${pieza.id}">
+                                <button type="submit" class="btn btn-pill btn-menta">Escribir sobre esta pieza</button>
+                            </form>
+
+                            <form th:action="@{/favoritos/{id}(id=${pieza.id})}" method="post" class="m-0">
+                                <input type="hidden" name="volver" th:value="@{/pieza/{id}(id=${pieza.id})}">
+                                <button type="submit" class="btn btn-pill btn-fav"
+                                    th:classappend="${esFavorito} ? 'activo'">
+                                    <span class="corazon" th:text="${esFavorito} ? '♥' : '♡'">♡</span>
+                                    <span th:text="${esFavorito} ? 'En favoritos' : 'Guardar en favoritos'">Guardar en
+                                        favoritos</span>
+                                </button>
+                            </form>
+                        </div>
                         <p class="text-secondary small mt-2 mb-0">
                             Pregunta lo que quieras, sin compromiso. Cuando lo tengáis claro, podrás solicitarla desde
                             la conversación.

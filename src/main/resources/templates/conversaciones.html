@@ -4,39 +4,71 @@
 <head th:replace="~{fragments/layout :: head('Mis mensajes')}"></head>
 
 <body>
-<nav th:replace="~{fragments/layout :: navbar}"></nav>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-<main class="container py-4">
-    <h2 class="titulo-marcador marcador-lila mb-4">Mis mensajes</h2>
+    <main class="container py-4">
+        <!-- Formas geométricas decorativas -->
+        <span class="deco deco-cuadro" aria-hidden="true"></span>
+        <span class="deco deco-circulo" aria-hidden="true"></span>
+        <span class="deco deco-triangulo" aria-hidden="true"></span>
+        <span class="deco deco-circulo-2" aria-hidden="true"></span>
+        <span class="deco deco-cuadro-2" aria-hidden="true"></span>
 
-    <a class="fila-conv" th:each="c : ${conversaciones}" th:href="@{/conversaciones/{id}(id=${c.id})}">
-        <img th:if="${c.producto.imagenUrl != null}" th:src="${c.producto.imagenUrl}" class="fila-img" alt="">
-        <div class="fila-img hilo-placeholder" th:if="${c.producto.imagenUrl == null}">🧊</div>
-        <div class="flex-grow-1">
-            <div class="fw-bold">
-                <span class="nuevo-punto" th:if="${c.sinLeerUsuario}" title="Mensaje nuevo"></span>
-                <span th:text="${c.producto.nombre}">Pieza</span>
+        <!-- Cabecera con título y botón para proponer idea a medida -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+            <h2 class="titulo-marcador marcador-lila mb-0">Mis mensajes</h2>
+            <a th:href="@{/conversaciones/personalizada}" class="btn btn-pill btn-menta shadow-sm">
+                💬 Proponer pieza a medida
+            </a>
+        </div>
+
+        <a class="fila-conv" th:each="c : ${conversaciones}" th:href="@{/conversaciones/{id}(id=${c.id})}">
+            
+            <!-- Si tiene producto y imagen -->
+            <th:block th:if="${c.producto != null}">
+                <img th:if="${c.producto.imagenUrl != null}" th:src="${c.producto.imagenUrl}" class="fila-img" alt="">
+                <div class="fila-img hilo-placeholder" th:if="${c.producto.imagenUrl == null}">🧊</div>
+            </th:block>
+
+            <!-- Si es una conversación personalizada (sin producto, usamos icono o imagen 1 si la hay) -->
+            <th:block th:if="${c.producto == null}">
+                <img th:if="${c.imagen1 != null}" th:src="${c.imagen1}" class="fila-img" alt="">
+                <div class="fila-img hilo-placeholder" th:if="${c.imagen1 == null}">💡</div>
+            </th:block>
+
+            <div class="flex-grow-1">
+                <div class="fw-bold">
+                    <span class="nuevo-punto" th:if="${c.sinLeerUsuario}" title="Mensaje nuevo"></span>
+                    <!-- Muestra el nombre del producto o un texto genérico si es a medida -->
+                    <span th:text="${c.producto != null ? c.producto.nombre : 'Encargo personalizado'}">Pieza</span>
+                </div>
+                <div class="small text-secondary"
+                    th:text="${c.ultimoResumen != null} ? ${c.ultimoResumen} : 'Conversación sin mensajes'">Resumen
+                </div>
             </div>
-            <div class="small text-secondary"
-                 th:text="${c.ultimoResumen != null} ? ${c.ultimoResumen} : 'Conversación sin mensajes'">Resumen</div>
+            <div class="text-end">
+                <span class="etiqueta" th:text="${c.estado.etiqueta}"
+                    th:classappend="${'estado-' + #strings.toLowerCase(c.estado.name())}">Consulta</span>
+                <div class="small text-secondary mt-1"
+                    th:text="${#temporals.format(c.ultimaActividad, 'dd/MM/yyyy HH:mm')}">fecha</div>
+            </div>
+        </a>
+
+        <div th:if="${conversaciones.isEmpty()}" class="text-center py-5">
+            <p class="lead text-secondary">Todavía no tienes conversaciones 💜</p>
+            <p class="text-secondary">Guarda piezas en favoritos, escríbenos sobre la que te guste o propón tu propia idea.</p>
+            <div class="d-flex justify-content-center gap-2 mt-3">
+                <a th:href="@{/favoritos}" class="btn btn-pill btn-borde">Ver mis favoritos</a>
+                <a th:href="@{/conversaciones/personalizada}" class="btn btn-pill btn-menta">Proponer idea a medida</a>
+            </div>
         </div>
-        <div class="text-end">
-            <span class="etiqueta" th:text="${c.estado.etiqueta}"
-                  th:classappend="${'estado-' + #strings.toLowerCase(c.estado.name())}">Consulta</span>
-            <div class="small text-secondary mt-1"
-                 th:text="${#temporals.format(c.ultimaActividad, 'dd/MM/yyyy HH:mm')}">fecha</div>
-        </div>
-    </a>
 
-    <div th:if="${conversaciones.isEmpty()}" class="text-center py-5">
-        <p class="lead text-secondary">Todavía no tienes conversaciones 💜</p>
-        <p class="text-secondary">Guarda piezas en favoritos y escríbenos sobre la que te guste.</p>
-        <a th:href="@{/favoritos}" class="btn btn-pill btn-menta">Ver mis favoritos</a>
-    </div>
+        <th:block
+            th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/conversaciones', '', '')}">
+        </th:block>
+    </main>
 
-    <th:block th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/conversaciones', '', '')}"></th:block>
-</main>
-
-<th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 </body>
+
 </html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Proponer pieza personalizada')}"></head>
+
+<body class="privacidad">
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <main class="container py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <a class="volver" th:href="@{/mensajes}">← Volver a mensajes</a>
+
+                <div class="card auth-card border-2 shadow-sm mt-3" style="border-color: var(--menta-claro); border-radius: 26px;">
+                    <div class="card-body p-4 p-md-5">
+                        <span class="badge-nuevo mb-2">💬 Taller a Medida</span>
+                        <h2 class="fw-bold mb-3 titulo-marcador marcador-menta">Propón tu propia idea</h2>
+                        <p class="text-secondary mb-4">¿Tienes en mente un diseño que quieres que imprima? Cuéntamelo, adjunta hasta 3 fotos de ejemplo o un enlace y lo estudiamos.</p>
+
+                        <form th:action="@{/conversaciones/personalizada/guardar}" method="post" enctype="multipart/form-data">
+                            
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Título o nombre de tu idea</label>
+                                <input type="text" name="titulo" class="form-control border-2" placeholder="Ej. Soporte para mando espacial" style="border-radius: 14px;" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Cuéntame los detalles (tamaño, uso, colores...)</label>
+                                <textarea name="descripcion" class="form-control border-2" rows="4" placeholder="Descríbeme cómo te lo imaginas..." style="border-radius: 14px;" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small">Enlace de referencia (Opcional - Thingiverse, Printables, web...)</label>
+                                <input type="url" name="enlaceReferencia" class="form-control border-2" placeholder="https://www.printables.com/..." style="border-radius: 14px;">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-bold small">Imágenes de ejemplo (Máximo 3)</label>
+                                <input type="file" name="imagenes" class="form-control border-2" accept="image/*" multiple style="border-radius: 14px;">
+                                <div class="form-text small">Puedes seleccionar varias imágenes a la vez (hasta 3).</div>
+                            </div>
+
+                            <button type="submit" class="btn btn-pill btn-menta w-100 shadow-sm">Enviar propuesta a La Guarida</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+</html>

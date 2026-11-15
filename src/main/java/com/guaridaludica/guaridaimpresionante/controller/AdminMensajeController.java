@@ -3,6 +3,7 @@ package com.guaridaludica.guaridaimpresionante.controller;
 import com.guaridaludica.guaridaimpresionante.model.Conversacion;
 import com.guaridaludica.guaridaimpresionante.model.EstadoConversacion;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
+import com.guaridaludica.guaridaimpresionante.service.CloudinaryService;
 import com.guaridaludica.guaridaimpresionante.service.ConversacionService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
 import org.springframework.data.domain.Page;
@@ -25,11 +26,13 @@ public class AdminMensajeController {
 
     private final ConversacionService servicio;
     private final ConversacionRepository conversacionRepository;
+    private final CloudinaryService cloudinaryService;
 
     public AdminMensajeController(ConversacionService servicio,
-            ConversacionRepository conversacionRepository) {
+            ConversacionRepository conversacionRepository, CloudinaryService cloudinaryService) {
         this.servicio = servicio;
         this.conversacionRepository = conversacionRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping
@@ -37,18 +40,30 @@ public class AdminMensajeController {
             @RequestParam(required = false) String filtro,
             Model model) {
         boolean pendientes = "pendientes".equals(filtro);
+        boolean canceladas = "canceladas".equals(filtro);
 
         Page<Conversacion> page = Paginas.pedir(pagina, i -> {
             Pageable pageable = PageRequest.of(i, POR_PAGINA, Sort.by(Sort.Direction.DESC, "ultimaActividad"));
-            return pendientes
-                    ? conversacionRepository.findBySinLeerGuaridaTrue(pageable)
-                    : conversacionRepository.findByUltimoResumenIsNotNull(pageable);
+            if (pendientes) {
+                return conversacionRepository.findBySinLeerGuaridaTrue(pageable);
+            } else if (canceladas) {
+                return conversacionRepository.findByEstado(EstadoConversacion.CANCELADA, pageable);
+            } else {
+                return conversacionRepository.findByUltimoResumenIsNotNull(pageable);
+            }
         });
 
         model.addAttribute("conversaciones", page.getContent());
         Paginas.atributos(model, page);
         model.addAttribute("pendientes", pendientes);
-        model.addAttribute("extraPaginacion", pendientes ? "&filtro=pendientes" : "");
+        model.addAttribute("canceladas", canceladas);
+        model.addAttribute("filtro", filtro);
+        
+        String extra = "";
+        if (pendientes) extra = "&filtro=pendientes";
+        else if (canceladas) extra = "&filtro=canceladas";
+        model.addAttribute("extraPaginacion", extra);
+        
         return "admin/mensajes";
     }
 
@@ -79,5 +94,26 @@ public class AdminMensajeController {
                     "No se puede hacer ese cambio. Para aceptar hay que indicar un precio mayor que 0.");
         }
         return "redirect:/admin/mensajes/" + id;
+    }
+
+    @PostMapping("/{id}/eliminar")
+    public String eliminarDefinitivamente(@PathVariable Long id, RedirectAttributes redirect) {
+        Conversacion conv = conversacionRepository.findById(id).orElse(null);
+        if (conv != null && conv.getEstado() == EstadoConversacion.CANCELADA) {
+            // Borrar imágenes de Cloudinary si existen
+            if (conv.getImagen1PublicId() != null) {
+                cloudinaryService.borrar(conv.getImagen1PublicId());
+            }
+            if (conv.getImagen2PublicId() != null) {
+                cloudinaryService.borrar(conv.getImagen2PublicId());
+            }
+            if (conv.getImagen3PublicId() != null) {
+                cloudinaryService.borrar(conv.getImagen3PublicId());
+            }
+
+            conversacionRepository.delete(conv);
+            redirect.addFlashAttribute("error", "Conversación y sus imágenes eliminadas definitivamente.");
+        }
+        return "redirect:/admin/mensajes?filtro=canceladas";
     }
 }

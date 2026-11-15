@@ -2,17 +2,25 @@ package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.model.Conversacion;
 import com.guaridaludica.guaridaimpresionante.model.EstadoConversacion;
+import com.guaridaludica.guaridaimpresionante.model.Mensaje;
+import com.guaridaludica.guaridaimpresionante.model.Usuario;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
+import com.guaridaludica.guaridaimpresionante.repository.UsuarioRepository;
+import com.guaridaludica.guaridaimpresionante.service.CloudinaryService;
+import com.guaridaludica.guaridaimpresionante.service.CloudinaryService.ImagenSubida;
 import com.guaridaludica.guaridaimpresionante.service.ConversacionService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.security.Principal;
 
 @Controller
@@ -23,11 +31,16 @@ public class ConversacionController {
 
     private final ConversacionService servicio;
     private final ConversacionRepository conversacionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final CloudinaryService cloudinaryService;
 
     public ConversacionController(ConversacionService servicio,
-            ConversacionRepository conversacionRepository) {
+            ConversacionRepository conversacionRepository, UsuarioRepository usuarioRepository,
+            CloudinaryService cloudinaryService) {
         this.servicio = servicio;
         this.conversacionRepository = conversacionRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @GetMapping
@@ -85,8 +98,8 @@ public class ConversacionController {
     public String enviar(@PathVariable Long id, @RequestParam String texto,
             Principal principal, RedirectAttributes redirect) {
         if (!servicio.enviarComoUsuario(id, principal.getName(), texto)) {
-             redirect.addFlashAttribute("error",
-                "No se pudo enviar. Comprueba que el mensaje no esté vacío (máximo 2000 caracteres) y que la conversación siga abierta.");
+            redirect.addFlashAttribute("error",
+                    "No se pudo enviar. Comprueba que el mensaje no esté vacío (máximo 2000 caracteres) y que la conversación siga abierta.");
         }
         return "redirect:/conversaciones/" + id;
     }
@@ -98,5 +111,73 @@ public class ConversacionController {
             redirect.addFlashAttribute("error", "No se puede hacer ese cambio en este momento.");
         }
         return "redirect:/conversaciones/" + id;
+    }
+
+    // Muestra el formulario para proponer una idea personalizada
+    @GetMapping("/personalizada")
+    public String formularioPersonalizada(Principal principal, Model model) {
+        // CORREGIDO: Sin la barra inicial para que Thymeleaf lo encuentre bien
+        return "conversaciones/personalizada";
+        // O si tu archivo se llama nueva-personalizada.html en la raíz de templates:
+        // return "nueva-personalizada";
+    }
+
+    // Guarda la propuesta, sube las imágenes y crea la conversación
+    @PostMapping("/personalizada/guardar")
+    public String guardarConversacionPersonalizada(
+            @RequestParam("titulo") String titulo,
+            @RequestParam("descripcion") String descripcion,
+            @RequestParam(value = "enlaceReferencia", required = false) String enlaceReferencia,
+            @RequestParam(value = "imagenes", required = false) MultipartFile[] imagenes,
+            Principal principal) {
+
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(principal.getName())
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+        Conversacion conv = new Conversacion();
+        conv.setUsuario(usuario);
+        conv.setEnlaceReferencia(enlaceReferencia);
+
+        // Procesar hasta 3 imágenes con Cloudinary guardando URL y PublicId
+        if (imagenes != null) {
+            int count = 0;
+            for (MultipartFile img : imagenes) {
+                if (!img.isEmpty() && count < 3) {
+                    try {
+                        ImagenSubida resultadoSubida = cloudinaryService.subir(img);
+                        String url = resultadoSubida.url();
+                        String publicId = resultadoSubida.publicId();
+
+                        if (count == 0) {
+                            conv.setImagen1(url);
+                            conv.setImagen1PublicId(publicId);
+                        } else if (count == 1) {
+                            conv.setImagen2(url);
+                            conv.setImagen2PublicId(publicId);
+                        } else if (count == 2) {
+                            conv.setImagen3(url);
+                            conv.setImagen3PublicId(publicId);
+                        }
+                        count++;
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+
+        // Creamos el primer mensaje automático con la idea del usuario
+        Mensaje primerMensaje = new Mensaje();
+        primerMensaje.setAutor(usuario);
+        primerMensaje.setTexto("💡 Propuesta personalizada: " + titulo + "\n\n" + descripcion);
+        primerMensaje.setDeLaGuarida(false);
+
+        conv.addMensaje(primerMensaje);
+        conv.setUltimoResumen("Propuesta personalizada: " + titulo);
+        conv.setSinLeerGuarida(true);
+
+        conversacionRepository.save(conv);
+
+        return "redirect:/conversaciones/" + conv.getId();
     }
 }
