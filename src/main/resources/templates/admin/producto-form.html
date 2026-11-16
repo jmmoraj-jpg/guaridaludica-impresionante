@@ -55,15 +55,18 @@
                                 <div class="lista-categorias d-flex flex-wrap gap-3 pt-1">
                                     <div class="form-check d-flex align-items-center gap-2"
                                         th:each="f : ${todosFilamentos}">
+
+                                        <!-- Añadimos th:disabled para bloquear el checkbox si f.activo es falso -->
                                         <input type="checkbox" class="form-check-input mt-0" th:id="${'fil-' + f.id}"
                                             name="filamentoIds" th:value="${f.id}"
-                                            th:checked="${form.filamentoIds.contains(f.id)}">
+                                            th:checked="${form.filamentoIds.contains(f.id)}" th:disabled="${!f.activo}">
+
                                         <label class="form-check-label d-flex align-items-center gap-2"
                                             th:for="${'fil-' + f.id}">
                                             <span class="rounded-circle d-inline-block shadow-sm"
                                                 th:style="'width: 14px; height: 14px; background-color: ' + ${f.colorHex} + ';'"></span>
-                                            <span
-                                                th:text="${f.activo} ? ${f.nombre} : ${f.nombre + ' (agotado)'}">Filamento</span>
+                                            <span th:text="${f.activo} ? ${f.nombre} : ${f.nombre + ' (agotado)'}"
+                                                th:classappend="${!f.activo} ? 'text-muted text-decoration-line-through' : ''">Filamento</span>
                                         </label>
                                     </div>
                                     <p class="text-secondary mb-0" th:if="${todosFilamentos.isEmpty()}">

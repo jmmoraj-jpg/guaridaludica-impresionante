@@ -106,11 +106,4 @@ public class AdminFilamentoController {
         filamentoService.cambiarEstado(id);
         return "redirect:/admin/filamentos";
     }
-
-    @PostMapping("/{id}/borrar")
-    public String borrar(@PathVariable Long id, RedirectAttributes redirect) {
-        filamentoService.borrar(id);
-        redirect.addFlashAttribute("mensaje", "Filamento borrado");
-        return "redirect:/admin/filamentos";
-    }
 }

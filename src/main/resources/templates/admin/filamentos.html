@@ -84,13 +84,6 @@
                                 <button type="submit" class="btn btn-sm btn-pill btn-borde"
                                     th:text="${f.activo} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
                             </form>
-
-                            <!-- Borrar -->
-                            <form th:action="@{/admin/filamentos/{id}/borrar(id=${f.id})}" method="post"
-                                class="d-inline"
-                                onsubmit="return confirm('¿Seguro que quieres borrar este filamento?')">
-                                <button type="submit" class="btn btn-sm btn-pill btn-borde">Borrar</button>
-                            </form>
                         </td>
                     </tr>
                 </tbody>
