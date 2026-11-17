@@ -32,6 +32,8 @@ public class Filamento {
 
     private boolean activo = true;
 
+    private Double precioPorKg;
+
     // Relación Many-to-Many con productos
     @ManyToMany(mappedBy = "filamentos")
     private List<Producto> productos = new ArrayList<>();

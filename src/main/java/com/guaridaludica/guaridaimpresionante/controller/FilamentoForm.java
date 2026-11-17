@@ -2,6 +2,7 @@ package com.guaridaludica.guaridaimpresionante.controller;
 
 import com.guaridaludica.guaridaimpresionante.model.Filamento;
 
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -21,6 +22,9 @@ public class FilamentoForm {
 
     private boolean activo = true;
 
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double precioPorKg;
+
     // Constructores
     public FilamentoForm() {}
 
@@ -30,6 +34,7 @@ public class FilamentoForm {
         form.setNombre(f.getNombre());
         form.setColorHex(f.getColorHex());
         form.setActivo(f.isActivo());
+        form.setPrecioPorKg(f.getPrecioPorKg());
         return form;
     }
     
