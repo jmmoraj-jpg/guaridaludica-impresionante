@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +34,13 @@ public class Producto {
 
     private Integer tiempoImpresionMinutos;
 
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double altoCm;
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double anchoCm;
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double fondoCm;
+
     private boolean visible = true;
 
     @ManyToMany
@@ -56,6 +64,17 @@ public class Producto {
         if (h == 0)
             return m + " min";
         return m == 0 ? h + " h" : h + " h " + m + " min";
+    }
+
+    public String getDimensionesTexto() {
+        if (altoCm == null || anchoCm == null || fondoCm == null) {
+            return null;
+        }
+        return formatearMedida(altoCm) + " × " + formatearMedida(anchoCm) + " × " + formatearMedida(fondoCm) + " cm";
+    }
+
+    private String formatearMedida(Double v) {
+        return (v % 1 == 0) ? String.valueOf(v.intValue()) : String.valueOf(v);
     }
 
     public void addImagen(ImagenProducto imagen) {

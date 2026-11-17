@@ -62,6 +62,9 @@ public class ProductoAdminService {
             p.getFilamentos().addAll(filamentoRepository.findAllById(form.getFilamentoIds()));
         }
         p.setTiempoImpresionMinutos(form.getTiempoImpresionMinutos());
+        p.setAltoCm(form.getAltoCm());
+        p.setAnchoCm(form.getAnchoCm());
+        p.setFondoCm(form.getFondoCm());
         p.setVisible(form.isVisible());
         p.setNovedad(form.isNovedad());
 

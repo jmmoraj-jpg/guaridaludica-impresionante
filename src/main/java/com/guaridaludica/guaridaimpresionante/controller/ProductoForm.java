@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
 import com.guaridaludica.guaridaimpresionante.model.Filamento;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
+
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -33,6 +35,15 @@ public class ProductoForm {
     @Min(value = 0, message = "No puede ser negativo")
     private Integer tiempoImpresionMinutos;
 
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double altoCm;
+
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double anchoCm;
+
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double fondoCm;
+
     private boolean visible = true;
 
     private boolean novedad;
@@ -45,6 +56,9 @@ public class ProductoForm {
         f.setCategoriaIds(p.getCategorias().stream().map(Categoria::getId)
                 .collect(Collectors.toCollection(LinkedHashSet::new)));
         f.setTiempoImpresionMinutos(p.getTiempoImpresionMinutos());
+        f.setAltoCm(p.getAltoCm());
+        f.setAnchoCm(p.getAnchoCm());
+        f.setFondoCm(p.getFondoCm());
         f.setVisible(p.isVisible());
         f.setNovedad(p.isNovedad());
         f.setFilamentoIds(p.getFilamentos().stream().map(Filamento::getId)

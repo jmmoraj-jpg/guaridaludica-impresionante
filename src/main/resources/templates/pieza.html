@@ -73,7 +73,10 @@
 
                 <div class="datos d-flex flex-wrap gap-2 mb-3">
                     <span class="etiqueta etiqueta-tiempo" th:if="${pieza.tiempoTexto != null}"
-                        th:text="${pieza.tiempoTexto}">6 h</span>
+                        th:text="'⏱ ' + ${pieza.tiempoTexto}">6 h</span>
+                    <span class="etiqueta etiqueta-tiempo" th:if="${pieza.dimensionesTexto != null}"
+                        th:text="'📐 ' + ${pieza.dimensionesTexto}"
+                        title="Medidas aproximadas (Alto × Ancho × Fondo)">15 × 10 × 8 cm</span>
                     <th:block th:each="c : ${pieza.categorias}">
                         <a class="etiqueta etiqueta-categoria" th:if="${c.visible}" th:href="@{/(categoria=${c.slug})}"
                             th:text="${c.nombre}">Figuras</a>

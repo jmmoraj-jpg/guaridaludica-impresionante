@@ -82,6 +82,30 @@
                                 <div class="error-campo" th:if="${#fields.hasErrors('tiempoImpresionMinutos')}"
                                     th:errors="*{tiempoImpresionMinutos}"></div>
                             </div>
+
+                            <div class="col-12 mb-3">
+                                <label class="form-label">Dimensiones aproximadas (cm)</label>
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <input type="number" id="alto" th:field="*{altoCm}" min="0" step="0.1"
+                                            class="form-control" placeholder="Alto">
+                                        <div class="error-campo" th:if="${#fields.hasErrors('altoCm')}"
+                                            th:errors="*{altoCm}"></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" id="ancho" th:field="*{anchoCm}" min="0" step="0.1"
+                                            class="form-control" placeholder="Ancho">
+                                        <div class="error-campo" th:if="${#fields.hasErrors('anchoCm')}"
+                                            th:errors="*{anchoCm}"></div>
+                                    </div>
+                                    <div class="col-4">
+                                        <input type="number" id="fondo" th:field="*{fondoCm}" min="0" step="0.1"
+                                            class="form-control" placeholder="Fondo">
+                                        <div class="error-campo" th:if="${#fields.hasErrors('fondoCm')}"
+                                            th:errors="*{fondoCm}"></div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-check mb-4">

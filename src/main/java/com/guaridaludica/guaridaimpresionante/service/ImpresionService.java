@@ -24,7 +24,15 @@ public class ImpresionService {
         "Trazando perímetros con mimo y precisión...",
         "Calculando soportes estratégicos para que no sufras...",
         "Vigilando la sagrada primera capa como un halcón...",
-        "Fundiendo filamento y dando forma a las ideas..."
+        "Fundiendo filamento y dando forma a las ideas...",
+        "Convirtiendo bobinas de plástico en pura magia lúdica...",
+        "Negociando con los ejes X, Y y Z para que todo encaje...",
+        "Rezando a los dioses del PLA para evitar el warping...",
+        "Extruyendo capas de 0.4 mm con cariño artesanal...",
+        "Afinando retracciones para que no quede ni un hilillo...",
+        "Transformando código G-code en piezas tangibles...",
+        "Comprobando que la bobina tenga cuerda para rato...",
+        "Dando forma a la próxima aventura sobre la mesa..."
     );
 
     public ImpresionService(ImpresionRepository impresionRepository,
