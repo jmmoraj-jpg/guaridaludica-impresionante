@@ -1,8 +1,10 @@
 package com.guaridaludica.guaridaimpresionante.service;
 
 import com.guaridaludica.guaridaimpresionante.controller.ProductoForm;
+import com.guaridaludica.guaridaimpresionante.model.Filamento;
 import com.guaridaludica.guaridaimpresionante.model.ImagenProducto;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
+import com.guaridaludica.guaridaimpresionante.model.ProductoFilamento;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ConversacionRepository;
 import com.guaridaludica.guaridaimpresionante.repository.FavoritoRepository;
@@ -31,7 +33,8 @@ public class ProductoAdminService {
 
     public ProductoAdminService(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
             ConversacionRepository conversacionRepository, FavoritoRepository favoritoRepository,
-            ImpresionRepository impresionRepository, FilamentoRepository filamentoRepository, CloudinaryService cloudinary) {
+            ImpresionRepository impresionRepository, FilamentoRepository filamentoRepository,
+            CloudinaryService cloudinary) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.conversacionRepository = conversacionRepository;
@@ -56,10 +59,28 @@ public class ProductoAdminService {
         if (form.getCategoriaIds() != null && !form.getCategoriaIds().isEmpty()) {
             p.getCategorias().addAll(categoriaRepository.findAllById(form.getCategoriaIds()));
         }
-        // Filamentos compatibles
-        p.getFilamentos().clear();
-        if (form.getFilamentoIds() != null && !form.getFilamentoIds().isEmpty()) {
-            p.getFilamentos().addAll(filamentoRepository.findAllById(form.getFilamentoIds()));
+        // Filamentos y gramos usados
+        p.getFilamentosUsados().clear();
+        if (form.getFilamentosForm() != null && !form.getFilamentosForm().isEmpty()) {
+            for (ProductoForm.FilamentoAsignadoForm faf : form.getFilamentosForm()) {
+                if (faf.getFilamentoId() != null && faf.getGramos() != null && faf.getGramos() > 0) {
+                    Filamento filamento = filamentoRepository.findById(faf.getFilamentoId()).orElse(null);
+                    if (filamento != null) {
+                        ProductoFilamento pf = new ProductoFilamento();
+                        pf.setProducto(p);
+                        pf.setFilamento(filamento);
+                        pf.setGramos(faf.getGramos());
+
+                        // Asignamos la clave compuesta
+                        pf.getId().setProductoId(p.getId() != null ? p.getId() : null); // Se asignará correctamente al
+                                                                                        // guardar si es nuevo, o puedes
+                                                                                        // usar el id si ya existe
+                        pf.getId().setFilamentoId(filamento.getId());
+
+                        p.getFilamentosUsados().add(pf);
+                    }
+                }
+            }
         }
         p.setTiempoImpresionMinutos(form.getTiempoImpresionMinutos());
         p.setAltoCm(form.getAltoCm());

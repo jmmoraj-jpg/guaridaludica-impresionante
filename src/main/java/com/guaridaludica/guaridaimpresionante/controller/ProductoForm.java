@@ -1,11 +1,12 @@
 package com.guaridaludica.guaridaimpresionante.controller;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.guaridaludica.guaridaimpresionante.model.Categoria;
-import com.guaridaludica.guaridaimpresionante.model.Filamento;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -30,8 +31,6 @@ public class ProductoForm {
 
     private Set<Long> categoriaIds = new LinkedHashSet<>();
 
-    private Set<Long> filamentoIds = new LinkedHashSet<>();
-
     @Min(value = 0, message = "No puede ser negativo")
     private Integer tiempoImpresionMinutos;
 
@@ -48,6 +47,16 @@ public class ProductoForm {
 
     private boolean novedad;
 
+    // Lista para recibir los filamentos y sus gramos desde la vista de administración
+    private List<FilamentoAsignadoForm> filamentosForm = new ArrayList<>();
+
+    @Getter
+    @Setter
+    public static class FilamentoAsignadoForm {
+        private Long filamentoId;
+        private Double gramos = 0.0;
+    }
+
     public static ProductoForm desde(Producto p) {
         ProductoForm f = new ProductoForm();
         f.setId(p.getId());
@@ -61,8 +70,15 @@ public class ProductoForm {
         f.setFondoCm(p.getFondoCm());
         f.setVisible(p.isVisible());
         f.setNovedad(p.isNovedad());
-        f.setFilamentoIds(p.getFilamentos().stream().map(Filamento::getId)
-                .collect(Collectors.toCollection(LinkedHashSet::new)));
+        // Mapear los filamentos usados actuales a las filas del formulario
+        if (p.getFilamentosUsados() != null) {
+            f.filamentosForm = p.getFilamentosUsados().stream().map(pf -> {
+                FilamentoAsignadoForm faf = new FilamentoAsignadoForm();
+                faf.setFilamentoId(pf.getFilamento().getId());
+                faf.setGramos(pf.getGramos());
+                return faf;
+            }).collect(Collectors.toList());
+        }
         return f;
     }
 }

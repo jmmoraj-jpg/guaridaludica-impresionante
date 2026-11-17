@@ -51,28 +51,84 @@
                             </div>
 
                             <div class="mb-4">
-                                <label>Filamentos disponibles / recomendados</label>
-                                <div class="lista-categorias d-flex flex-wrap gap-3 pt-1">
-                                    <div class="form-check d-flex align-items-center gap-2"
-                                        th:each="f : ${todosFilamentos}">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label mb-0 fw-semibold">Filamentos y gramos utilizados</label>
+                                    <button type="button" id="btnAnadirFilamentoForm"
+                                        class="btn btn-sm btn-pill btn-borde">
+                                        + Añadir color
+                                    </button>
+                                </div>
 
-                                        <!-- Añadimos th:disabled para bloquear el checkbox si f.activo es falso -->
-                                        <input type="checkbox" class="form-check-input mt-0" th:id="${'fil-' + f.id}"
-                                            name="filamentoIds" th:value="${f.id}"
-                                            th:checked="${form.filamentoIds.contains(f.id)}" th:disabled="${!f.activo}">
+                                <div id="listaFilamentosForm" class="d-flex flex-column gap-2">
+                                    <!-- Si ya tiene filamentos guardados, los iteramos -->
+                                    <div class="fila-filamento-form border rounded-3 p-2 bg-light"
+                                        th:each="item, stat : ${form.filamentosForm}">
+                                        <div class="row g-2 align-items-end">
+                                            <div class="col-7 col-md-7">
+                                                <label class="form-label small text-muted mb-1">Filamento</label>
+                                                <select class="form-select form-select-sm"
+                                                    th:name="${'filamentosForm[' + stat.index + '].filamentoId'}">
+                                                    <option value="">-- Elige filamento --</option>
+                                                    <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
+                                                        th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')"
+                                                        th:selected="${f.id == item.filamentoId}">
+                                                        PLA Negro
+                                                    </option>
+                                                </select>
+                                            </div>
 
-                                        <label class="form-check-label d-flex align-items-center gap-2"
-                                            th:for="${'fil-' + f.id}">
-                                            <span class="rounded-circle d-inline-block shadow-sm"
-                                                th:style="'width: 14px; height: 14px; background-color: ' + ${f.colorHex} + ';'"></span>
-                                            <span th:text="${f.activo} ? ${f.nombre} : ${f.nombre + ' (agotado)'}"
-                                                th:classappend="${!f.activo} ? 'text-muted text-decoration-line-through' : ''">Filamento</span>
-                                        </label>
+                                            <div class="col-3 col-md-4">
+                                                <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                                                <input type="number" class="form-control form-control-sm" min="0"
+                                                    step="0.1" th:name="${'filamentosForm[' + stat.index + '].gramos'}"
+                                                    th:value="${item.gramos}">
+                                            </div>
+
+                                            <div class="col-2 col-md-1 text-end">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger btn-quitar-fila"
+                                                    title="Quitar">
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <p class="text-secondary mb-0" th:if="${todosFilamentos.isEmpty()}">
-                                        Aún no hay filamentos registrados. <a th:href="@{/admin/filamentos}">Añadir
-                                            uno</a>
-                                    </p>
+
+                                    <!-- Si está vacío al crear una pieza nueva, mostramos una fila inicial por defecto -->
+                                    <div class="fila-filamento-form border rounded-3 p-2 bg-light"
+                                        th:if="${#lists.isEmpty(form.filamentosForm)}">
+                                        <div class="row g-2 align-items-end">
+                                            <div class="col-7 col-md-7">
+                                                <label class="form-label small text-muted mb-1">Filamento</label>
+                                                <select class="form-select form-select-sm"
+                                                    name="filamentosForm[0].filamentoId">
+                                                    <option value="">-- Elige filamento --</option>
+                                                    <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
+                                                        th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')">
+                                                        PLA Negro
+                                                    </option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-3 col-md-4">
+                                                <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                                                <input type="number" class="form-control form-control-sm" min="0"
+                                                    step="0.1" name="filamentosForm[0].gramos" value="0">
+                                            </div>
+
+                                            <div class="col-2 col-md-1 text-end">
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-danger btn-quitar-fila d-none"
+                                                    title="Quitar">
+                                                    ✕
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-text mt-1">
+                                    Indica los filamentos y gramos exactos que consume esta pieza para que la
+                                    calculadora los lea automáticamente.
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">

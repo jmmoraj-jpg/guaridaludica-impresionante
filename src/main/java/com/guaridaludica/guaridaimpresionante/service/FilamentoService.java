@@ -34,6 +34,7 @@ public class FilamentoService {
             filamento.setNombre(form.getNombre());
             filamento.setColorHex(form.getColorHex());
             filamento.setActivo(form.isActivo());
+            filamento.setPrecioPorKg(form.getPrecioPorKg()); // <-- ¡Faltaba aquí al editar!
         } else {
             filamento = new Filamento();
             filamento.setNombre(form.getNombre());

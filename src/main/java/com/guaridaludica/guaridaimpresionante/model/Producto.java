@@ -1,9 +1,7 @@
 package com.guaridaludica.guaridaimpresionante.model;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
@@ -43,10 +41,14 @@ public class Producto {
 
     private boolean visible = true;
 
-    @ManyToMany
-    @JoinTable(name = "producto_filamento", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "filamento_id"))
-    @OrderBy("nombre ASC")
-    private Set<Filamento> filamentos = new HashSet<>();
+    // @ManyToMany
+    // @JoinTable(name = "producto_filamento", joinColumns = @JoinColumn(name =
+    // "producto_id"), inverseJoinColumns = @JoinColumn(name = "filamento_id"))
+    // @OrderBy("nombre ASC")
+    // private Set<Filamento> filamentos = new HashSet<>();
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoFilamento> filamentosUsados = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "producto_categoria", joinColumns = @JoinColumn(name = "producto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
@@ -103,5 +105,9 @@ public class Producto {
             lista.add(0, portada);
         }
         return lista;
+    }
+
+    public List<Filamento> getFilamentosDisponibles() {
+        return filamentosUsados.stream().map(ProductoFilamento::getFilamento).toList();
     }
 }

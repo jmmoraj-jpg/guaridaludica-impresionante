@@ -74,9 +74,9 @@
 
                             <!-- Bloque de filamentos integrado dentro de la tarjeta -->
                             <div class="mt-3 pt-2 border-top d-flex flex-wrap gap-1 align-items-center"
-                                th:if="${p.filamentos != null and !p.filamentos.empty}">
+                                th:if="${p.filamentosDisponibles != null and !p.filamentosDisponibles.empty}">
                                 <small class="text-muted me-1" style="font-size: 0.7rem;">Colores:</small>
-                                <span th:each="filamento : ${p.filamentos}"
+                                <span th:each="filamento : ${p.filamentosDisponibles}"
                                     class="d-inline-flex align-items-center gap-1 px-2 py-0.5 border rounded-pill bg-white"
                                     style="font-size: 0.7rem;" th:title="${filamento.nombre}">
                                     <span

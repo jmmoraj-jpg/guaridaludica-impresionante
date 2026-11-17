@@ -91,9 +91,9 @@ public class AdminProductoController {
                     ? List.of()
                     : productoRepository.findWithImagenesById(form.getId())
                             .map(Producto::getImagenes).orElse(List.of());
-            model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
-            model.addAttribute("todosFilamentos", filamentoRepository.findAll());
-            model.addAttribute("imagenes", existentes);
+            
+            // Reutilizamos prepararFormulario para mantener limpio el código
+            prepararFormulario(model, form, existentes);
             return "admin/producto-form";
         }
         servicioProductoAdminService.guardar(form, nuevas, eliminar, portada);

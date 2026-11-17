@@ -21,6 +21,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const resPrecioFinal = document.getElementById("resPrecioFinal");
     const resBeneficio = document.getElementById("resBeneficio");
 
+    // Guardamos las opciones HTML del inventario de filamentos del primer select antes de alterar nada
+    const selectInicial = document.querySelector(".select-filamento");
+    const opcionesFilamentosHtml = selectInicial ? selectInicial.innerHTML : '<option value="" data-precio="20">Estándar / Otro (20,00 €/kg)</option>';
+
     function formatearEuros(valor) {
         return valor.toFixed(2).replace(".", ",") + " €";
     }
@@ -57,11 +61,14 @@ document.addEventListener("DOMContentLoaded", () => {
         let costeMaterial = 0;
 
         listaFilamentos.querySelectorAll(".fila-filamento").forEach((fila) => {
-            const gramos = parseFloat(fila.querySelector(".input-gramos").value) || 0;
-            const precioKg = parseFloat(fila.querySelector(".input-precio-kg").value) || 0;
+            const inputGramos = fila.querySelector(".input-gramos");
+            const inputPrecio = fila.querySelector(".input-precio-kg");
 
-            gramosTotales += gramos;
-            costeMaterial += (gramos / 1000) * precioKg;
+            const gramos = inputGramos && inputGramos.value !== "" ? parseFloat(inputGramos.value) : 0;
+            const precioKg = inputPrecio && inputPrecio.value !== "" ? parseFloat(inputPrecio.value) : 0;
+
+            gramosTotales += isNaN(gramos) ? 0 : gramos;
+            costeMaterial += ((isNaN(gramos) ? 0 : gramos) / 1000) * (isNaN(precioKg) ? 0 : precioKg);
         });
 
         // 2. Coste energético y desgaste de máquina
@@ -83,10 +90,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const beneficio = precioFinal - costeTotal;
 
-        // Pintar resultados
+        // Pintar resultados de gramos y coste de material
         resGramosTotales.textContent = gramosTotales % 1 === 0
             ? gramosTotales.toFixed(0)
             : gramosTotales.toFixed(1).replace(".", ",");
+        
+        // Actualizamos también el texto dinámico del desglose con los gramos actuales
+        const textoFilamentoTotal = document.getElementById("resFilamentoTotalTexto"); // O el span que tengas en el HTML
+        if (textoFilamentoTotal) {
+            textoFilamentoTotal.textContent = gramosTotales % 1 === 0 ? gramosTotales.toFixed(0) : gramosTotales.toFixed(1).replace(".", ",");
+        }
+
         resMaterial.textContent = formatearEuros(costeMaterial);
         resEnergia.textContent = formatearEuros(costeEnergia);
         resRiesgo.textContent = formatearEuros(costeRiesgo);
@@ -104,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Reiniciar valores de la nueva fila
         const select = nuevaFila.querySelector(".select-filamento");
-        select.selectedIndex = 0;
+        select.selectedIndex = 0; // Se posiciona en la opción de "-- Selecciona un filamento --"
         nuevaFila.querySelector(".input-gramos").value = 15;
         nuevaFila.querySelector(".input-precio-kg").value = 20;
 
@@ -113,12 +127,13 @@ document.addEventListener("DOMContentLoaded", () => {
         calcular();
     });
 
-    // Delegación de eventos dentro de la lista de filamentos (funciona para filas nuevas y existentes)
+    // Delegación de eventos dentro de la lista de filamentos
     listaFilamentos.addEventListener("change", (e) => {
         if (e.target.classList.contains("select-filamento")) {
             const fila = e.target.closest(".fila-filamento");
             const opcion = e.target.options[e.target.selectedIndex];
-            const precio = parseFloat(opcion.dataset.precio);
+            const precioStr = opcion.getAttribute("data-precio");
+            const precio = parseFloat(precioStr);
             if (!isNaN(precio)) {
                 fila.querySelector(".input-precio-kg").value = precio;
             }
@@ -144,13 +159,93 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Al elegir una pieza del catálogo, rellena su tiempo si lo tiene guardado
+    // Al elegir una pieza del catálogo, rellena su tiempo y sus filamentos guardados (o reinicia si elige manual)
     selectPieza.addEventListener("change", () => {
         const opcion = selectPieza.options[selectPieza.selectedIndex];
+
+        // Si selecciona la opción por defecto ("-- Cálculo libre / manual --")
+        if (!selectPieza.value) {
+            // Reiniciamos a una única fila vacía por defecto
+            listaFilamentos.innerHTML = `
+                <div class="fila-filamento border rounded-3 p-2 bg-light">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label small text-muted mb-1">Filamento</label>
+                            <select class="form-select form-select-sm select-filamento">
+                                <option value="" data-precio="20" disabled selected>-- Selecciona un filamento --</option>
+                                ${opcionesFilamentosHtml}
+                            </select>
+                        </div>
+                        <div class="col-5 col-md-3">
+                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="50">
+                        </div>
+                        <div class="col-5 col-md-3">
+                            <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
+                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="20">
+                        </div>
+                        <div class="col-2 col-md-1 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento d-none" title="Quitar color">✕</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            actualizarBotonesQuitar();
+            calcular();
+            return;
+        }
+
         const tiempo = parseInt(opcion.dataset.tiempo, 10);
         if (!isNaN(tiempo) && tiempo > 0) {
             inputMinutos.value = tiempo;
         }
+
+        const filamentosData = opcion.dataset.filamentos;
+        if (filamentosData && filamentosData.trim() !== "") {
+            // Limpiamos las filas actuales
+            listaFilamentos.innerHTML = "";
+
+            // El formato viene como "id:gramos:precio,id:gramos:precio"
+            const items = filamentosData.split(",");
+            items.forEach((item) => {
+                const [filamentoId, gramos, precioKg] = item.split(":");
+
+                const filaDiv = document.createElement("div");
+                filaDiv.className = "fila-filamento border rounded-3 p-2 bg-light";
+                filaDiv.innerHTML = `
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label small text-muted mb-1">Filamento</label>
+                            <select class="form-select form-select-sm select-filamento">
+                                <option value="" data-precio="20" disabled>-- Selecciona un filamento --</option>
+                                ${opcionesFilamentosHtml}
+                            </select>
+                        </div>
+                        <div class="col-5 col-md-3">
+                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="${gramos}">
+                        </div>
+                        <div class="col-5 col-md-3">
+                            <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
+                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="${precioKg}">
+                        </div>
+                        <div class="col-2 col-md-1 text-end">
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento" title="Quitar color">✕</button>
+                        </div>
+                    </div>
+                `;
+
+                listaFilamentos.appendChild(filaDiv);
+
+                // Seleccionamos el filamento correcto
+                const selectAgregado = filaDiv.querySelector(".select-filamento");
+                if (filamentoId) {
+                    selectAgregado.value = filamentoId;
+                }
+            });
+            actualizarBotonesQuitar();
+        }
+
         calcular();
     });
 

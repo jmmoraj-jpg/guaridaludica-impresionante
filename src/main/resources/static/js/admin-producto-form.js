@@ -58,3 +58,53 @@ function iniciarBuscadorCategorias() {
         if (e.key === 'Enter') e.preventDefault();
     });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const btnAnadir = document.getElementById("btnAnadirFilamentoForm");
+    const contenedor = document.getElementById("listaFilamentosForm");
+
+    if (btnAnadir && contenedor) {
+        function actualizarIndicesYBotones() {
+            const filas = contenedor.querySelectorAll(".fila-filamento-form");
+            filas.forEach((fila, index) => {
+                const select = fila.querySelector("select");
+                const inputGramos = fila.querySelector("input[type='number']");
+                
+                if (select) select.name = `filamentosForm[${index}].filamentoId`;
+                if (inputGramos) inputGramos.name = `filamentosForm[${index}].gramos`;
+
+                const btnQuitar = fila.querySelector(".btn-quitar-fila");
+                if (btnQuitar) {
+                    if (filas.length > 1) {
+                        btnQuitar.classList.remove("d-none");
+                    } else {
+                        btnQuitar.classList.add("d-none");
+                    }
+                }
+            });
+        }
+
+        btnAnadir.addEventListener("click", () => {
+            const primeraFila = contenedor.querySelector(".fila-filamento-form");
+            if (primeraFila) {
+                const nuevaFila = primeraFila.cloneNode(true);
+                nuevaFila.querySelector("select").selectedIndex = 0;
+                nuevaFila.querySelector("input[type='number']").value = "0";
+                contenedor.appendChild(nuevaFila);
+                actualizarIndicesYBotones();
+            }
+        });
+
+        contenedor.addEventListener("click", (e) => {
+            if (e.target.closest(".btn-quitar-fila")) {
+                const fila = e.target.closest(".fila-filamento-form");
+                if (contenedor.querySelectorAll(".fila-filamento-form").length > 1) {
+                    fila.remove();
+                    actualizarIndicesYBotones();
+                }
+            }
+        });
+
+        actualizarIndicesYBotones();
+    }
+});

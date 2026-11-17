@@ -54,8 +54,8 @@
                     <h5 class="text-muted mb-2"><i class="bi bi-palette"></i> Filamentos utilizados:</h5>
 
                     <!-- Si la pieza tiene filamentos asociados -->
-                    <div class="d-flex flex-wrap gap-2" th:if="${pieza.filamentos != null and !pieza.filamentos.empty}">
-                        <span th:each="filamento : ${pieza.filamentos}"
+                    <div class="d-flex flex-wrap gap-2" th:if="${pieza.filamentosDisponibles != null and !pieza.filamentosDisponibles.empty}">
+                        <span th:each="filamento : ${pieza.filamentosDisponibles}"
                             class="badge d-inline-flex align-items-center gap-2 px-3 py-2 border rounded-pill shadow-sm bg-white text-dark">
                             <!-- Círculo con el color HEX real del filamento -->
                             <span
@@ -66,7 +66,7 @@
                     </div>
 
                     <!-- Si por algún motivo no tiene ninguno asignado -->
-                    <p class="text-muted fst-italic" th:if="${pieza.filamentos == null or pieza.filamentos.empty}">
+                    <p class="text-muted fst-italic" th:if="${pieza.filamentosDisponibles == null or pieza.filamentosDisponibles.empty}">
                         Consúltanos los colores disponibles para esta pieza.
                     </p>
                 </div>

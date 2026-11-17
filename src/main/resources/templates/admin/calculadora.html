@@ -24,7 +24,9 @@
                             <select id="selectPieza" class="form-select">
                                 <option value="">-- Cálculo libre / manual --</option>
                                 <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"
-                                    th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}">
+                                    th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}"
+                                    th:data-filamentos="${#aggregates.sum(p.filamentosUsados.![gramos]) != null ? 
+                #strings.listJoin(p.filamentosUsados.![filamento.id + ':' + gramos + ':' + (filamento.precioPorKg != null ? filamento.precioPorKg : 20)], ',') : ''}">
                                     Torre de dados
                                 </option>
                             </select>
@@ -53,7 +55,8 @@
                                 <div class="col-md-5">
                                     <label class="form-label small text-muted mb-1">Filamento</label>
                                     <select class="form-select form-select-sm select-filamento">
-                                        <option value="" data-precio="20">Estándar / Otro (20,00 €/kg)</option>
+                                        <option value="" data-precio="20" disabled selected>-- Selecciona un filamento
+                                            --</option>
                                         <option th:each="f : ${filamentos}" th:value="${f.id}"
                                             th:text="${f.nombre} + (${f.precioPorKg != null} ? ' (' + ${#numbers.formatDecimal(f.precioPorKg, 1, 2)} + ' €/kg)' : '')"
                                             th:data-precio="${f.precioPorKg != null ? f.precioPorKg : 20}">
@@ -131,10 +134,6 @@
                             <li class="list-group-item d-flex justify-content-between px-0">
                                 <span class="text-secondary">Filamento total (<span id="resGramosTotales">50</span>
                                     g):</span>
-                                <strong id="resMaterial">1,00 €</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between px-0">
-                                <span class="text-secondary">Filamento consumido:</span>
                                 <strong id="resMaterial">1,00 €</strong>
                             </li>
                             <li class="list-group-item d-flex justify-content-between px-0">
