@@ -30,6 +30,7 @@
                         <th>Categoría</th>
                         <th>Coste / Sugerido</th>
                         <th>Estado</th>
+                        <th>Stock</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
@@ -66,6 +67,27 @@
                             <span class="etiqueta mat-petg" th:if="${p.visible}">Visible</span>
                             <span class="etiqueta" th:unless="${p.visible}">Oculta</span>
                         </td>
+                        <td class="align-middle text-center">
+                            <div class="d-inline-flex align-items-center gap-1">
+                                <!-- Botón restar -->
+                                <form th:action="@{/admin/productos/{id}/stock(id=${p.id})}" method="post" class="m-0">
+                                    <input type="hidden" name="delta" value="-1" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm px-2 py-0"
+                                        title="Restar 1">-</button>
+                                </form>
+
+                                <!-- Cantidad actual -->
+                                <span class="fw-bold px-2" th:text="${p.stock != null ? p.stock : 0}">0</span>
+
+                                <!-- Botón sumar -->
+                                <form th:action="@{/admin/productos/{id}/stock(id=${p.id})}" method="post" class="m-0">
+                                    <input type="hidden" name="delta" value="1" />
+                                    <button type="submit" class="btn btn-outline-secondary btn-sm px-2 py-0"
+                                        title="Sumar 1">+</button>
+                                </form>
+                            </div>
+                        </td>
+                        
                         <td class="text-end">
                             <!-- Tus botones de editar, ocultar y borrar de siempre -->
                             <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"

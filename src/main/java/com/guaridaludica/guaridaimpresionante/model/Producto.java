@@ -5,6 +5,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -61,6 +62,10 @@ public class Producto {
 
     @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean novedad;
+
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    @Column(nullable = false, columnDefinition = "integer default 0")
+    private Integer stock = 0;
 
     public String getTiempoTexto() {
         if (tiempoImpresionMinutos == null)

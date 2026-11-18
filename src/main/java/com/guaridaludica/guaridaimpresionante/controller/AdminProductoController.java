@@ -123,4 +123,21 @@ public class AdminProductoController {
         model.addAttribute("todasCategorias", categoriaRepository.findAllByOrderByOrdenAscNombreAsc());
         model.addAttribute("todosFilamentos", filamentoRepository.findAll());
     }
+
+    @PostMapping("/{id}/stock")
+    public String actualizarStockRapido(@PathVariable Long id, 
+                                        @RequestParam int delta, 
+                                        RedirectAttributes redirect) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        
+        int nuevoStock = (producto.getStock() != null ? producto.getStock() : 0) + delta;
+        if (nuevoStock < 0) nuevoStock = 0; // Evitamos negativos
+        
+        producto.setStock(nuevoStock);
+        productoRepository.save(producto);
+        
+        redirect.addFlashAttribute("mensaje", "Stock actualizado para: " + producto.getNombre());
+        return "redirect:/admin/productos";
+    }
 }

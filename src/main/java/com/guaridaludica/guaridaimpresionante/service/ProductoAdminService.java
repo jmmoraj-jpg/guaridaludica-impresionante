@@ -86,6 +86,7 @@ public class ProductoAdminService {
         p.setAltoCm(form.getAltoCm());
         p.setAnchoCm(form.getAnchoCm());
         p.setFondoCm(form.getFondoCm());
+        p.setStock(form.getStock() != null ? form.getStock() : 0);
         p.setVisible(form.isVisible());
         p.setNovedad(form.isNovedad());
 

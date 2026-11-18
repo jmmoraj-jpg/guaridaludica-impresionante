@@ -55,6 +55,9 @@ public class ProductoForm {
     // administración
     private List<FilamentoAsignadoForm> filamentosForm = new ArrayList<>();
 
+    @Min(value = 0, message = "No puede ser negativo")
+    private Integer stock = 0;
+
     @Getter
     @Setter
     public static class FilamentoAsignadoForm {
@@ -79,7 +82,8 @@ public class ProductoForm {
         f.setCosteProduccion(p.getCosteProduccion());
         f.setMargenBeneficioAplicado(p.getMargenBeneficioAplicado());
         f.setPrecioSugerido(p.getPrecioSugerido());
-        
+
+        f.setStock(p.getStock() != null ? p.getStock() : 0);
         // Mapear los filamentos usados actuales a las filas del formulario
         if (p.getFilamentosUsados() != null) {
             f.filamentosForm = p.getFilamentosUsados().stream().map(pf -> {
