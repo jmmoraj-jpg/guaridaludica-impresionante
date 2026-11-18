@@ -7,8 +7,8 @@ Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas
 ## Funcionalidades
 
 **Parte pública y de usuario**
-- Catálogo de piezas con filtros por categoría, buscador de categorías y paginación.
-- Detalle de cada pieza con carrusel de imágenes de tamaño fijo, material, tiempo de impresión y categoría.
+- Catálogo de piezas con filtros por categoría, buscador, descripciones resumidas en tarjetas y paginación.
+- Detalle de cada pieza con carrusel de imágenes de tamaño fijo, descripción completa, materiales disponibles, dimensiones, tiempo de impresión y categoría.
 - Registro e inicio de sesión (contraseñas cifradas con BCrypt). El registro exige aceptar la política de privacidad y guarda la fecha de aceptación.
 - Favoritos: corazón en las tarjetas y en el detalle, y página "Mis favoritos".
 - Conversaciones con el creador sobre una pieza: la conversación se crea al enviar el primer mensaje, y desde ella se puede **solicitar** o **cancelar** la pieza.
@@ -18,7 +18,9 @@ Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas
 - Diseño colorido, responsive y con Bootstrap 5.
 
 **Administración** (roles `ADMIN` y `ENCARGADO`, según se indica)
-- Piezas (`ADMIN`): listado con opción de ocultar, mostrar y borrar; alta y edición con varias imágenes, elección de la portada, vista previa y casilla de **novedad**.
+- Piezas (`ADMIN`): listado con vista rápida de coste de producción y precio sugerido, opción de ocultar, mostrar y borrar; alta y edición con varias imágenes, elección de la portada, vista previa, asignación de filamentos con gramos exactos, datos económicos y casilla de **novedad**.
+- Filamentos (`ADMIN`): gestión de inventario de materiales/colores, disponibilidad y precio por kilogramo (`€/kg`).
+- Calculadora de costes y margen (`ADMIN`): herramienta interactiva para calcular el coste real de fabricación (consumo multicolor de filamentos, desgaste/electricidad, colchón de fallos y extras) y el precio sugerido según margen. Permite cargar cualquier pieza del catálogo automáticamente y guardar el cálculo directamente en su ficha.
 - Categorías (`ADMIN`): alta, edición, orden y visibilidad.
 - Impresora (`ADMIN`): lista de piezas que se están imprimiendo (hasta 4), con buscador para elegirlas y porcentaje de avance editable.
 - Bandeja de mensajes (`ADMIN` y `ENCARGADO`): responder a los usuarios, aceptar solicitudes fijando el precio y hacer avanzar el estado.
@@ -52,23 +54,24 @@ CONSULTA → SOLICITADA → ACEPTADA → EN_IMPRESION → LISTA → ENTREGADA
 | Lenguaje | Java 21 |
 | Framework | Spring Boot 4.1 (Web MVC, Data JPA, Security, Validation, Actuator) |
 | Plantillas | Thymeleaf + Thymeleaf Extras Spring Security |
-| Base de datos | PostgreSQL |
+| Base de datos | PostgreSQL (esquema `guarida3d`, alojado en Supabase en producción) |
 | Imágenes | Cloudinary |
 | Interfaz | Bootstrap 5.3 (CDN), CSS y JavaScript propios |
-| Build | Maven |
+| Build y Despliegue | Maven, Render |
 
 ## Estructura del proyecto
 
 ```
 src/main/java/com/guaridaludica/guaridaimpresionante/
 ├── config/        Seguridad, Cloudinary y carga inicial de datos
-├── controller/    Controladores web y formularios
-├── model/         Entidades JPA (Producto, ImagenProducto, Categoria, Usuario, Favorito,
-│                  Conversacion, Mensaje, Impresion) y enumerados (Rol, EstadoConversacion)
+├── controller/    Controladores web y formularios (catálogo, calculadora, piezas, filamentos, etc.)
+├── model/         Entidades JPA (Producto, ImagenProducto, Filamento, ProductoFilamento,
+│                  Categoria, Usuario, Favorito, Conversacion, Mensaje, Impresion)
+│                  y enumerados (Rol, EstadoConversacion)
 ├── repository/    Repositorios Spring Data
 ├── security/      UserDetailsService
 ├── service/       Lógica de negocio (conversaciones, impresiones, avisos, administración,
-│                  favoritos, categorías y Cloudinary)
+│                  filamentos, favoritos, categorías y Cloudinary)
 └── util/          Utilidades (paginación)
 
 src/main/resources/
@@ -78,11 +81,11 @@ src/main/resources/
 ├── static/
 │   ├── css/                  Estilos por módulos (base, componentes, layout, home, catalogo,
 │   │                         pieza, formularios, admin, conversaciones)
-│   ├── js/                   Scripts por pantalla
+│   ├── js/                   Scripts por pantalla (calculadora, formularios dinámicos, etc.)
 │   └── img/                  Logos y favicon
 └── templates/
     ├── fragments/            Cabecera, navbar, pie, hilo de mensajes y paginación reutilizables
-    └── admin/                Pantallas de administración
+    └── admin/                Pantallas de administración (piezas, filamentos, calculadora, etc.)
 ```
 
 ## Requisitos
@@ -148,7 +151,7 @@ Se activa con la variable `SPRING_PROFILES_ACTIVE=prod`. Todos los datos sensibl
 
 | Variable | Descripción |
 |---|---|
-| `DB_URL` | URL JDBC de PostgreSQL (con `?currentSchema=guarida3d`) |
+| `DB_URL` | URL JDBC de PostgreSQL en Supabase (con `?currentSchema=guarida3d`) |
 | `DB_USER` | Usuario de la base de datos |
 | `DB_PASSWORD` | Contraseña de la base de datos |
 | `ADMIN_EMAIL` | Email del administrador inicial |
@@ -157,19 +160,19 @@ Se activa con la variable `SPRING_PROFILES_ACTIVE=prod`. Todos los datos sensibl
 | `CLOUDINARY_API_KEY` | API key de Cloudinary |
 | `CLOUDINARY_API_SECRET` | API secret de Cloudinary |
 
-En producción `ddl-auto` está en `validate`: las tablas y columnas deben existir antes de arrancar. Cada vez que se añade una entidad o un campo (por ejemplo, las tablas `conversaciones`, `mensajes` e `impresiones`, o las columnas `novedad`, `precio` y `fecha_aceptacion_privacidad`), hay que crearlo también en la base de datos de producción antes de desplegar.
+En producción `ddl-auto` está en `validate`: las tablas y columnas deben existir antes de arrancar. Cada vez que se añade una entidad o un campo (por ejemplo, las tablas `filamentos` y `producto_filamento`, o las columnas `coste_produccion`, `margen_beneficio_aplicado` y `precio_sugerido` en `productos`), hay que crearlo también en la base de datos de producción antes de desplegar.
 
 El endpoint `/actuator/health` es público y sirve para comprobar que la aplicación está viva (por ejemplo, desde un servicio de monitorización externo).
 
-El despliegue previsto es en [Render](https://render.com/) con PostgreSQL en la nube.
+El despliegue está configurado en [Render](https://render.com/) conectado a [Supabase](https://supabase.com/).
 
 ## Roles
 
 | Rol | Permisos |
 |---|---|
 | `USUARIO` | Favoritos, conversaciones y solicitudes de piezas |
-| `ENCARGADO` | Lo anterior y la bandeja de mensajes: leer, responder y cambiar el estado de las solicitudes. No gestiona piezas, categorías ni impresora |
-| `ADMIN` | Todo lo anterior y la gestión de piezas, categorías e impresora |
+| `ENCARGADO` | Lo anterior y la bandeja de mensajes: leer, responder y cambiar el estado de las solicitudes. No gestiona piezas, filamentos, calculadora, categorías ni impresora |
+| `ADMIN` | Todo lo anterior y la gestión de piezas, filamentos, calculadora de costes, categorías e impresora |
 
 ## Hoja de ruta
 
@@ -183,9 +186,11 @@ El despliegue previsto es en [Render](https://render.com/) con PostgreSQL en la 
 - [x] Estado de la impresora editable desde administración
 - [x] Etiqueta de novedad dinámica en la home
 - [x] Casilla y página de política de privacidad
+- [x] Gestión de inventario de filamentos (`€/kg`) y asignación multicolor por gramos
+- [x] Calculadora de costes y margen integrada con persistencia en piezas
+- [x] Despliegue en producción (Render + Supabase PostgreSQL)
 - [ ] Dirección opcional en los datos del usuario
 - [ ] Botón "Borrar mi cuenta"
-- [ ] Despliegue en producción
 
 ## Seguridad
 
