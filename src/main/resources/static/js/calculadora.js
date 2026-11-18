@@ -21,6 +21,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const resPrecioFinal = document.getElementById("resPrecioFinal");
     const resBeneficio = document.getElementById("resBeneficio");
 
+    // Referencias para el formulario de guardado en base de datos
+    const inputProductoId = document.getElementById("inputProductoId");
+    const inputCosteProduccion = document.getElementById("inputCosteProduccion");
+    const inputMargenBeneficio = document.getElementById("inputMargenBeneficio");
+    const inputPrecioSugerido = document.getElementById("inputPrecioSugerido");
+    const btnGuardarCalculo = document.getElementById("btnGuardarCalculo");
+
     // Guardamos las opciones HTML del inventario de filamentos del primer select antes de alterar nada
     const selectInicial = document.querySelector(".select-filamento");
     const opcionesFilamentosHtml = selectInicial ? selectInicial.innerHTML : '<option value="" data-precio="20">Estándar / Otro (20,00 €/kg)</option>';
@@ -94,12 +101,12 @@ document.addEventListener("DOMContentLoaded", () => {
         resGramosTotales.textContent = gramosTotales % 1 === 0
             ? gramosTotales.toFixed(0)
             : gramosTotales.toFixed(1).replace(".", ",");
-        
+
         // Actualizamos también el texto dinámico del desglose con los gramos actuales
-        const textoFilamentoTotal = document.getElementById("resFilamentoTotalTexto"); // O el span que tengas en el HTML
-        if (textoFilamentoTotal) {
-            textoFilamentoTotal.textContent = gramosTotales % 1 === 0 ? gramosTotales.toFixed(0) : gramosTotales.toFixed(1).replace(".", ",");
-        }
+        // const textoFilamentoTotal = document.getElementById("resFilamentoTotalTexto"); // O el span que tengas en el HTML
+        // if (textoFilamentoTotal) {
+        //     textoFilamentoTotal.textContent = gramosTotales % 1 === 0 ? gramosTotales.toFixed(0) : gramosTotales.toFixed(1).replace(".", ",");
+        // }
 
         resMaterial.textContent = formatearEuros(costeMaterial);
         resEnergia.textContent = formatearEuros(costeEnergia);
@@ -109,6 +116,21 @@ document.addEventListener("DOMContentLoaded", () => {
         resPrecioExacto.textContent = formatearEuros(precioExacto);
         resPrecioFinal.textContent = formatearEuros(precioFinal);
         resBeneficio.textContent = "+" + formatearEuros(beneficio);
+
+        // --- ACTUALIZAR CAMPOS OCULTOS PARA GUARDAR EN BBDD ---
+        if (inputProductoId) {
+            inputProductoId.value = selectPieza.value;
+            inputCosteProduccion.value = costeTotal.toFixed(2);
+            inputMargenBeneficio.value = margen;
+            inputPrecioSugerido.value = precioFinal.toFixed(2);
+
+            // Habilitar o deshabilitar botón de guardar según si hay pieza seleccionada
+            if (selectPieza.value && selectPieza.value !== "") {
+                btnGuardarCalculo.removeAttribute("disabled");
+            } else {
+                btnGuardarCalculo.setAttribute("disabled", "true");
+            }
+        }
     }
 
     // Añadir una nueva fila de color clonando la primera

@@ -30,137 +30,162 @@
                                 th:errors="*{descripcion}"></div>
                         </div>
 
-                        <div class="row">
-                            <div class="mb-4">
-                                <label>Categorías</label>
-                                <input type="search" id="buscarCategorias" class="form-control mb-2"
-                                    placeholder="Buscar categoría…" autocomplete="off"
-                                    th:if="${!todasCategorias.isEmpty()}">
-                                <div class="lista-categorias" id="listaCategoriasForm">
-                                    <div class="form-check" th:each="c : ${todasCategorias}">
-                                        <input type="checkbox" class="form-check-input" th:id="${'cat-' + c.id}"
-                                            name="categoriaIds" th:value="${c.id}"
-                                            th:checked="${form.categoriaIds.contains(c.id)}">
-                                        <label class="form-check-label" th:for="${'cat-' + c.id}"
-                                            th:text="${c.visible} ? ${c.nombre} : ${c.nombre + ' (oculta)'}">Nombre</label>
-                                    </div>
-                                    <p class="text-secondary mb-0" th:if="${todasCategorias.isEmpty()}">
-                                        Aún no hay categorías. <a th:href="@{/admin/categorias}">Crear una</a>
-                                    </p>
+                        <!-- Categorías -->
+                        <div class="mb-4">
+                            <label>Categorías</label>
+                            <input type="search" id="buscarCategorias" class="form-control mb-2"
+                                placeholder="Buscar categoría…" autocomplete="off"
+                                th:if="${!todasCategorias.isEmpty()}">
+                            <div class="lista-categorias" id="listaCategoriasForm">
+                                <div class="form-check" th:each="c : ${todasCategorias}">
+                                    <input type="checkbox" class="form-check-input" th:id="${'cat-' + c.id}"
+                                        name="categoriaIds" th:value="${c.id}"
+                                        th:checked="${form.categoriaIds.contains(c.id)}">
+                                    <label class="form-check-label" th:for="${'cat-' + c.id}"
+                                        th:text="${c.visible} ? ${c.nombre} : ${c.nombre + ' (oculta)'}">Nombre</label>
                                 </div>
+                                <p class="text-secondary mb-0" th:if="${todasCategorias.isEmpty()}">
+                                    Aún no hay categorías. <a th:href="@{/admin/categorias}">Crear una</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Filamentos y gramos -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0 fw-semibold">Filamentos y gramos utilizados</label>
+                                <button type="button" id="btnAnadirFilamentoForm"
+                                    class="btn btn-sm btn-pill btn-borde">
+                                    + Añadir color
+                                </button>
                             </div>
 
-                            <div class="mb-4">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <label class="form-label mb-0 fw-semibold">Filamentos y gramos utilizados</label>
-                                    <button type="button" id="btnAnadirFilamentoForm"
-                                        class="btn btn-sm btn-pill btn-borde">
-                                        + Añadir color
-                                    </button>
-                                </div>
-
-                                <div id="listaFilamentosForm" class="d-flex flex-column gap-2">
-                                    <!-- Si ya tiene filamentos guardados, los iteramos -->
-                                    <div class="fila-filamento-form border rounded-3 p-2 bg-light"
-                                        th:each="item, stat : ${form.filamentosForm}">
-                                        <div class="row g-2 align-items-end">
-                                            <div class="col-7 col-md-7">
-                                                <label class="form-label small text-muted mb-1">Filamento</label>
-                                                <select class="form-select form-select-sm"
-                                                    th:name="${'filamentosForm[' + stat.index + '].filamentoId'}">
-                                                    <option value="">-- Elige filamento --</option>
-                                                    <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
-                                                        th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')"
-                                                        th:selected="${f.id == item.filamentoId}">
-                                                        PLA Negro
-                                                    </option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-3 col-md-4">
-                                                <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                                                <input type="number" class="form-control form-control-sm" min="0"
-                                                    step="0.1" th:name="${'filamentosForm[' + stat.index + '].gramos'}"
-                                                    th:value="${item.gramos}">
-                                            </div>
-
-                                            <div class="col-2 col-md-1 text-end">
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger btn-quitar-fila"
-                                                    title="Quitar">
-                                                    ✕
-                                                </button>
-                                            </div>
+                            <div id="listaFilamentosForm" class="d-flex flex-column gap-2">
+                                <!-- Si ya tiene filamentos guardados, los iteramos -->
+                                <div class="fila-filamento-form border rounded-3 p-2 bg-light"
+                                    th:each="item, stat : ${form.filamentosForm}">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-7 col-md-7">
+                                            <label class="form-label small text-muted mb-1">Filamento</label>
+                                            <select class="form-select form-select-sm"
+                                                th:name="${'filamentosForm[' + stat.index + '].filamentoId'}">
+                                                <option value="">-- Elige filamento --</option>
+                                                <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
+                                                    th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')"
+                                                    th:selected="${f.id == item.filamentoId}">
+                                                    PLA Negro
+                                                </option>
+                                            </select>
                                         </div>
-                                    </div>
 
-                                    <!-- Si está vacío al crear una pieza nueva, mostramos una fila inicial por defecto -->
-                                    <div class="fila-filamento-form border rounded-3 p-2 bg-light"
-                                        th:if="${#lists.isEmpty(form.filamentosForm)}">
-                                        <div class="row g-2 align-items-end">
-                                            <div class="col-7 col-md-7">
-                                                <label class="form-label small text-muted mb-1">Filamento</label>
-                                                <select class="form-select form-select-sm"
-                                                    name="filamentosForm[0].filamentoId">
-                                                    <option value="">-- Elige filamento --</option>
-                                                    <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
-                                                        th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')">
-                                                        PLA Negro
-                                                    </option>
-                                                </select>
-                                            </div>
+                                        <div class="col-3 col-md-4">
+                                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                                            <input type="number" class="form-control form-control-sm" min="0"
+                                                step="0.1" th:name="${'filamentosForm[' + stat.index + '].gramos'}"
+                                                th:value="${item.gramos}">
+                                        </div>
 
-                                            <div class="col-3 col-md-4">
-                                                <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                                                <input type="number" class="form-control form-control-sm" min="0"
-                                                    step="0.1" name="filamentosForm[0].gramos" value="0">
-                                            </div>
-
-                                            <div class="col-2 col-md-1 text-end">
-                                                <button type="button"
-                                                    class="btn btn-sm btn-outline-danger btn-quitar-fila d-none"
-                                                    title="Quitar">
-                                                    ✕
-                                                </button>
-                                            </div>
+                                        <div class="col-2 col-md-1 text-end">
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger btn-quitar-fila"
+                                                title="Quitar">
+                                                ✕
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-text mt-1">
-                                    Indica los filamentos y gramos exactos que consume esta pieza para que la
-                                    calculadora los lea automáticamente.
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="tiempo">Tiempo (minutos)</label>
-                                <input type="number" id="tiempo" th:field="*{tiempoImpresionMinutos}" min="0"
-                                    class="form-control">
-                                <div class="error-campo" th:if="${#fields.hasErrors('tiempoImpresionMinutos')}"
-                                    th:errors="*{tiempoImpresionMinutos}"></div>
-                            </div>
 
-                            <div class="col-12 mb-3">
-                                <label class="form-label">Dimensiones aproximadas (cm)</label>
-                                <div class="row g-2">
-                                    <div class="col-4">
-                                        <input type="number" id="alto" th:field="*{altoCm}" min="0" step="0.1"
-                                            class="form-control" placeholder="Alto">
-                                        <div class="error-campo" th:if="${#fields.hasErrors('altoCm')}"
-                                            th:errors="*{altoCm}"></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" id="ancho" th:field="*{anchoCm}" min="0" step="0.1"
-                                            class="form-control" placeholder="Ancho">
-                                        <div class="error-campo" th:if="${#fields.hasErrors('anchoCm')}"
-                                            th:errors="*{anchoCm}"></div>
-                                    </div>
-                                    <div class="col-4">
-                                        <input type="number" id="fondo" th:field="*{fondoCm}" min="0" step="0.1"
-                                            class="form-control" placeholder="Fondo">
-                                        <div class="error-campo" th:if="${#fields.hasErrors('fondoCm')}"
-                                            th:errors="*{fondoCm}"></div>
+                                <!-- Si está vacío al crear una pieza nueva -->
+                                <div class="fila-filamento-form border rounded-3 p-2 bg-light"
+                                    th:if="${#lists.isEmpty(form.filamentosForm)}">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-7 col-md-7">
+                                            <label class="form-label small text-muted mb-1">Filamento</label>
+                                            <select class="form-select form-select-sm"
+                                                name="filamentosForm[0].filamentoId">
+                                                <option value="">-- Elige filamento --</option>
+                                                <option th:each="f : ${todosFilamentos}" th:value="${f.id}"
+                                                    th:text="${f.nombre} + (${f.activo} ? '' : ' (agotado)')">
+                                                    PLA Negro
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-3 col-md-4">
+                                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                                            <input type="number" class="form-control form-control-sm" min="0"
+                                                step="0.1" name="filamentosForm[0].gramos" value="0">
+                                        </div>
+
+                                        <div class="col-2 col-md-1 text-end">
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger btn-quitar-fila d-none"
+                                                title="Quitar">
+                                                ✕
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="form-text mt-1">
+                                Indica los filamentos y gramos exactos que consume esta pieza para que la
+                                calculadora los lea automáticamente.
+                            </div>
+                        </div>
+
+                        <!-- Tiempo de impresión -->
+                        <div class="mb-3">
+                            <label for="tiempo">Tiempo (minutos)</label>
+                            <input type="number" id="tiempo" th:field="*{tiempoImpresionMinutos}" min="0"
+                                class="form-control">
+                            <div class="error-campo" th:if="${#fields.hasErrors('tiempoImpresionMinutos')}"
+                                th:errors="*{tiempoImpresionMinutos}"></div>
+                        </div>
+
+                        <!-- Dimensiones -->
+                        <div class="mb-3">
+                            <label class="form-label">Dimensiones aproximadas (cm)</label>
+                            <div class="row g-2">
+                                <div class="col-4">
+                                    <input type="number" id="alto" th:field="*{altoCm}" min="0" step="0.1"
+                                        class="form-control" placeholder="Alto">
+                                    <div class="error-campo" th:if="${#fields.hasErrors('altoCm')}"
+                                        th:errors="*{altoCm}"></div>
+                                </div>
+                                <div class="col-4">
+                                    <input type="number" id="ancho" th:field="*{anchoCm}" min="0" step="0.1"
+                                        class="form-control" placeholder="Ancho">
+                                    <div class="error-campo" th:if="${#fields.hasErrors('anchoCm')}"
+                                        th:errors="*{anchoCm}"></div>
+                                </div>
+                                <div class="col-4">
+                                    <input type="number" id="fondo" th:field="*{fondoCm}" min="0" step="0.1"
+                                        class="form-control" placeholder="Fondo">
+                                    <div class="error-campo" th:if="${#fields.hasErrors('fondoCm')}"
+                                        th:errors="*{fondoCm}"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sección de Datos Económicos Calculados -->
+                        <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                            <h5 class="mb-3 fs-6 fw-bold text-secondary">📊 Datos económicos (Calculadora)</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="costeProduccion" class="form-label small">Coste de producción (€)</label>
+                                    <input type="number" id="costeProduccion" th:field="*{costeProduccion}" min="0" step="0.01" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="margenBeneficioAplicado" class="form-label small">Margen aplicado (%)</label>
+                                    <input type="number" id="margenBeneficioAplicado" th:field="*{margenBeneficioAplicado}" min="0" step="1" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="precioSugerido" class="form-label small fw-bold text-success">Precio sugerido (€)</label>
+                                    <input type="number" id="precioSugerido" th:field="*{precioSugerido}" min="0" step="0.01" class="form-control form-control-sm fw-bold">
+                                </div>
+                            </div>
+                            <div class="form-text small mt-2">
+                                Estos datos se autocomplementan desde la calculadora o se pueden ajustar manualmente.
                             </div>
                         </div>
 

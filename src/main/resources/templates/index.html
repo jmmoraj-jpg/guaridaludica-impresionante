@@ -70,7 +70,7 @@
                                 <span th:if="${p.imagenUrl == null}">🧊</span>
                             </div>
                             <h5 th:text="${p.nombre}">Nombre</h5>
-                            <p class="pieza-desc" th:text="${p.descripcion}">Descripción</p>
+                            <p class="pieza-desc" th:text="${p.descripcion != null ? #strings.abbreviate(p.descripcion, 100) : ''}">Descripción</p>
 
                             <!-- Bloque de filamentos integrado dentro de la tarjeta -->
                             <div class="mt-3 pt-2 border-top d-flex flex-wrap gap-1 align-items-center"

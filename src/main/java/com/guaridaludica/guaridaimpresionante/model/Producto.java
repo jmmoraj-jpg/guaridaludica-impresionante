@@ -41,11 +41,15 @@ public class Producto {
 
     private boolean visible = true;
 
-    // @ManyToMany
-    // @JoinTable(name = "producto_filamento", joinColumns = @JoinColumn(name =
-    // "producto_id"), inverseJoinColumns = @JoinColumn(name = "filamento_id"))
-    // @OrderBy("nombre ASC")
-    // private Set<Filamento> filamentos = new HashSet<>();
+    // Datos económicos calculados y guardados
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double costeProduccion;
+
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double margenBeneficioAplicado;
+
+    @DecimalMin(value = "0.0", message = "No puede ser negativo")
+    private Double precioSugerido;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoFilamento> filamentosUsados = new ArrayList<>();

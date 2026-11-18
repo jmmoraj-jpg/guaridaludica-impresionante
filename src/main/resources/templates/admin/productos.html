@@ -28,6 +28,7 @@
                         <th></th>
                         <th>Nombre</th>
                         <th>Categoría</th>
+                        <th>Coste / Sugerido</th>
                         <th>Estado</th>
                         <th class="text-end">Acciones</th>
                     </tr>
@@ -43,11 +44,30 @@
                                 th:text="${c.nombre}">Cat</span>
                             <span class="text-secondary" th:if="${p.categorias.isEmpty()}">—</span>
                         </td>
+                        <!-- NUEVA CELDA ECONÓMICA -->
+                        <td>
+                            <div th:if="${p.precioSugerido != null}">
+                                <span class="fw-bold" style="color: var(--menta-oscuro, #2a8c6a);"
+                                    th:text="${#numbers.formatDecimal(p.precioSugerido, 1, 'POINT', 2, 'POINT') + ' €'}">3,50
+                                    €</span>
+                                <div class="small text-secondary" style="font-size: 0.75rem;">
+                                    Coste: <span
+                                        th:text="${#numbers.formatDecimal(p.costeProduccion != null ? p.costeProduccion : 0, 1, 'POINT', 2, 'POINT') + ' €'}">1,65
+                                        €</span>
+                                    <span th:if="${p.margenBeneficioAplicado != null}">
+                                        (<span
+                                            th:text="${#numbers.formatDecimal(p.margenBeneficioAplicado, 1, 0)}">100</span>%)
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="text-secondary" th:unless="${p.precioSugerido != null}">— Sin calcular —</span>
+                        </td>
                         <td>
                             <span class="etiqueta mat-petg" th:if="${p.visible}">Visible</span>
                             <span class="etiqueta" th:unless="${p.visible}">Oculta</span>
                         </td>
                         <td class="text-end">
+                            <!-- Tus botones de editar, ocultar y borrar de siempre -->
                             <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"
                                 class="btn btn-sm btn-pill btn-borde">Editar</a>
                             <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post"

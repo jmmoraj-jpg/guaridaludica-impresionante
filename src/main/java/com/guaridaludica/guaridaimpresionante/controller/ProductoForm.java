@@ -47,7 +47,12 @@ public class ProductoForm {
 
     private boolean novedad;
 
-    // Lista para recibir los filamentos y sus gramos desde la vista de administración
+    private Double costeProduccion;
+    private Double margenBeneficioAplicado;
+    private Double precioSugerido;
+
+    // Lista para recibir los filamentos y sus gramos desde la vista de
+    // administración
     private List<FilamentoAsignadoForm> filamentosForm = new ArrayList<>();
 
     @Getter
@@ -70,6 +75,11 @@ public class ProductoForm {
         f.setFondoCm(p.getFondoCm());
         f.setVisible(p.isVisible());
         f.setNovedad(p.isNovedad());
+        // Copiar los datos económicos calculados
+        f.setCosteProduccion(p.getCosteProduccion());
+        f.setMargenBeneficioAplicado(p.getMargenBeneficioAplicado());
+        f.setPrecioSugerido(p.getPrecioSugerido());
+        
         // Mapear los filamentos usados actuales a las filas del formulario
         if (p.getFilamentosUsados() != null) {
             f.filamentosForm = p.getFilamentosUsados().stream().map(pf -> {

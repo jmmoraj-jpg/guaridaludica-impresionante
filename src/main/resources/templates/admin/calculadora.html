@@ -170,6 +170,21 @@
                                 €</label>
                         </div>
                     </div>
+
+                    <!-- Formulario para guardar el cálculo en la pieza seleccionada -->
+                    <form th:action="@{/admin/calculadora/guardar-calculo}" method="post" id="formGuardarCalculo"
+                        class="mt-4">
+                        <!-- Campos ocultos que recogerán los valores calculados por JavaScript -->
+                        <input type="hidden" id="inputProductoId" name="productoId" value="">
+                        <input type="hidden" id="inputCosteProduccion" name="costeProduccion" value="">
+                        <input type="hidden" id="inputMargenBeneficio" name="margenBeneficio" value="">
+                        <input type="hidden" id="inputPrecioSugerido" name="precioSugerido" value="">
+
+                        <button type="submit" class="btn btn-success w-100" id="btnGuardarCalculo" disabled>
+                            💾 Guardar cálculo en esta pieza
+                        </button>
+                    </form>
+
                 </div>
             </div>
         </div>
