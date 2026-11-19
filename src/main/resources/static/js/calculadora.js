@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Constantes por defecto del taller (alineadas con la lógica del backend)
+    const PRECIO_KG_DEFECTO = 20;
+    const GRAMOS_FILA_NUEVA_DEFECTO = 15;
+    const GRAMOS_INICIAL_DEFECTO = 50;
+    const REDONDEO_PASO_EUROS = 0.5;
+
     const selectPieza = document.getElementById("selectPieza");
     const inputMinutos = document.getElementById("minutos");
     const listaFilamentos = document.getElementById("listaFilamentos");
@@ -30,10 +36,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Guardamos las opciones HTML del inventario de filamentos del primer select antes de alterar nada
     const selectInicial = document.querySelector(".select-filamento");
-    const opcionesFilamentosHtml = selectInicial ? selectInicial.innerHTML : '<option value="" data-precio="20">Estándar / Otro (20,00 €/kg)</option>';
+    const opcionesFilamentosHtml = selectInicial
+        ? selectInicial.innerHTML
+        : `<option value="" data-precio="${PRECIO_KG_DEFECTO}">Estándar / Otro (20,00 €/kg)</option>`;
 
     function formatearEuros(valor) {
         return valor.toFixed(2).replace(".", ",") + " €";
+    }
+
+    function redondearAlAlza(valor, paso) {
+        if (!paso || paso <= 0) return valor;
+        const factor = 1 / paso;
+        return Math.ceil(valor * factor) / factor;
     }
 
     function actualizarTextoHoras(minutos) {
@@ -92,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 5. Precio con margen
         const precioExacto = costeTotal * (1 + margen / 100);
         const precioFinal = checkRedondear.checked
-            ? Math.ceil(precioExacto * 2) / 2
+            ? redondearAlAlza(precioExacto, REDONDEO_PASO_EUROS)
             : precioExacto;
 
         const beneficio = precioFinal - costeTotal;
@@ -101,12 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
         resGramosTotales.textContent = gramosTotales % 1 === 0
             ? gramosTotales.toFixed(0)
             : gramosTotales.toFixed(1).replace(".", ",");
-
-        // Actualizamos también el texto dinámico del desglose con los gramos actuales
-        // const textoFilamentoTotal = document.getElementById("resFilamentoTotalTexto"); // O el span que tengas en el HTML
-        // if (textoFilamentoTotal) {
-        //     textoFilamentoTotal.textContent = gramosTotales % 1 === 0 ? gramosTotales.toFixed(0) : gramosTotales.toFixed(1).replace(".", ",");
-        // }
 
         resMaterial.textContent = formatearEuros(costeMaterial);
         resEnergia.textContent = formatearEuros(costeEnergia);
@@ -124,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
             inputMargenBeneficio.value = margen;
             inputPrecioSugerido.value = precioFinal.toFixed(2);
 
-            // Habilitar o deshabilitar botón de guardar según si hay pieza seleccionada
             if (selectPieza.value && selectPieza.value !== "") {
                 btnGuardarCalculo.removeAttribute("disabled");
             } else {
@@ -138,11 +145,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const primeraFila = listaFilamentos.querySelector(".fila-filamento");
         const nuevaFila = primeraFila.cloneNode(true);
 
-        // Reiniciar valores de la nueva fila
         const select = nuevaFila.querySelector(".select-filamento");
-        select.selectedIndex = 0; // Se posiciona en la opción de "-- Selecciona un filamento --"
-        nuevaFila.querySelector(".input-gramos").value = 15;
-        nuevaFila.querySelector(".input-precio-kg").value = 20;
+        select.selectedIndex = 0;
+        nuevaFila.querySelector(".input-gramos").value = GRAMOS_FILA_NUEVA_DEFECTO;
+        nuevaFila.querySelector(".input-precio-kg").value = PRECIO_KG_DEFECTO;
 
         listaFilamentos.appendChild(nuevaFila);
         actualizarBotonesQuitar();
@@ -185,26 +191,24 @@ document.addEventListener("DOMContentLoaded", () => {
     selectPieza.addEventListener("change", () => {
         const opcion = selectPieza.options[selectPieza.selectedIndex];
 
-        // Si selecciona la opción por defecto ("-- Cálculo libre / manual --")
         if (!selectPieza.value) {
-            // Reiniciamos a una única fila vacía por defecto
             listaFilamentos.innerHTML = `
                 <div class="fila-filamento border rounded-3 p-2 bg-light">
                     <div class="row g-2 align-items-end">
                         <div class="col-md-5">
                             <label class="form-label small text-muted mb-1">Filamento</label>
                             <select class="form-select form-select-sm select-filamento">
-                                <option value="" data-precio="20" disabled selected>-- Selecciona un filamento --</option>
+                                <option value="" data-precio="${PRECIO_KG_DEFECTO}" disabled selected>-- Selecciona un filamento --</option>
                                 ${opcionesFilamentosHtml}
                             </select>
                         </div>
                         <div class="col-5 col-md-3">
                             <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="50">
+                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="${GRAMOS_INICIAL_DEFECTO}">
                         </div>
                         <div class="col-5 col-md-3">
                             <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
-                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="20">
+                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="${PRECIO_KG_DEFECTO}">
                         </div>
                         <div class="col-2 col-md-1 text-end">
                             <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento d-none" title="Quitar color">✕</button>
@@ -224,10 +228,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const filamentosData = opcion.dataset.filamentos;
         if (filamentosData && filamentosData.trim() !== "") {
-            // Limpiamos las filas actuales
             listaFilamentos.innerHTML = "";
 
-            // El formato viene como "id:gramos:precio,id:gramos:precio"
             const items = filamentosData.split(",");
             items.forEach((item) => {
                 const [filamentoId, gramos, precioKg] = item.split(":");
@@ -239,7 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         <div class="col-md-5">
                             <label class="form-label small text-muted mb-1">Filamento</label>
                             <select class="form-select form-select-sm select-filamento">
-                                <option value="" data-precio="20" disabled>-- Selecciona un filamento --</option>
+                                <option value="" data-precio="${PRECIO_KG_DEFECTO}" disabled>-- Selecciona un filamento --</option>
                                 ${opcionesFilamentosHtml}
                             </select>
                         </div>
@@ -259,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 listaFilamentos.appendChild(filaDiv);
 
-                // Seleccionamos el filamento correcto
                 const selectAgregado = filaDiv.querySelector(".select-filamento");
                 if (filamentoId) {
                     selectAgregado.value = filamentoId;

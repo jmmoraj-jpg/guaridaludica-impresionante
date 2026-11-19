@@ -12,9 +12,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class FilamentoService {
 
     private final FilamentoRepository filamentoRepository;
+    private final PrecioAjusteService precioAjusteService;
 
-    public FilamentoService(FilamentoRepository filamentoRepository) {
+    public FilamentoService(FilamentoRepository filamentoRepository, PrecioAjusteService precioAjusteService) {
         this.filamentoRepository = filamentoRepository;
+        this.precioAjusteService = precioAjusteService;
     }
 
     public boolean nombreEnUso(String nombre, Long id) {
@@ -42,7 +44,8 @@ public class FilamentoService {
             filamento.setActivo(form.isActivo());
             filamento.setPrecioPorKg(form.getPrecioPorKg());
         }
-        filamentoRepository.save(filamento);
+        Filamento guardado = filamentoRepository.save(filamento);
+        precioAjusteService.recalcularPorFilamento(guardado.getId());
     }
 
     public void cambiarEstado(Long id) {

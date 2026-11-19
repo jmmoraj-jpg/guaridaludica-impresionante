@@ -16,22 +16,24 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     Page<Producto> findByVisibleTrue(Pageable pageable);
 
     @Query(value = """
-                   select distinct p from Producto p join p.categorias c
-                   where p.visible = true and c.slug = :slug and c.visible = true
-                   """,
-           countQuery = """
-                   select count(distinct p) from Producto p join p.categorias c
-                   where p.visible = true and c.slug = :slug and c.visible = true
-                   """)
+            select distinct p from Producto p join p.categorias c
+            where p.visible = true and c.slug = :slug and c.visible = true
+            """, countQuery = """
+            select count(distinct p) from Producto p join p.categorias c
+            where p.visible = true and c.slug = :slug and c.visible = true
+            """)
     Page<Producto> buscarPorCategoria(@Param("slug") String slug, Pageable pageable);
 
     Page<Producto> findByNombreContainingIgnoreCase(String nombre, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"imagenes"})
+    @EntityGraph(attributePaths = { "imagenes" })
     Optional<Producto> findWithImagenesById(Long id);
 
     @Query("select p from Producto p join p.categorias c where c.id = :id")
     List<Producto> conCategoria(@Param("id") Long id);
 
     Optional<Producto> findFirstByNovedadTrueAndVisibleTrueOrderByIdDesc();
+
+    @Query("select distinct p from Producto p join p.filamentosUsados pf where pf.filamento.id = :filamentoId")
+    List<Producto> buscarPorFilamentoId(@Param("filamentoId") Long filamentoId);
 }

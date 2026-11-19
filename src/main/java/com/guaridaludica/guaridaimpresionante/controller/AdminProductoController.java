@@ -5,6 +5,7 @@ import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.CategoriaRepository;
 import com.guaridaludica.guaridaimpresionante.repository.FilamentoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
+import com.guaridaludica.guaridaimpresionante.service.PrecioAjusteService;
 import com.guaridaludica.guaridaimpresionante.service.ProductoAdminService;
 import com.guaridaludica.guaridaimpresionante.util.Paginas;
 
@@ -35,13 +36,16 @@ public class AdminProductoController {
     private final CategoriaRepository categoriaRepository;
     private final FilamentoRepository filamentoRepository;
     private final ProductoAdminService servicioProductoAdminService;
+    private final PrecioAjusteService precioAjusteService;
 
     public AdminProductoController(ProductoRepository productoRepository, CategoriaRepository categoriaRepository,
-            FilamentoRepository filamentoRepository, ProductoAdminService servicioProductoAdminService) {
+            FilamentoRepository filamentoRepository, ProductoAdminService servicioProductoAdminService,
+            PrecioAjusteService precioAjusteService) {
         this.productoRepository = productoRepository;
         this.categoriaRepository = categoriaRepository;
         this.filamentoRepository = filamentoRepository;
         this.servicioProductoAdminService = servicioProductoAdminService;
+        this.precioAjusteService = precioAjusteService;
     }
 
     @GetMapping
@@ -91,7 +95,7 @@ public class AdminProductoController {
                     ? List.of()
                     : productoRepository.findWithImagenesById(form.getId())
                             .map(Producto::getImagenes).orElse(List.of());
-            
+
             // Reutilizamos prepararFormulario para mantener limpio el código
             prepararFormulario(model, form, existentes);
             return "admin/producto-form";
@@ -125,19 +129,21 @@ public class AdminProductoController {
     }
 
     @PostMapping("/{id}/stock")
-    public String actualizarStockRapido(@PathVariable Long id, 
-                                        @RequestParam int delta, 
-                                        RedirectAttributes redirect) {
+    public String actualizarStockRapido(@PathVariable Long id,
+            @RequestParam int delta,
+            RedirectAttributes redirect) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        
+
         int nuevoStock = (producto.getStock() != null ? producto.getStock() : 0) + delta;
-        if (nuevoStock < 0) nuevoStock = 0; // Evitamos negativos
-        
+        if (nuevoStock < 0) {
+            nuevoStock = 0;
+        }
+
         producto.setStock(nuevoStock);
-        productoRepository.save(producto);
-        
-        redirect.addFlashAttribute("mensaje", "Stock actualizado para: " + producto.getNombre());
+        precioAjusteService.recalcularProducto(producto);
+
+        redirect.addFlashAttribute("mensaje", "Stock y precio actualizados para: " + producto.getNombre());
         return "redirect:/admin/productos";
     }
 }
