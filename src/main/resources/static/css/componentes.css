@@ -201,3 +201,16 @@ a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
     margin-bottom: .5rem;
     color: var(--lila);
 }
+
+@media (max-width: 575.98px) {
+    .btn-pill {
+        padding: .48rem 1.05rem;
+        font-size: .92rem;
+    }
+
+    .pag-enlace {
+        min-width: 38px;
+        height: 38px;
+        padding: 0 .65rem;
+    }
+}
