@@ -76,21 +76,7 @@ public class PrecioAjusteService {
             recalcularProducto(p);
         }
     }
-
-    private double calcularMultiplicadorStock(Integer stock) {
-        int unidades = stock != null ? stock : 0;
-        if (unidades == 0) {
-            return 1.10; // Sin stock en estantería: +10% por impresión bajo pedido
-        }
-        if (unidades == 1) {
-            return 1.05; // Última unidad: +5%
-        }
-        if (unidades >= 5) {
-            return 0.95; // Buen stock acumulado: -5% para rotar inventario
-        }
-        return 1.0; // Stock normal (2-4 unidades)
-    }
-
+    
     private double redondearDosDecimales(double valor) {
         return Math.round(valor * 100.0) / 100.0;
     }

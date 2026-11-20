@@ -68,3 +68,19 @@ button.filtro { font: inherit; cursor: pointer; }
 .mensaje-fade {
     animation: fadeIn 0.5s ease-in-out;
 }
+
+.pieza-compacta {
+    border-radius: 18px;
+}
+
+.pieza-img-compacta {
+    height: 115px;
+    border-radius: 14px;
+    font-size: 2rem;
+}
+
+@media (max-width: 575.98px) {
+    .pieza-img-compacta {
+        height: 95px;
+    }
+}

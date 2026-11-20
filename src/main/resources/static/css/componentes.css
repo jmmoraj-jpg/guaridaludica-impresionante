@@ -214,3 +214,30 @@ a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
         padding: 0 .65rem;
     }
 }
+
+:root {
+    --alto-desc-colapsada: 13.5rem; /* Altura visible antes de "Leer más" */
+    --alto-desc-expandida: 120rem; /* Altura máxima al desplegar */
+}
+
+.descripcion-pieza {
+    position: relative;
+    overflow: hidden;
+    max-height: var(--alto-desc-colapsada);
+    transition: max-height .28s ease;
+}
+
+.descripcion-pieza.colapsada::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2.2rem;
+    background: linear-gradient(to bottom, rgba(250, 244, 232, 0), var(--crema, #faf4e8));
+    pointer-events: none;
+}
+
+.descripcion-pieza.expandida {
+    max-height: var(--alto-desc-expandida);
+}

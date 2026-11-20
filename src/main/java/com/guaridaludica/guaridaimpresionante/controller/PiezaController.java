@@ -3,6 +3,7 @@ package com.guaridaludica.guaridaimpresionante.controller;
 import com.guaridaludica.guaridaimpresionante.model.Producto;
 import com.guaridaludica.guaridaimpresionante.repository.FavoritoRepository;
 import com.guaridaludica.guaridaimpresionante.repository.ProductoRepository;
+import com.guaridaludica.guaridaimpresionante.service.PiezaService;
 
 import java.security.Principal;
 
@@ -18,10 +19,12 @@ public class PiezaController {
 
     private final ProductoRepository productoRepository;
     private final FavoritoRepository favoritoRepository;
+    private final PiezaService piezaService;
 
-    public PiezaController(ProductoRepository productoRepository, FavoritoRepository favoritoRepository) {
+    public PiezaController(ProductoRepository productoRepository, FavoritoRepository favoritoRepository, PiezaService piezaService) {
         this.productoRepository = productoRepository;
         this.favoritoRepository = favoritoRepository;
+        this.piezaService = piezaService;
     }
 
     @GetMapping("/pieza/{id}")
@@ -33,6 +36,7 @@ public class PiezaController {
                 && favoritoRepository.existsByUsuarioEmailIgnoreCaseAndProductoId(principal.getName(), id);
         model.addAttribute("pieza", pieza);
         model.addAttribute("esFavorito", esFavorito);
+        model.addAttribute("relacionadas", piezaService.buscarRelacionadas(pieza));
         return "pieza";
     }
 }

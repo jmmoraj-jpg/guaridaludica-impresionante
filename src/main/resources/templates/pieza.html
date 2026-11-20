@@ -54,7 +54,8 @@
                     <h5 class="text-muted mb-2"><i class="bi bi-palette"></i> Filamentos utilizados:</h5>
 
                     <!-- Si la pieza tiene filamentos asociados -->
-                    <div class="d-flex flex-wrap gap-2" th:if="${pieza.filamentosDisponibles != null and !pieza.filamentosDisponibles.empty}">
+                    <div class="d-flex flex-wrap gap-2"
+                        th:if="${pieza.filamentosDisponibles != null and !pieza.filamentosDisponibles.empty}">
                         <span th:each="filamento : ${pieza.filamentosDisponibles}"
                             class="badge d-inline-flex align-items-center gap-2 px-3 py-2 border rounded-pill shadow-sm bg-white text-dark">
                             <!-- Círculo con el color HEX real del filamento -->
@@ -66,7 +67,8 @@
                     </div>
 
                     <!-- Si por algún motivo no tiene ninguno asignado -->
-                    <p class="text-muted fst-italic" th:if="${pieza.filamentosDisponibles == null or pieza.filamentosDisponibles.empty}">
+                    <p class="text-muted fst-italic"
+                        th:if="${pieza.filamentosDisponibles == null or pieza.filamentosDisponibles.empty}">
                         Consúltanos los colores disponibles para esta pieza.
                     </p>
                 </div>
@@ -83,7 +85,14 @@
                     </th:block>
                 </div>
 
-                <p class="lead text-secondary" th:text="${pieza.descripcion}">Descripción</p>
+                <div class="mb-4" id="bloqueDescripcion">
+                    <p class="lead text-secondary mb-1 descripcion-pieza" id="textoDescripcion"
+                        th:text="${pieza.descripcion}">Descripción</p>
+                    <button type="button" class="btn btn-link p-0 fw-semibold text-decoration-none d-none"
+                        id="btnToggleDescripcion" aria-expanded="false" aria-controls="textoDescripcion">
+                        Leer más
+                    </button>
+                </div>
 
                 <div class="caja-solicitar">
                     <h5 class="mb-2">¿Te gusta esta pieza?</h5>
@@ -122,9 +131,32 @@
                 </div>
             </div>
         </div>
+
+        <section class="mt-5 pt-4 border-top" th:if="${relacionadas != null and !#lists.isEmpty(relacionadas)}">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                <h5 class="mb-0 titulo-marcador marcador-menta">También te puede gustar</h5>
+                <a th:href="@{/#catalogo}" class="volver m-0">Ver todo el catálogo →</a>
+            </div>
+
+            <div class="row row-cols-2 row-cols-md-4 g-3">
+                <div class="col" th:each="rel, st : ${relacionadas}">
+                    <a class="pieza-enlace" th:href="@{/pieza/{id}(id=${rel.id})}">
+                        <article class="pieza pieza-compacta p-2" th:classappend="${'borde-' + (st.index % 4)}">
+                            <div class="pieza-img pieza-img-compacta mb-2" th:classappend="${'tono-' + (st.index % 4)}">
+                                <img th:if="${rel.imagenUrl != null}" th:src="${rel.imagenUrl}" th:alt="${rel.nombre}">
+                                <span th:if="${rel.imagenUrl == null}">🧊</span>
+                            </div>
+                            <h6 class="mb-0 text-truncate" th:text="${rel.nombre}">Nombre de pieza</h6>
+                        </article>
+                    </a>
+                </div>
+            </div>
+        </section>
     </main>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/pieza.js}"></script>
+</body>
 </body>
 
 </html>
