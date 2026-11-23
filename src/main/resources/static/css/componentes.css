@@ -241,3 +241,35 @@ a.pag-enlace:hover { border-color: var(--salmon); color: var(--texto); }
 .descripcion-pieza.expandida {
     max-height: var(--alto-desc-expandida);
 }
+
+.ref-miniatura {
+    width: 72px;
+    height: 72px;
+    padding: 0;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.ref-miniatura img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+@media (max-width: 575.98px) {
+    .ref-miniatura {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+#modalImagenReferencia {
+    z-index: 2000;
+}
+
+#modalImagenReferencia.show {
+    display: block;
+    opacity: 1;
+    background-color: rgba(24, 24, 27, 0.65);
+}

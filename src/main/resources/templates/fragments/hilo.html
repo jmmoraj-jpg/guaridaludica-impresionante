@@ -6,23 +6,29 @@
     <th:block th:fragment="hilo(conv, vistaGuarida, accion)">
         <div class="hilo-cabecera">
             <!-- Si tiene producto del catálogo, muestra su imagen; si no, muestra la primera imagen subida o un placeholder -->
-            <img th:if="${conv.producto?.imagenUrl != null}" th:src="${conv.producto.imagenUrl}" class="fila-img" alt="">
-            <img th:if="${conv.producto == null and conv.imagen1 != null}" th:src="${conv.imagen1}" class="fila-img" alt="Propuesta personalizada">
-            <div class="fila-img hilo-placeholder" th:if="${conv.producto?.imagenUrl == null and conv.imagen1 == null}">🧊</div>
-            
+            <img th:if="${conv.producto?.imagenUrl != null}" th:src="${conv.producto.imagenUrl}" class="fila-img"
+                alt="">
+            <img th:if="${conv.producto == null and conv.imagen1 != null}" th:src="${conv.imagen1}" class="fila-img"
+                alt="Propuesta personalizada">
+            <div class="fila-img hilo-placeholder" th:if="${conv.producto?.imagenUrl == null and conv.imagen1 == null}">
+                🧊</div>
+
             <div class="flex-grow-1">
                 <!-- Nombre del producto o título alternativo para personalizadas -->
-                <div class="fw-bold" th:text="${conv.producto != null ? conv.producto.nombre : '💡 Solicitud Personalizada'}">Pieza</div>
-                
+                <div class="fw-bold"
+                    th:text="${conv.producto != null ? conv.producto.nombre : '💡 Solicitud Personalizada'}">Pieza</div>
+
                 <div class="small text-secondary" th:if="${vistaGuarida}"
                     th:text="'Conversación con ' + ${conv.usuario.nombre}">Conversación con ...</div>
-                
+
                 <!-- Enlace a la pieza del catálogo (solo si existe producto) -->
-                <a class="small" th:if="${conv.producto != null}" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver la pieza</a>
-                
+                <a class="small" th:if="${conv.producto != null}" th:href="@{/pieza/{id}(id=${conv.producto.id})}">Ver
+                    la pieza</a>
+
                 <!-- Enlace de referencia externo (para propuestas personalizadas) -->
-                <a class="small d-block text-truncate" th:if="${conv.producto == null and conv.enlaceReferencia != null}" 
-                   th:href="${conv.enlaceReferencia}" target="_blank" rel="noopener">🔗 Ver enlace de referencia</a>
+                <a class="small d-block text-truncate"
+                    th:if="${conv.producto == null and conv.enlaceReferencia != null}"
+                    th:href="${conv.enlaceReferencia}" target="_blank" rel="noopener">🔗 Ver enlace de referencia</a>
 
                 <div class="small fw-bold" th:if="${conv.precio != null}"
                     th:text="'Precio acordado: ' + ${#numbers.formatDecimal(conv.precio, 1, 'POINT', 2, 'COMMA')} + ' €'">
@@ -31,6 +37,31 @@
             </div>
             <span class="etiqueta" th:text="${conv.estado.etiqueta}"
                 th:classappend="${'estado-' + #strings.toLowerCase(conv.estado.name())}">Consulta</span>
+        </div>
+
+        <!-- Galería de miniaturas ampliables de imágenes de referencia -->
+        <div class="mt-3 mb-2 p-3 rounded-4 bg-white border"
+            th:if="${conv.imagen1 != null or conv.imagen2 != null or conv.imagen3 != null}">
+            <div class="small fw-bold text-secondary mb-2">Imágenes de referencia (pulsa para ampliar)</div>
+            <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="btn p-0 border rounded-3 overflow-hidden ref-miniatura"
+                    th:if="${conv.imagen1 != null}"
+                    th:attr="data-img-src=${conv.imagen1}, data-img-titulo='Referencia 1'">
+                    <img th:src="${conv.imagen1}" alt="Referencia 1" class="d-block w-100 h-100 object-fit-cover">
+                </button>
+
+                <button type="button" class="btn p-0 border rounded-3 overflow-hidden ref-miniatura"
+                    th:if="${conv.imagen2 != null}"
+                    th:attr="data-img-src=${conv.imagen2}, data-img-titulo='Referencia 2'">
+                    <img th:src="${conv.imagen2}" alt="Referencia 2" class="d-block w-100 h-100 object-fit-cover">
+                </button>
+
+                <button type="button" class="btn p-0 border rounded-3 overflow-hidden ref-miniatura"
+                    th:if="${conv.imagen3 != null}"
+                    th:attr="data-img-src=${conv.imagen3}, data-img-titulo='Referencia 3'">
+                    <img th:src="${conv.imagen3}" alt="Referencia 3" class="d-block w-100 h-100 object-fit-cover">
+                </button>
+            </div>
         </div>
 
         <!-- Seguimiento de la solicitud (no se muestra si está cancelada) -->
@@ -67,8 +98,10 @@
         </form>
 
         <p class="text-center text-secondary small my-3" th:if="${conv.estado.cerrada}">
-            Esta conversación está cerrada. Si quieres otra pieza, escríbenos desde su ficha o solicita una nueva personalizada.
+            Esta conversación está cerrada. Si quieres otra pieza, escríbenos desde su ficha o solicita una nueva
+            personalizada.
         </p>
+
     </th:block>
 
 </body>
