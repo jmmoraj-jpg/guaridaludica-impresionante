@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const PRECIO_KG_DEFECTO = 20;
     const GRAMOS_FILA_NUEVA_DEFECTO = 15;
     const GRAMOS_INICIAL_DEFECTO = 50;
+    const MARGEN_DEFECTO = 100;
     const REDONDEO_PASO_EUROS = 0.5;
 
     const selectPieza = document.getElementById("selectPieza");
@@ -66,6 +67,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 btnQuitar.classList.add("d-none");
             }
         });
+    }
+
+    function renderizarFilaFilamento(filamentoId = "", gramos = 0, precioKg = PRECIO_KG_DEFECTO, mostrarQuitar = false) {
+        const filaDiv = document.createElement("div");
+        filaDiv.className = "fila-filamento border rounded-3 p-2 bg-light";
+        filaDiv.innerHTML = `
+            <div class="row g-2 align-items-end">
+                <div class="col-md-5">
+                    <label class="form-label small text-muted mb-1">Filamento</label>
+                    <select class="form-select form-select-sm select-filamento">
+                        <option value="" data-precio="${PRECIO_KG_DEFECTO}" disabled ${!filamentoId ? "selected" : ""}>-- Selecciona un filamento --</option>
+                        ${opcionesFilamentosHtml}
+                    </select>
+                </div>
+                <div class="col-5 col-md-3">
+                    <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                    <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="${gramos}">
+                </div>
+                <div class="col-5 col-md-3">
+                    <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
+                    <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="${precioKg}">
+                </div>
+                <div class="col-2 col-md-1 text-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento ${mostrarQuitar ? "" : "d-none"}" title="Quitar color">✕</button>
+                </div>
+            </div>
+        `;
+
+        listaFilamentos.appendChild(filaDiv);
+
+        const selectAgregado = filaDiv.querySelector(".select-filamento");
+        if (filamentoId) {
+            selectAgregado.value = filamentoId;
+        }
+    }
+
+    function resetearFilamentosPorDefecto(gramosDefecto = GRAMOS_INICIAL_DEFECTO) {
+        listaFilamentos.innerHTML = "";
+        renderizarFilaFilamento("", gramosDefecto, PRECIO_KG_DEFECTO, false);
+        actualizarBotonesQuitar();
     }
 
     function calcular() {
@@ -187,86 +228,41 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Al elegir una pieza del catálogo, rellena su tiempo y sus filamentos guardados (o reinicia si elige manual)
+    // Al elegir una pieza del catálogo, rellena su tiempo, margen y filamentos guardados (o reinicia si elige manual)
     selectPieza.addEventListener("change", () => {
         const opcion = selectPieza.options[selectPieza.selectedIndex];
 
         if (!selectPieza.value) {
-            listaFilamentos.innerHTML = `
-                <div class="fila-filamento border rounded-3 p-2 bg-light">
-                    <div class="row g-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label small text-muted mb-1">Filamento</label>
-                            <select class="form-select form-select-sm select-filamento">
-                                <option value="" data-precio="${PRECIO_KG_DEFECTO}" disabled selected>-- Selecciona un filamento --</option>
-                                ${opcionesFilamentosHtml}
-                            </select>
-                        </div>
-                        <div class="col-5 col-md-3">
-                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="${GRAMOS_INICIAL_DEFECTO}">
-                        </div>
-                        <div class="col-5 col-md-3">
-                            <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
-                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="${PRECIO_KG_DEFECTO}">
-                        </div>
-                        <div class="col-2 col-md-1 text-end">
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento d-none" title="Quitar color">✕</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            actualizarBotonesQuitar();
+            inputMargen.value = MARGEN_DEFECTO;
+            resetearFilamentosPorDefecto(GRAMOS_INICIAL_DEFECTO);
             calcular();
             return;
         }
 
         const tiempo = parseInt(opcion.dataset.tiempo, 10);
-        if (!isNaN(tiempo) && tiempo > 0) {
-            inputMinutos.value = tiempo;
-        }
+        inputMinutos.value = !isNaN(tiempo) ? tiempo : 0;
+
+        const margenGuardado = parseFloat(opcion.dataset.margen);
+        inputMargen.value = !isNaN(margenGuardado) ? margenGuardado : MARGEN_DEFECTO;
 
         const filamentosData = opcion.dataset.filamentos;
         if (filamentosData && filamentosData.trim() !== "") {
             listaFilamentos.innerHTML = "";
 
             const items = filamentosData.split(",");
+            const mostrarQuitar = items.length > 1;
             items.forEach((item) => {
                 const [filamentoId, gramos, precioKg] = item.split(":");
-
-                const filaDiv = document.createElement("div");
-                filaDiv.className = "fila-filamento border rounded-3 p-2 bg-light";
-                filaDiv.innerHTML = `
-                    <div class="row g-2 align-items-end">
-                        <div class="col-md-5">
-                            <label class="form-label small text-muted mb-1">Filamento</label>
-                            <select class="form-select form-select-sm select-filamento">
-                                <option value="" data-precio="${PRECIO_KG_DEFECTO}" disabled>-- Selecciona un filamento --</option>
-                                ${opcionesFilamentosHtml}
-                            </select>
-                        </div>
-                        <div class="col-5 col-md-3">
-                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                            <input type="number" class="form-control form-control-sm input-gramos" min="0" step="0.1" value="${gramos}">
-                        </div>
-                        <div class="col-5 col-md-3">
-                            <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
-                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0" step="0.5" value="${precioKg}">
-                        </div>
-                        <div class="col-2 col-md-1 text-end">
-                            <button type="button" class="btn btn-sm btn-outline-danger btn-quitar-filamento" title="Quitar color">✕</button>
-                        </div>
-                    </div>
-                `;
-
-                listaFilamentos.appendChild(filaDiv);
-
-                const selectAgregado = filaDiv.querySelector(".select-filamento");
-                if (filamentoId) {
-                    selectAgregado.value = filamentoId;
-                }
+                renderizarFilaFilamento(
+                    filamentoId || "",
+                    gramos !== undefined ? gramos : 0,
+                    precioKg !== undefined ? precioKg : PRECIO_KG_DEFECTO,
+                    mostrarQuitar
+                );
             });
             actualizarBotonesQuitar();
+        } else {
+            resetearFilamentosPorDefecto(0);
         }
 
         calcular();

@@ -11,6 +11,15 @@
             <h2 class="mb-0">Calculadora de Costes y Margen</h2>
         </div>
 
+        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${exito}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+        </div>
+
         <div class="row g-4">
             <!-- Columna izquierda: Datos de la impresión -->
             <div class="col-lg-7">
@@ -22,9 +31,10 @@
                         <div class="col-md-7">
                             <label for="selectPieza" class="form-label">Cargar pieza del catálogo (opcional)</label>
                             <select id="selectPieza" class="form-select">
-                                <option value="">-- Cálculo libre / manual --</option>
+                                <option value="" data-margen="100">-- Cálculo libre / manual --</option>
                                 <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"
                                     th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}"
+                                    th:data-margen="${p.margenBeneficioAplicado != null ? p.margenBeneficioAplicado : 100}"
                                     th:data-filamentos="${#aggregates.sum(p.filamentosUsados.![gramos]) != null ? 
                 #strings.listJoin(p.filamentosUsados.![filamento.id + ':' + gramos + ':' + (filamento.precioPorKg != null ? filamento.precioPorKg : 20)], ',') : ''}">
                                     Torre de dados
