@@ -25,6 +25,16 @@
                     </form>
                     <span class="small text-secondary" th:unless="${conv.estado.usuarioPuedeCancelar}"
                         th:text="'Estado: ' + ${conv.estado.etiqueta}">Estado</span>
+
+                    <p class="caja-estado-ayuda" th:if="${conv.estado.usuarioPuedeSolicitar}">
+                        Puedes usar el chat para resolver dudas o concretar detalles. Pulsa
+                        <strong>Solicitar esta pieza</strong> cuando quieras pedirla formalmente para que te
+                        indiquemos el precio acordado.
+                    </p>
+                    <p class="caja-estado-ayuda"
+                        th:if="${!conv.estado.usuarioPuedeSolicitar and conv.estado.usuarioPuedeCancelar}">
+                        Ya has enviado tu solicitud: el equipo la revisará para indicarte el precio acordado.
+                    </p>
                 </div>
 
                 <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>

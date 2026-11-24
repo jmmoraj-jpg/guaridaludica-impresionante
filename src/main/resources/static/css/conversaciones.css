@@ -300,3 +300,12 @@
         white-space: nowrap;
     }
 }
+
+/* Nota contextual dentro de la barra de estado */
+.caja-estado-ayuda {
+    flex-basis: 100%;
+    margin: 0;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--gris);
+}
