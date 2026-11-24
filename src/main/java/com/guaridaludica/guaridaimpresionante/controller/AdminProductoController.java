@@ -146,4 +146,12 @@ public class AdminProductoController {
         redirect.addFlashAttribute("mensaje", "Stock y precio actualizados para: " + producto.getNombre());
         return "redirect:/admin/productos";
     }
+
+    @PostMapping("/recalcular-precios")
+    public String recalcularPrecios(RedirectAttributes redirect) {
+        int totalRecalculadas = precioAjusteService.recalcularTodosLosProductos();
+        redirect.addFlashAttribute("mensaje",
+                "Precios recalculados en " + totalRecalculadas + " " + (totalRecalculadas == 1 ? "pieza" : "piezas") + ".");
+        return "redirect:/admin/productos";
+    }
 }

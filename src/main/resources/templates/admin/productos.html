@@ -9,7 +9,13 @@
     <main class="container py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">Piezas</h2>
-            <a th:href="@{/admin/productos/nuevo}" class="btn btn-pill btn-menta">Nueva pieza</a>
+            <div class="d-flex gap-2">
+                <form th:action="@{/admin/productos/recalcular-precios}" method="post" class="m-0"
+                    onsubmit="return confirm('¿Recalcular coste y precio sugerido de todas las piezas?')">
+                    <button type="submit" class="btn btn-pill btn-borde">Recalcular precios</button>
+                </form>
+                <a th:href="@{/admin/productos/nuevo}" class="btn btn-pill btn-menta">Nueva pieza</a>
+            </div>
         </div>
 
         <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>

@@ -76,6 +76,15 @@ public class PrecioAjusteService {
             recalcularProducto(p);
         }
     }
+
+    @Transactional
+    public int recalcularTodosLosProductos() {
+        List<Producto> todos = productoRepository.findAll();
+        for (Producto p : todos) {
+            recalcularProducto(p);
+        }
+        return todos.size();
+    }
     
     private double redondearDosDecimales(double valor) {
         return Math.round(valor * 100.0) / 100.0;
