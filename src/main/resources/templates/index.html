@@ -125,7 +125,7 @@
                                 <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-pill shadow-sm"
                                     th:each="f : ${filamentos}">
                                     <span class="rounded-circle d-inline-block"
-                                        th:style="'width: 14px; height: 14px; background-color: ' + ${f.colorHex} + ';'"></span>
+                                        th:style="'width: 14px; height: 14px; background-color: ' + ${f.colorHex} + '; border: 1px solid rgba(0,0,0,0.15);'"></span>
                                     <span class="small fw-semibold" th:text="${f.nombre}">Nombre Filamento</span>
                                 </div>
                             </div>

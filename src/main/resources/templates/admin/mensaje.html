@@ -62,6 +62,24 @@
     </main>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+
+    <!-- Modal para ampliar cualquier imagen de referencia -->
+    <div class="modal" id="modalImagenReferencia" tabindex="-1" aria-labelledby="tituloModalReferencia"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content rounded-4 border-0 shadow">
+                <div class="modal-header border-0 pb-2">
+                    <h5 class="modal-title fw-bold" id="tituloModalReferencia">Imagen de referencia</h5>
+                    <button type="button" class="btn-close" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body text-center pt-0">
+                    <img id="imgReferenciaAmpliada" src="" alt="Vista ampliada de referencia"
+                        class="img-fluid rounded-3" style="max-height: 75vh; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script th:src="@{/js/conversacion.js}"></script>
 </body>
 
