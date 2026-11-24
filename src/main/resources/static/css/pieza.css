@@ -52,16 +52,28 @@
 
 /* Descripción de la pieza respetando saltos de línea */
 .descripcion-pieza {
+    position: relative;
     white-space: pre-line;
     overflow-wrap: anywhere;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
 }
 
 .descripcion-pieza.colapsada {
     max-height: 7.5rem;
-    overflow: hidden;
+}
+
+.descripcion-pieza.colapsada::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2rem;
+    background: linear-gradient(to bottom, rgba(250, 244, 232, 0), var(--crema, #faf4e8));
+    pointer-events: none;
 }
 
 .descripcion-pieza.expandida {
-    max-height: none;
-    overflow: visible;
+    overflow: hidden;
 }

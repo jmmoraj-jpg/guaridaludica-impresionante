@@ -4,6 +4,7 @@
     if (!desc || !btn) return;
 
     function evaluarAltura() {
+        desc.style.maxHeight = '';
         desc.classList.remove('expandida');
         desc.classList.add('colapsada');
 
@@ -22,12 +23,24 @@
         desc.classList.toggle('colapsada', !expandido);
         btn.setAttribute('aria-expanded', String(expandido));
         btn.textContent = expandido ? 'Ver menos' : 'Leer más';
+
+        if (expandido) {
+            // Fijamos la altura exacta en px para que la transición CSS anime de forma fluida
+            desc.style.maxHeight = desc.scrollHeight + 'px';
+        } else {
+            // Forzamos reflow para que la transición de cierre también se anime
+            desc.style.maxHeight = desc.scrollHeight + 'px';
+            void desc.offsetHeight;
+            desc.style.maxHeight = '';
+        }
     });
 
     window.addEventListener('load', evaluarAltura);
     window.addEventListener('resize', function () {
         if (!desc.classList.contains('expandida')) {
             evaluarAltura();
+        } else {
+            desc.style.maxHeight = desc.scrollHeight + 'px';
         }
     });
 })();
