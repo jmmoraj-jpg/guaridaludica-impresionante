@@ -23,7 +23,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -131,6 +133,8 @@ public class AdminProductoController {
     @PostMapping("/{id}/stock")
     public String actualizarStockRapido(@PathVariable Long id,
             @RequestParam int delta,
+            @RequestParam(defaultValue = "1") int pagina,
+            @RequestParam(required = false) String q,
             RedirectAttributes redirect) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -144,14 +148,25 @@ public class AdminProductoController {
         precioAjusteService.recalcularProducto(producto);
 
         redirect.addFlashAttribute("mensaje", "Stock y precio actualizados para: " + producto.getNombre());
-        return "redirect:/admin/productos";
+
+        int paginaSegura = Math.max(1, pagina);
+        StringBuilder url = new StringBuilder("redirect:/admin/productos?pagina=").append(paginaSegura);
+
+        if (q != null && !q.isBlank()) {
+            String qCodificada = UriUtils.encodeQueryParam(q.trim(), StandardCharsets.UTF_8);
+            url.append("&q=").append(qCodificada);
+        }
+
+        url.append("#pieza-").append(id);
+        return url.toString();
     }
 
     @PostMapping("/recalcular-precios")
     public String recalcularPrecios(RedirectAttributes redirect) {
         int totalRecalculadas = precioAjusteService.recalcularTodosLosProductos();
         redirect.addFlashAttribute("mensaje",
-                "Precios recalculados en " + totalRecalculadas + " " + (totalRecalculadas == 1 ? "pieza" : "piezas") + ".");
+                "Precios recalculados en " + totalRecalculadas + " " + (totalRecalculadas == 1 ? "pieza" : "piezas")
+                        + ".");
         return "redirect:/admin/productos";
     }
 }

@@ -36,3 +36,39 @@
     border: 2px solid var(--borde);
     padding: .55rem 1.1rem;
 }
+
+.fila-stock-cero > td {
+    --bs-table-bg: #fff3f0;
+    background-color: #fff3f0;
+}
+
+.fila-stock-uno > td {
+    --bs-table-bg: #fffaf0;
+    background-color: #fffaf0;
+}
+
+.stock-badge {
+    display: inline-block;
+    margin-top: .25rem;
+    padding: .15rem .55rem;
+    border-radius: 999px;
+    font-size: .72rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.stock-badge-cero {
+    background-color: #fbe3dd;
+    color: #8a2c17;
+    border: 1px solid #f0b8ab;
+}
+
+.stock-badge-uno {
+    background-color: #fef0c7;
+    color: #7a4b00;
+    border: 1px solid #f5d47a;
+}
+
+tr[id^="pieza-"] {
+    scroll-margin-top: 88px;
+}

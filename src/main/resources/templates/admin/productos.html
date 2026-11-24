@@ -41,7 +41,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="p : ${productos}">
+                    <tr th:each="p : ${productos}" th:id="'pieza-' + ${p.id}"
+                        th:with="stockActual=${p.stock != null ? p.stock : 0}"
+                        th:classappend="${stockActual == 0} ? 'fila-stock-cero' : (${stockActual == 1} ? 'fila-stock-uno' : '')">
                         <td style="width: 80px">
                             <img th:if="${p.imagenUrl != null}" th:src="${p.imagenUrl}" class="mini" alt="">
                         </td>
@@ -51,7 +53,6 @@
                                 th:text="${c.nombre}">Cat</span>
                             <span class="text-secondary" th:if="${p.categorias.isEmpty()}">—</span>
                         </td>
-                        <!-- NUEVA CELDA ECONÓMICA -->
                         <td>
                             <div th:if="${p.precioSugerido != null}">
                                 <span class="fw-bold" style="color: var(--menta-oscuro, #2a8c6a);"
@@ -78,24 +79,33 @@
                                 <!-- Botón restar -->
                                 <form th:action="@{/admin/productos/{id}/stock(id=${p.id})}" method="post" class="m-0">
                                     <input type="hidden" name="delta" value="-1" />
+                                    <input type="hidden" name="pagina" th:value="${pagina}" />
+                                    <input type="hidden" name="q" th:if="${q != null}" th:value="${q}" />
                                     <button type="submit" class="btn btn-outline-secondary btn-sm px-2 py-0"
                                         title="Restar 1">-</button>
                                 </form>
 
                                 <!-- Cantidad actual -->
-                                <span class="fw-bold px-2" th:text="${p.stock != null ? p.stock : 0}">0</span>
+                                <span class="fw-bold px-2" th:text="${stockActual}">0</span>
 
                                 <!-- Botón sumar -->
                                 <form th:action="@{/admin/productos/{id}/stock(id=${p.id})}" method="post" class="m-0">
                                     <input type="hidden" name="delta" value="1" />
+                                    <input type="hidden" name="pagina" th:value="${pagina}" />
+                                    <input type="hidden" name="q" th:if="${q != null}" th:value="${q}" />
                                     <button type="submit" class="btn btn-outline-secondary btn-sm px-2 py-0"
                                         title="Sumar 1">+</button>
                                 </form>
                             </div>
+                            <div th:if="${stockActual == 0}">
+                                <span class="stock-badge stock-badge-cero">Sin stock</span>
+                            </div>
+                            <div th:if="${stockActual == 1}">
+                                <span class="stock-badge stock-badge-uno">Última unidad</span>
+                            </div>
                         </td>
-                        
+
                         <td class="text-end">
-                            <!-- Tus botones de editar, ocultar y borrar de siempre -->
                             <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"
                                 class="btn btn-sm btn-pill btn-borde">Editar</a>
                             <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post"
