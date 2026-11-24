@@ -49,3 +49,19 @@
     padding: 1.4rem;
     margin-top: 1.5rem;
 }
+
+/* Descripción de la pieza respetando saltos de línea */
+.descripcion-pieza {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.descripcion-pieza.colapsada {
+    max-height: 7.5rem;
+    overflow: hidden;
+}
+
+.descripcion-pieza.expandida {
+    max-height: none;
+    overflow: visible;
+}
