@@ -10,6 +10,7 @@ Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas
 - Catálogo de piezas con filtros por categoría, buscador, descripciones resumidas en tarjetas y paginación.
 - Detalle de cada pieza con carrusel de imágenes de tamaño fijo, descripción completa, materiales disponibles, dimensiones, tiempo de impresión y categoría.
 - Registro e inicio de sesión (contraseñas cifradas con BCrypt). El registro exige aceptar la política de privacidad y guarda la fecha de aceptación.
+- Perfil de usuario (`/perfil`): consulta de datos básicos, gestión de direcciones de envío y opción para **borrar la propia cuenta** (con confirmación y contraseña, siempre que no existan solicitudes en curso).
 - Favoritos: corazón en las tarjetas y en el detalle, y página "Mis favoritos".
 - Conversaciones con el creador sobre una pieza: la conversación se crea al enviar el primer mensaje, y desde ella se puede **solicitar** o **cancelar** la pieza.
 - Seguimiento de la solicitud: estado, precio acordado y avisos de mensajes sin leer en el menú y en "Mis mensajes".
@@ -18,9 +19,9 @@ Web de un proyecto personal **sin ánimo de lucro** para mostrar piezas impresas
 - Diseño colorido, responsive y con Bootstrap 5.
 
 **Administración** (roles `ADMIN` y `ENCARGADO`, según se indica)
-- Piezas (`ADMIN`): listado con vista rápida de coste de producción y precio sugerido, opción de ocultar, mostrar y borrar; alta y edición con varias imágenes, elección de la portada, vista previa, asignación de filamentos con gramos exactos, datos económicos y casilla de **novedad**.
+- Piezas (`ADMIN`): listado con vista rápida de coste de producción y precio sugerido, avisos visuales de stock bajo (`0` y `1`), actualización rápida de stock conservando filtros/página y ancla, opción de ocultar, mostrar y borrar; alta y edición con varias imágenes, elección de la portada, vista previa, asignación de filamentos con gramos exactos, datos económicos y casilla de **novedad**.
 - Filamentos (`ADMIN`): gestión de inventario de materiales/colores, disponibilidad y precio por kilogramo (`€/kg`).
-- Calculadora de costes y margen (`ADMIN`): herramienta interactiva para calcular el coste real de fabricación (consumo multicolor de filamentos, desgaste/electricidad, colchón de fallos y extras) y el precio sugerido según margen. Permite cargar cualquier pieza del catálogo automáticamente y guardar el cálculo directamente en su ficha.
+- Calculadora de costes y margen (`ADMIN`): herramienta interactiva para calcular el coste real de fabricación (consumo multicolor de filamentos, desgaste/electricidad, colchón de fallos y extras) y el precio sugerido según margen (redondeado al alza a pasos de `0,50 €`). Permite cargar cualquier pieza del catálogo automáticamente y guardar el cálculo directamente en su ficha.
 - Categorías (`ADMIN`): alta, edición, orden y visibilidad.
 - Impresora (`ADMIN`): lista de piezas que se están imprimiendo (hasta 4), con buscador para elegirlas y porcentaje de avance editable.
 - Bandeja de mensajes (`ADMIN` y `ENCARGADO`): responder a los usuarios, aceptar solicitudes fijando el precio y hacer avanzar el estado.
@@ -64,14 +65,14 @@ CONSULTA → SOLICITADA → ACEPTADA → EN_IMPRESION → LISTA → ENTREGADA
 ```
 src/main/java/com/guaridaludica/guaridaimpresionante/
 ├── config/        Seguridad, Cloudinary y carga inicial de datos
-├── controller/    Controladores web y formularios (catálogo, calculadora, piezas, filamentos, etc.)
+├── controller/    Controladores web y formularios (catálogo, calculadora, piezas, filamentos, cuenta, etc.)
 ├── model/         Entidades JPA (Producto, ImagenProducto, Filamento, ProductoFilamento,
-│                  Categoria, Usuario, Favorito, Conversacion, Mensaje, Impresion)
+│                  Categoria, Usuario, Direccion, Favorito, Conversacion, Mensaje, Impresion)
 │                  y enumerados (Rol, EstadoConversacion)
 ├── repository/    Repositorios Spring Data
 ├── security/      UserDetailsService
 ├── service/       Lógica de negocio (conversaciones, impresiones, avisos, administración,
-│                  filamentos, favoritos, categorías y Cloudinary)
+│                  cuenta, filamentos, favoritos, categorías y Cloudinary)
 └── util/          Utilidades (paginación)
 
 src/main/resources/
@@ -85,6 +86,7 @@ src/main/resources/
 │   └── img/                  Logos y favicon
 └── templates/
     ├── fragments/            Cabecera, navbar, pie, hilo de mensajes y paginación reutilizables
+    ├── perfil/               Configuración de cuenta y direcciones de envío
     └── admin/                Pantallas de administración (piezas, filamentos, calculadora, etc.)
 ```
 
@@ -189,8 +191,10 @@ El despliegue está configurado en [Render](https://render.com/) conectado a [Su
 - [x] Gestión de inventario de filamentos (`€/kg`) y asignación multicolor por gramos
 - [x] Calculadora de costes y margen integrada con persistencia en piezas
 - [x] Despliegue en producción (Render + Supabase PostgreSQL)
-- [ ] Dirección opcional en los datos del usuario
-- [ ] Botón "Borrar mi cuenta"
+- [x] Direcciones de envío en el perfil de usuario
+- [x] Botón "Borrar mi cuenta" en el perfil de usuario
+- [x] Gestión y borrado de cuentas de usuario desde administración (`ADMIN`)
+- [ ] Historial y estadísticas de ventas
 
 ## Seguridad
 
