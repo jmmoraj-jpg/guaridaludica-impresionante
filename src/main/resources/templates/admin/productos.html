@@ -130,6 +130,7 @@
             </table>
             <p th:if="${#lists.isEmpty(productos)}" class="text-secondary p-3 mb-0">Todavía no hay piezas.</p>
         </div>
+        
         <p class="text-secondary small mt-2" th:text="${total} + ' piezas'">0 piezas</p>
         <th:block
             th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/admin/productos', ${extraPaginacion}, '')}">

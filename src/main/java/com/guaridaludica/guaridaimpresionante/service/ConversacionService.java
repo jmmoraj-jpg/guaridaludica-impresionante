@@ -23,13 +23,16 @@ public class ConversacionService {
     private final ConversacionRepository conversacionRepository;
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
+    private final VentaService ventaService;
 
     public ConversacionService(ConversacionRepository conversacionRepository,
             UsuarioRepository usuarioRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository,
+            VentaService ventaService) {
         this.conversacionRepository = conversacionRepository;
         this.usuarioRepository = usuarioRepository;
         this.productoRepository = productoRepository;
+        this.ventaService = ventaService;
     }
 
     // Devuelve la conversación abierta del usuario sobre esa pieza, o null si no
@@ -154,9 +157,15 @@ public class ConversacionService {
             }
             c.setPrecio(precio);
         }
+        boolean pasaAEntregada = (nuevo == EstadoConversacion.ENTREGADA
+                && c.getEstado() != EstadoConversacion.ENTREGADA);
         c.setEstado(nuevo);
         c.setUltimaActividad(LocalDateTime.now());
         c.setSinLeerUsuario(true);
+
+        if (pasaAEntregada) {
+            ventaService.registrarDesdeConversacionEntregada(c);
+        }
         return true;
     }
 
