@@ -30,7 +30,8 @@
                         <!-- Selector rápido de pieza existente -->
                         <div class="col-md-7">
                             <label for="selectPieza" class="form-label">Cargar pieza del catálogo (opcional)</label>
-                            <select id="selectPieza" class="form-select">
+                            <select id="selectPieza" class="form-select"
+                                th:data-preseleccionado="${productoIdSeleccionado}">
                                 <option value="" data-margen="100">-- Cálculo libre / manual --</option>
                                 <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"
                                     th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}"

@@ -278,6 +278,15 @@ document.addEventListener("DOMContentLoaded", () => {
         checkRedondear
     ].forEach(el => el.addEventListener("input", calcular));
 
+    const preseleccionado = selectPieza.dataset.preseleccionado;
+    if (preseleccionado) {
+        const existeOpcion = Array.from(selectPieza.options).some(opt => opt.value === preseleccionado);
+        if (existeOpcion) {
+            selectPieza.value = preseleccionado;
+            selectPieza.dispatchEvent(new Event("change"));
+        }
+    }
+    
     actualizarBotonesQuitar();
     calcular();
 });

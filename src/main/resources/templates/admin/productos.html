@@ -54,21 +54,25 @@
                             <span class="text-secondary" th:if="${p.categorias.isEmpty()}">—</span>
                         </td>
                         <td>
-                            <div th:if="${p.precioSugerido != null}">
-                                <span class="fw-bold" style="color: var(--menta-oscuro, #2a8c6a);"
-                                    th:text="${#numbers.formatDecimal(p.precioSugerido, 1, 'POINT', 2, 'POINT') + ' €'}">3,50
-                                    €</span>
-                                <div class="small text-secondary" style="font-size: 0.75rem;">
-                                    Coste: <span
-                                        th:text="${#numbers.formatDecimal(p.costeProduccion != null ? p.costeProduccion : 0, 1, 'POINT', 2, 'POINT') + ' €'}">1,65
+                            <a th:href="@{/admin/calculadora(productoId=${p.id})}"
+                                class="text-decoration-none d-inline-block" title="Abrir en la calculadora">
+                                <div th:if="${p.precioSugerido != null}">
+                                    <span class="fw-bold" style="color: var(--menta-oscuro, #2a8c6a);"
+                                        th:text="${#numbers.formatDecimal(p.precioSugerido, 1, 'POINT', 2, 'POINT') + ' €'}">4.00
                                         €</span>
-                                    <span th:if="${p.margenBeneficioAplicado != null}">
-                                        (<span
-                                            th:text="${#numbers.formatDecimal(p.margenBeneficioAplicado, 1, 0)}">100</span>%)
-                                    </span>
+                                    <div class="small text-secondary" style="font-size: 0.75rem;">
+                                        Coste: <span
+                                            th:text="${#numbers.formatDecimal(p.costeProduccion != null ? p.costeProduccion : 0, 1, 'POINT', 2, 'POINT') + ' €'}">0.97
+                                            €</span>
+                                        <span th:if="${p.margenBeneficioAplicado != null}">
+                                            (<span
+                                                th:text="${#numbers.formatDecimal(p.margenBeneficioAplicado, 1, 0)}">300</span>%)
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-secondary" th:unless="${p.precioSugerido != null}">— Sin calcular —</span>
+                                <span class="text-secondary" th:unless="${p.precioSugerido != null}">— Sin calcular
+                                    —</span>
+                            </a>
                         </td>
                         <td>
                             <span class="etiqueta mat-petg" th:if="${p.visible}">Visible</span>
@@ -106,17 +110,20 @@
                         </td>
 
                         <td class="text-end">
-                            <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"
-                                class="btn btn-sm btn-pill btn-borde">Editar</a>
-                            <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post"
-                                class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-pill btn-borde"
-                                    th:text="${p.visible} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
-                            </form>
-                            <form th:action="@{/admin/productos/{id}/borrar(id=${p.id})}" method="post" class="d-inline"
-                                onsubmit="return confirm('¿Borrar esta pieza y todas sus imágenes?')">
-                                <button type="submit" class="btn btn-sm btn-pill btn-borde">Borrar</button>
-                            </form>
+                            <div class="d-inline-flex flex-wrap justify-content-end align-items-center gap-1">
+                                <a th:href="@{/admin/productos/{id}/editar(id=${p.id})}"
+                                    class="btn btn-sm btn-pill btn-borde text-nowrap">Editar</a>
+                                <form th:action="@{/admin/productos/{id}/visibilidad(id=${p.id})}" method="post"
+                                    class="m-0">
+                                    <button type="submit" class="btn btn-sm btn-pill btn-borde text-nowrap"
+                                        th:text="${p.visible} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
+                                </form>
+                                <form th:action="@{/admin/productos/{id}/borrar(id=${p.id})}" method="post" class="m-0"
+                                    onsubmit="return confirm('¿Borrar esta pieza y todas sus imágenes?')">
+                                    <button type="submit"
+                                        class="btn btn-sm btn-pill btn-borde text-nowrap">Borrar</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
