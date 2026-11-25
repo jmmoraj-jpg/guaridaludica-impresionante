@@ -32,7 +32,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     @Query("select p from Producto p join p.categorias c where c.id = :id")
     List<Producto> conCategoria(@Param("id") Long id);
 
-    Optional<Producto> findFirstByNovedadTrueAndVisibleTrueOrderByIdDesc();
+    List<Producto> findTop3ByNovedadTrueAndVisibleTrueOrderByIdDesc();
 
     @Query("select distinct p from Producto p join p.filamentosUsados pf where pf.filamento.id = :filamentoId")
     List<Producto> buscarPorFilamentoId(@Param("filamentoId") Long filamentoId);
