@@ -159,4 +159,20 @@ public class ConversacionService {
         c.setSinLeerUsuario(true);
         return true;
     }
+
+    @Transactional
+    public boolean actualizarResumenEncargoComoGuarida(Long id, String resumenEncargo) {
+        Conversacion c = abrirComoGuarida(id);
+        if (c.getEstado().isCerrada() || c.getEstado() != EstadoConversacion.CONSULTA) {
+            return false;
+        }
+        String limpio = resumenEncargo == null ? "" : resumenEncargo.trim();
+        if (limpio.length() > 200) {
+            return false;
+        }
+        c.setResumenEncargo(limpio.isEmpty() ? null : limpio);
+        c.setUltimaActividad(LocalDateTime.now());
+        c.setSinLeerUsuario(true);
+        return true;
+    }
 }

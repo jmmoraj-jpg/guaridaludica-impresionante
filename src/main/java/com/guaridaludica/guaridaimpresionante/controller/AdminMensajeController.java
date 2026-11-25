@@ -116,4 +116,15 @@ public class AdminMensajeController {
         }
         return "redirect:/admin/mensajes?filtro=canceladas";
     }
+
+    @PostMapping("/{id}/detalle")
+    public String guardarDetalle(@PathVariable Long id,
+            @RequestParam(required = false) String resumenEncargo,
+            RedirectAttributes redirect) {
+        if (!servicio.actualizarResumenEncargoComoGuarida(id, resumenEncargo)) {
+            redirect.addFlashAttribute("error",
+                    "Solo puedes indicar o modificar el detalle de piezas y colores mientras la conversación esté en Consulta.");
+        }
+        return "redirect:/admin/mensajes/" + id;
+    }
 }

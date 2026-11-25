@@ -68,6 +68,9 @@ public class Conversacion {
     @Column(precision = 8, scale = 2)
     private BigDecimal precio;
 
+    @Column(length = 200)
+    private String resumenEncargo;
+
     private boolean sinLeerUsuario;
     private boolean sinLeerGuarida;
 
