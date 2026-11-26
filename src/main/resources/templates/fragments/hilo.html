@@ -80,12 +80,11 @@
             th:if="${conv.resumenEncargo != null or (vistaGuarida and conv.estado.name() == 'CONSULTA')}">
             <div class="d-flex justify-content-between align-items-center mb-1">
                 <span class="small fw-bold text-secondary">📌 Piezas y colores acordados</span>
-                <span class="badge bg-light text-secondary border"
-                    th:if="${conv.estado.name() != 'CONSULTA'}">Fijado al solicitar</span>
+                <span class="badge bg-light text-secondary border" th:if="${conv.estado.name() != 'CONSULTA'}">Fijado al
+                    solicitar</span>
             </div>
 
-            <div class="fw-semibold"
-                th:if="${!vistaGuarida or conv.estado.name() != 'CONSULTA'}"
+            <div class="fw-semibold" th:if="${!vistaGuarida or conv.estado.name() != 'CONSULTA'}"
                 th:text="${conv.resumenEncargo != null and !#strings.isEmpty(conv.resumenEncargo)} ? ${conv.resumenEncargo} : 'Por concretar en el chat'">
                 Detalle de piezas y colores
             </div>
@@ -94,8 +93,7 @@
                 th:action="@{/admin/mensajes/{id}/detalle(id=${conv.id})}" method="post"
                 class="d-flex flex-wrap gap-2 mt-2">
                 <input type="text" name="resumenEncargo" maxlength="200"
-                    class="form-control form-control-sm flex-grow-1"
-                    th:value="${conv.resumenEncargo}"
+                    class="form-control form-control-sm flex-grow-1" th:value="${conv.resumenEncargo}"
                     placeholder="Ej. 2 unidades: 1 PLA Rojo y 1 PLA Negro">
                 <button type="submit" class="btn btn-sm btn-pill btn-menta">Guardar resumen</button>
             </form>
@@ -109,8 +107,13 @@
             <div class="burbuja" th:each="m : ${conv.mensajes}"
                 th:classappend="${m.deLaGuarida == vistaGuarida} ? 'burbuja-mia' : 'burbuja-otro'">
                 <span th:text="${m.texto}">Texto</span>
-                <small th:text="${(vistaGuarida ? m.autor.nombre : (m.deLaGuarida ? 'La Guarida' : 'Tú'))
-                            + ' · ' + #temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Autor · fecha</small>
+                <small>
+                    <span th:text="${(vistaGuarida ? m.autor.nombre : (m.deLaGuarida ? 'La Guarida' : 'Tú'))
+                        + ' · ' + #temporals.format(m.fecha, 'dd/MM/yyyy HH:mm')}">Autor · fecha</span>
+                    <span th:if="${m.deLaGuarida == vistaGuarida}" class="ms-1"
+                        th:text="${m.leido} ? '· ✓✓ Leído' : '· ✓ Enviado'"
+                        th:title="${m.leido} ? 'Leído' : 'Aún no leído'">· ✓ Enviado</span>
+                </small>
             </div>
         </div>
 

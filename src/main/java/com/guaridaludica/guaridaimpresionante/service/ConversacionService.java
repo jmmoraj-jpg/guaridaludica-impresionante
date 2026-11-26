@@ -86,6 +86,11 @@ public class ConversacionService {
                 .filter(x -> x.getUsuario().getEmail().equalsIgnoreCase(email))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         c.setSinLeerUsuario(false);
+        for (Mensaje m : c.getMensajes()) {
+            if (m.isDeLaGuarida() && !m.isLeido()) {
+                m.setLeido(true);
+            }
+        }
         return c;
     }
 
@@ -94,6 +99,11 @@ public class ConversacionService {
         Conversacion c = conversacionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         c.setSinLeerGuarida(false);
+        for (Mensaje m : c.getMensajes()) {
+            if (!m.isDeLaGuarida() && !m.isLeido()) {
+                m.setLeido(true);
+            }
+        }
         return c;
     }
 

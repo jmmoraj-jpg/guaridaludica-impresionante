@@ -29,9 +29,13 @@ public class Mensaje {
     @Column(nullable = false, length = 2000)
     private String texto;
 
-    // true si lo escribe el equipo (admin o encargado) y false si lo escribe el usuario
+    // true si lo escribe el equipo (admin o encargado) y false si lo escribe el
+    // usuario
     private boolean deLaGuarida;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime fecha = LocalDateTime.now();
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean leido = false;
 }
