@@ -24,15 +24,18 @@ public class ConversacionService {
     private final UsuarioRepository usuarioRepository;
     private final ProductoRepository productoRepository;
     private final VentaService ventaService;
+    private final PushNotificationService pushNotificationService;
 
     public ConversacionService(ConversacionRepository conversacionRepository,
             UsuarioRepository usuarioRepository,
             ProductoRepository productoRepository,
-            VentaService ventaService) {
+            VentaService ventaService,
+            PushNotificationService pushNotificationService) {
         this.conversacionRepository = conversacionRepository;
         this.usuarioRepository = usuarioRepository;
         this.productoRepository = productoRepository;
         this.ventaService = ventaService;
+        this.pushNotificationService = pushNotificationService;
     }
 
     // Devuelve la conversación abierta del usuario sobre esa pieza, o null si no
@@ -58,13 +61,25 @@ public class ConversacionService {
     @Transactional
     public Conversacion iniciarConMensaje(String email, Long productoId, String texto) {
         Conversacion c = buscarAbierta(email, productoId);
-        if (c == null) {
+        boolean eraNueva = (c == null);
+        if (eraNueva) {
             c = nuevaConversacion(email, productoId);
         }
         if (!anadir(c, email, texto, false)) {
             return null;
         }
-        return conversacionRepository.save(c);
+        Conversacion guardada = conversacionRepository.save(c);
+        if (eraNueva) {
+            String pieza = nombrePieza(guardada);
+            String resumen = recortar(texto, 110);
+            pushNotificationService.notificarNuevaActividadConversacion(
+                    guardada,
+                    false,
+                    "Nueva consulta: " + pieza,
+                    guardada.getUsuario().getNombre() + ": " + resumen
+            );
+        }
+        return guardada;
     }
 
     private Conversacion nuevaConversacion(String email, Long productoId) {
@@ -140,6 +155,21 @@ public class ConversacionService {
         } else {
             c.setSinLeerGuarida(true);
         }
+
+        // Si c.getId() != null ya está persistida; si es null (conversación nueva),
+        // notifica iniciarConMensaje tras save(c)
+        if (c.getId() != null) {
+            String pieza = nombrePieza(c);
+            String titulo = deLaGuarida
+                    ? "Respuesta de La Guarida (" + pieza + ")"
+                    : "Nuevo mensaje de " + autor.getNombre() + " (" + pieza + ")";
+            pushNotificationService.notificarNuevaActividadConversacion(
+                    c,
+                    deLaGuarida,
+                    titulo,
+                    recortar(limpio, 110)
+            );
+        }
         return true;
     }
 
@@ -152,6 +182,14 @@ public class ConversacionService {
         c.setEstado(nuevo);
         c.setUltimaActividad(LocalDateTime.now());
         c.setSinLeerGuarida(true);
+
+        String pieza = nombrePieza(c);
+        pushNotificationService.notificarNuevaActividadConversacion(
+                c,
+                false,
+                "Cambio de estado (" + pieza + ")",
+                c.getUsuario().getNombre() + " ha cambiado el estado a: " + nuevo.getEtiqueta()
+        );
         return true;
     }
 
@@ -176,6 +214,14 @@ public class ConversacionService {
         if (pasaAEntregada) {
             ventaService.registrarDesdeConversacionEntregada(c);
         }
+
+        String pieza = nombrePieza(c);
+        pushNotificationService.notificarNuevaActividadConversacion(
+                c,
+                true,
+                "Actualización de tu pieza: " + pieza,
+                "El estado de tu solicitud ahora es: " + nuevo.getEtiqueta()
+        );
         return true;
     }
 
@@ -193,5 +239,17 @@ public class ConversacionService {
         c.setUltimaActividad(LocalDateTime.now());
         c.setSinLeerUsuario(true);
         return true;
+    }
+
+    private String nombrePieza(Conversacion c) {
+        return c.getProducto() != null ? c.getProducto().getNombre() : "Encargo personalizado";
+    }
+
+    private String recortar(String texto, int max) {
+        if (texto == null) {
+            return "";
+        }
+        String limpio = texto.trim();
+        return limpio.length() > max ? limpio.substring(0, max - 1) + "…" : limpio;
     }
 }
