@@ -19,4 +19,24 @@ body {
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
 
-h1, h2, h3, h4, h5 { font-weight: 700; letter-spacing: -.01em; }
+h1,
+h2,
+h3,
+h4,
+h5 {
+    font-weight: 700;
+    letter-spacing: -.01em;
+}
+
+
+.input-color-grupo .form-control-color {
+    flex: 0 0 3.75rem;
+    width: 3.75rem;
+    height: auto;
+    min-height: 2.55rem;
+    padding: 0.25rem;
+}
+
+.input-color-grupo .form-control {
+    min-height: 2.55rem;
+}

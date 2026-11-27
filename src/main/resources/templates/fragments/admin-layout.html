@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<body>
+
+    <aside th:fragment="sidebar(seccionActiva)" class="admin-sidebar" aria-label="Navegación de administración"
+        th:with="pendientes=${@avisos.deEquipo()}">
+
+        <div class="admin-sidebar-cabecera">
+            <span class="admin-sidebar-titulo">Administración</span>
+            <button class="btn btn-sm btn-pill btn-borde d-lg-none" type="button"
+                data-bs-toggle="collapse" data-bs-target="#adminMenuMovil"
+                aria-expanded="false" aria-controls="adminMenuMovil">
+                Secciones
+            </button>
+        </div>
+
+        <div id="adminMenuMovil" class="collapse d-lg-block admin-sidebar-cuerpo">
+            <div class="admin-grupo-etiqueta">General</div>
+            <ul class="admin-nav">
+                <li>
+                    <a th:href="@{/admin}"
+                        th:classappend="${seccionActiva == 'panel'} ? 'activo'">
+                        <span>🏠 Panel</span>
+                    </a>
+                </li>
+                <li sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">
+                    <a th:href="@{/admin/mensajes}"
+                        th:classappend="${seccionActiva == 'mensajes'} ? 'activo'">
+                        <span>✉ Bandeja</span>
+                        <span class="aviso-nuevo" th:if="${pendientes > 0}" th:text="${pendientes}">1</span>
+                    </a>
+                </li>
+            </ul>
+
+            <th:block sec:authorize="hasRole('ADMIN')">
+                <div class="admin-grupo-etiqueta">Taller y catálogo</div>
+                <ul class="admin-nav">
+                    <li>
+                        <a th:href="@{/admin/productos}"
+                            th:classappend="${seccionActiva == 'productos'} ? 'activo'">
+                            <span>🧊 Piezas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/categorias}"
+                            th:classappend="${seccionActiva == 'categorias'} ? 'activo'">
+                            <span>🏷️ Categorías</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/impresora}"
+                            th:classappend="${seccionActiva == 'impresora'} ? 'activo'">
+                            <span>🖨️ Impresora</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/filamentos}"
+                            th:classappend="${seccionActiva == 'filamentos'} ? 'activo'">
+                            <span>🧵 Filamentos</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/calculadora}"
+                            th:classappend="${seccionActiva == 'calculadora'} ? 'activo'">
+                            <span>🧮 Calculadora</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="admin-grupo-etiqueta">Gestión</div>
+                <ul class="admin-nav">
+                    <li>
+                        <a th:href="@{/admin/ventas}"
+                            th:classappend="${seccionActiva == 'ventas'} ? 'activo'">
+                            <span>💶 Ventas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/admin/usuarios}"
+                            th:classappend="${seccionActiva == 'usuarios'} ? 'activo'">
+                            <span>👥 Usuarios</span>
+                        </a>
+                    </li>
+                </ul>
+            </th:block>
+        </div>
+    </aside>
+
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="~{fragments/layout :: head('Panel de administración')}"></head>
+
+<body>
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <div class="container py-4">
+        <div class="admin-shell">
+            <aside th:replace="~{fragments/admin-layout :: sidebar('panel')}"></aside>
+
+            <main class="admin-contenido" th:with="pendientes=${@avisos.deEquipo()}">
+                <div class="admin-cabecera-pagina">
+                    <div>
+                        <h2 class="mb-1">Panel de administración</h2>
+                        <p class="text-secondary mb-0">Acceso rápido a mensajes, taller y gestión de La Guarida.</p>
+                    </div>
+                </div>
+
+                <h3 class="admin-seccion-titulo">Atención y mensajes</h3>
+                <div class="admin-grid">
+                    <a th:href="@{/admin/mensajes}" class="admin-card acento-menta"
+                        sec:authorize="hasAnyRole('ADMIN','ENCARGADO')">
+                        <div class="admin-card-top">
+                            <span class="admin-card-icono">✉</span>
+                            <span class="aviso-nuevo" th:if="${pendientes > 0}" th:text="${pendientes}">1</span>
+                        </div>
+                        <div class="admin-card-titulo">Bandeja de mensajes</div>
+                        <p class="admin-card-desc">Responde consultas, fija encargos y actualiza estados.</p>
+                    </a>
+                </div>
+
+                <th:block sec:authorize="hasRole('ADMIN')">
+                    <h3 class="admin-seccion-titulo">Taller y catálogo</h3>
+                    <div class="admin-grid">
+                        <a th:href="@{/admin/productos}" class="admin-card acento-salmon">
+                            <div class="admin-card-top"><span class="admin-card-icono">🧊</span></div>
+                            <div class="admin-card-titulo">Piezas</div>
+                            <p class="admin-card-desc">Gestiona el catálogo, stock, imágenes y visibilidad.</p>
+                        </a>
+
+                        <a th:href="@{/admin/categorias}" class="admin-card acento-lila">
+                            <div class="admin-card-top"><span class="admin-card-icono">🏷️</span></div>
+                            <div class="admin-card-titulo">Categorías</div>
+                            <p class="admin-card-desc">Organiza y ordena las categorías del catálogo.</p>
+                        </a>
+
+                        <a th:href="@{/admin/impresora}" class="admin-card acento-menta">
+                            <div class="admin-card-top"><span class="admin-card-icono">🖨️</span></div>
+                            <div class="admin-card-titulo">Impresora</div>
+                            <p class="admin-card-desc">Actualiza el progreso en vivo, cola y mensaje del taller.</p>
+                        </a>
+
+                        <a th:href="@{/admin/filamentos}" class="admin-card acento-amarillo">
+                            <div class="admin-card-top"><span class="admin-card-icono">🧵</span></div>
+                            <div class="admin-card-titulo">Filamentos</div>
+                            <p class="admin-card-desc">Controla materiales, colores activos y precios por kilo.</p>
+                        </a>
+
+                        <a th:href="@{/admin/calculadora}" class="admin-card acento-lila">
+                            <div class="admin-card-top"><span class="admin-card-icono">🧮</span></div>
+                            <div class="admin-card-titulo">Calculadora</div>
+                            <p class="admin-card-desc">Calcula costes de impresión, margen y precio sugerido.</p>
+                        </a>
+                    </div>
+
+                    <h3 class="admin-seccion-titulo">Gestión y negocio</h3>
+                    <div class="admin-grid">
+                        <a th:href="@{/admin/ventas}" class="admin-card acento-menta">
+                            <div class="admin-card-top"><span class="admin-card-icono">💶</span></div>
+                            <div class="admin-card-titulo">Ventas</div>
+                            <p class="admin-card-desc">Consulta el registro de ventas, importes y costes.</p>
+                        </a>
+
+                        <a th:href="@{/admin/usuarios}" class="admin-card acento-salmon">
+                            <div class="admin-card-top"><span class="admin-card-icono">👥</span></div>
+                            <div class="admin-card-titulo">Usuarios</div>
+                            <p class="admin-card-desc">Revisa cuentas registradas y permisos de acceso.</p>
+                        </a>
+                    </div>
+                </th:block>
+            </main>
+        </div>
+    </div>
+
+    <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+</body>
+
+</html>

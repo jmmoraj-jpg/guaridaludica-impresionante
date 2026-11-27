@@ -6,111 +6,118 @@
 <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-    <main class="container py-4">
-        <h2 class="mb-3">Gestión de Filamentos</h2>
+    <div class="container py-4">
+        <div class="admin-shell">
+            <aside th:replace="~{fragments/admin-layout :: sidebar('filamentos')}"></aside>
 
-        <!-- Mensaje de éxito si lo hubiera -->
-        <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
+            <main class="admin-contenido">
+                <h2 class="mb-3">Gestión de Filamentos</h2>
 
-        <!-- Tarjeta de formulario (Nuevo / Editar filamento) -->
-        <div class="auth-card mb-4">
-            <h5 class="mb-3" th:text="${form.id != null} ? 'Editar filamento' : 'Nuevo filamento'">Nuevo filamento</h5>
+                <div th:if="${mensaje}" class="alert alert-success" th:text="${mensaje}"></div>
 
-            <form th:action="@{/admin/filamentos/guardar}" th:object="${form}" method="post" novalidate>
-                <input type="hidden" th:field="*{id}" />
+                <!-- Tarjeta de formulario (Nuevo / Editar filamento) -->
+                <div class="auth-card mb-4">
+                    <h5 class="mb-3" th:text="${form.id != null} ? 'Editar filamento' : 'Nuevo filamento'">Nuevo
+                        filamento</h5>
 
-                <div class="row g-3 align-items-start">
-                    <div class="row g-3 align-items-start">
-                        <div class="col-md-4">
-                            <label for="nombre">Nombre</label>
-                            <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
-                                placeholder="Ej. PLA Negro Mate">
-                            <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
-                        </div>
+                    <form th:action="@{/admin/filamentos/guardar}" th:object="${form}" method="post" novalidate>
+                        <input type="hidden" th:field="*{id}" />
 
-                        <div class="col-md-3">
-                            <label for="colorHex">Color (Código HEX)</label>
-                            <div class="input-group">
-                                <input type="color" id="inputColorPicker" class="form-control form-control-color"
-                                    value="#212529" title="Elige el color">
-                                <input type="text" id="inputColorText" class="form-control" th:field="*{colorHex}"
-                                    placeholder="#212529" required>
+                        <div class="row g-3 align-items-start">
+                            <div class="col-md-4">
+                                <label for="nombre">Nombre</label>
+                                <input type="text" id="nombre" th:field="*{nombre}" class="form-control"
+                                    placeholder="Ej. PLA Negro Mate">
+                                <div class="error-campo" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}">
+                                </div>
                             </div>
-                            <div class="error-campo" th:if="${#fields.hasErrors('colorHex')}" th:errors="*{colorHex}">
+
+                            <div class="col-md-4">
+                                <label for="colorHex">Color (Código HEX)</label>
+                                <div class="input-group input-color-grupo">
+                                    <input type="color" id="inputColorPicker" class="form-control form-control-color"
+                                        value="#212529" title="Elige el color">
+                                    <input type="text" id="inputColorText" class="form-control" th:field="*{colorHex}"
+                                        placeholder="#212529" required>
+                                </div>
+                                <div class="error-campo" th:if="${#fields.hasErrors('colorHex')}"
+                                    th:errors="*{colorHex}">
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="precioPorKg">Precio bobina (€/kg)</label>
+                                <input type="number" id="precioPorKg" th:field="*{precioPorKg}" min="0" step="0.01"
+                                    class="form-control" placeholder="Ej. 20.00">
+                                <div class="error-campo" th:if="${#fields.hasErrors('precioPorKg')}"
+                                    th:errors="*{precioPorKg}"></div>
+                            </div>
+
+                            <div class="col-md-2 pt-md-4">
+                                <button type="submit" class="btn btn-pill btn-menta w-100"
+                                    th:text="${form.id != null} ? 'Actualizar' : 'Crear'">Guardar</button>
                             </div>
                         </div>
-
-                        <div class="col-md-3">
-                            <label for="precioPorKg">Precio bobina (€/kg)</label>
-                            <input type="number" id="precioPorKg" th:field="*{precioPorKg}" min="0" step="0.01"
-                                class="form-control" placeholder="Ej. 20.00">
-                            <div class="error-campo" th:if="${#fields.hasErrors('precioPorKg')}"
-                                th:errors="*{precioPorKg}"></div>
-                        </div>
-
-                        <div class="col-md-2 pt-md-4">
-                            <button type="submit" class="btn btn-pill btn-menta w-100"
-                                th:text="${form.id != null} ? 'Actualizar' : 'Crear'">Guardar</button>
-                        </div>
-                    </div>
-
+                    </form>
                 </div>
-            </form>
+
+                <!-- Tabla de listado de filamentos -->
+                <div class="tabla-admin">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Filamento</th>
+                                <th>Precio/kg</th>
+                                <th>Estado</th>
+                                <th class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="f : ${filamentos}">
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="rounded-circle d-inline-block shadow-sm flex-shrink-0"
+                                            th:style="'width: 24px; height: 24px; background-color: ' + ${f.colorHex} + ';'"></span>
+                                        <div>
+                                            <div class="fw-semibold" th:text="${f.nombre}">PLA Negro Mate</div>
+                                            <div class="text-secondary small font-monospace" th:text="${f.colorHex}">
+                                                #212529</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-secondary text-nowrap"
+                                    th:text="${f.precioPorKg != null} ? ${#numbers.formatDecimal(f.precioPorKg, 1, 2)} + ' €' : '—'">
+                                    20,00 €</td>
+                                <td>
+                                    <span class="etiqueta mat-petg" th:if="${f.activo}">Activo</span>
+                                    <span class="etiqueta" th:unless="${f.activo}">Agotado</span>
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    <a th:href="@{/admin/filamentos/{id}/editar(id=${f.id})}"
+                                        class="btn btn-sm btn-pill btn-borde">Editar</a>
+
+                                    <form th:action="@{/admin/filamentos/{id}/estado(id=${f.id})}" method="post"
+                                        class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-pill btn-borde"
+                                            th:text="${f.activo} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p th:if="${#lists.isEmpty(filamentos)}" class="text-secondary p-3 mb-0">Todavía no hay filamentos
+                        registrados.</p>
+                </div>
+
+                <p class="text-secondary small mt-2" th:text="${#lists.size(filamentos)} + ' filamentos en total'">0
+                    filamentos
+                </p>
+                <th:block
+                    th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/admin/filamentos', ${extraPaginacion}, '')}">
+                </th:block>
+            </main>
         </div>
-
-        <!-- Tabla de listado de filamentos -->
-        <div class="tabla-admin">
-            <table class="table align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th style="width: 60px;">Color</th>
-                        <th>Nombre</th>
-                        <th>Código HEX</th>
-                        <th>Precio/kg</th>
-                        <th>Estado</th>
-                        <th class="text-end">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="f : ${filamentos}">
-                        <td>
-                            <span class="rounded-circle d-inline-block shadow-sm"
-                                th:style="'width: 24px; height: 24px; background-color: ' + ${f.colorHex} + ';'"></span>
-                        </td>
-                        <td class="fw-semibold" th:text="${f.nombre}">PLA Negro Mate</td>
-                        <td class="text-secondary small font-monospace" th:text="${f.colorHex}">#212529</td>
-                        <td class="text-secondary"
-                            th:text="${f.precioPorKg != null} ? ${#numbers.formatDecimal(f.precioPorKg, 1, 2)} + ' €' : '—'">
-                            20,00 €</td>
-                        <td>
-                            <span class="etiqueta mat-petg" th:if="${f.activo}">Activo</span>
-                            <span class="etiqueta" th:unless="${f.activo}">Agotado</span>
-                        </td>
-                        <td class="text-end">
-                            <!-- Botón Editar -->
-                            <a th:href="@{/admin/filamentos/{id}/editar(id=${f.id})}"
-                                class="btn btn-sm btn-pill btn-borde">Editar</a>
-
-                            <!-- Cambiar Estado (Activo/Inactivo) -->
-                            <form th:action="@{/admin/filamentos/{id}/estado(id=${f.id})}" method="post"
-                                class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-pill btn-borde"
-                                    th:text="${f.activo} ? 'Ocultar' : 'Mostrar'">Ocultar</button>
-                            </form>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <p th:if="${#lists.isEmpty(filamentos)}" class="text-secondary p-3 mb-0">Todavía no hay filamentos
-                registrados.</p>
-        </div>
-
-        <p class="text-secondary small mt-2" th:text="${#lists.size(filamentos)} + ' filamentos en total'">0 filamentos
-        </p>
-        <th:block
-            th:replace="~{fragments/paginacion :: paginacion(${pagina}, ${totalPaginas}, '/admin/filamentos', ${extraPaginacion}, '')}">
-        </th:block>
-    </main>
+    </div>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
     <script th:src="@{/js/filamentos.js}"></script>

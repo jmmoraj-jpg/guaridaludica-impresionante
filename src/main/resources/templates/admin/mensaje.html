@@ -6,60 +6,65 @@
 <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-    <main class="container py-4">
-        <a class="volver" th:href="@{/admin/mensajes}">← Volver a la bandeja</a>
-        <div class="row justify-content-center mt-3">
-            <div class="col-lg-8">
+    <div class="container py-4">
+        <div class="admin-shell">
+            <aside th:replace="~{fragments/admin-layout :: sidebar('mensajes')}"></aside>
 
-                <!-- Bloque unificado para estado y borrado de la conversación -->
-                <div class="card p-4 mb-4 border-0 rounded-4 shadow-sm bg-light">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
-                        <div class="caja-estado mb-0 p-0 border-0 bg-transparent">
-                            <span class="small text-secondary" th:if="${conv.estado.name() == 'CONSULTA'}">
-                                Esperando a que el usuario la solicite.
-                            </span>
-                            <span class="small text-secondary fw-bold"
-                                th:if="${conv.estado.siguientesParaEquipo().isEmpty() and conv.estado.name() != 'CONSULTA'}"
-                                th:text="'Estado actual: ' + ${conv.estado.etiqueta}">Cerrada</span>
-                            
-                            <th:block th:each="e : ${conv.estado.siguientesParaEquipo()}">
-                                <form th:if="${e.name() == 'ACEPTADA'}"
-                                    th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
-                                    class="d-flex gap-2 align-items-center">
-                                    <input type="hidden" name="estado" value="ACEPTADA">
-                                    <input type="number" name="precio" step="0.01" min="0.01" required class="form-control form-control-sm"
-                                        style="width: 7rem" placeholder="Precio €">
-                                    <button type="submit" class="btn btn-sm btn-pill btn-menta">Aceptar</button>
-                                </form>
-                                <form th:unless="${e.name() == 'ACEPTADA'}"
-                                    th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
-                                    th:attr="data-confirmar=${e.name() == 'CANCELADA'} ? '¿Seguro que quieres cancelar? No se puede deshacer.' : null">
-                                    <input type="hidden" name="estado" th:value="${e.name()}">
-                                    <button type="submit" class="btn btn-sm btn-pill"
-                                        th:classappend="${e.name() == 'CANCELADA'} ? 'btn-borde' : 'btn-menta'"
-                                        th:text="${e.name() == 'CANCELADA'} ? 'Cancelar' : 'Pasar a ' + ${e.etiqueta}">Pasar
-                                        a</button>
-                                </form>
-                            </th:block>
-                        </div>
+            <main class="admin-contenido">
+                <a class="volver" th:href="@{/admin/mensajes}">← Volver a la bandeja</a>
 
-                        <!-- Botón de eliminación definitiva integrado de forma sutil si está cancelada -->
-                        <div th:if="${conv.estado.name() == 'CANCELADA'}">
-                            <form th:action="@{/admin/mensajes/{id}/eliminar(id=${conv.id})}" method="post" 
-                                  th:attr="data-confirmar='¿Estás seguro? Se borrarán los mensajes y todas las imágenes de Cloudinary permanentemente.'">
-                                <button type="submit" class="btn btn-sm btn-outline-danger btn-pill" title="Eliminar definitivamente y limpiar Cloudinary">
-                                    🗑️ Eliminar definitivamente
-                                </button>
-                            </form>
+                <div class="mt-3">
+                    <!-- Bloque unificado para estado y borrado de la conversación -->
+                    <div class="card p-4 mb-4 border-0 rounded-4 shadow-sm bg-light">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                            <div class="caja-estado mb-0 p-0 border-0 bg-transparent">
+                                <span class="small text-secondary" th:if="${conv.estado.name() == 'CONSULTA'}">
+                                    Esperando a que el usuario la solicite.
+                                </span>
+                                <span class="small text-secondary fw-bold"
+                                    th:if="${conv.estado.siguientesParaEquipo().isEmpty() and conv.estado.name() != 'CONSULTA'}"
+                                    th:text="'Estado actual: ' + ${conv.estado.etiqueta}">Cerrada</span>
+
+                                <th:block th:each="e : ${conv.estado.siguientesParaEquipo()}">
+                                    <form th:if="${e.name() == 'ACEPTADA'}"
+                                        th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
+                                        class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" name="estado" value="ACEPTADA">
+                                        <input type="number" name="precio" step="0.01" min="0.01" required
+                                            class="form-control form-control-sm" style="width: 7rem" placeholder="Precio €">
+                                        <button type="submit" class="btn btn-sm btn-pill btn-menta">Aceptar</button>
+                                    </form>
+                                    <form th:unless="${e.name() == 'ACEPTADA'}"
+                                        th:action="@{/admin/mensajes/{id}/estado(id=${conv.id})}" method="post"
+                                        th:attr="data-confirmar=${e.name() == 'CANCELADA'} ? '¿Seguro que quieres cancelar? No se puede deshacer.' : null">
+                                        <input type="hidden" name="estado" th:value="${e.name()}">
+                                        <button type="submit" class="btn btn-sm btn-pill"
+                                            th:classappend="${e.name() == 'CANCELADA'} ? 'btn-borde' : 'btn-menta'"
+                                            th:text="${e.name() == 'CANCELADA'} ? 'Cancelar' : 'Pasar a ' + ${e.etiqueta}">Pasar
+                                            a</button>
+                                    </form>
+                                </th:block>
+                            </div>
+
+                            <!-- Botón de eliminación definitiva integrado de forma sutil si está cancelada -->
+                            <div th:if="${conv.estado.name() == 'CANCELADA'}">
+                                <form th:action="@{/admin/mensajes/{id}/eliminar(id=${conv.id})}" method="post"
+                                    th:attr="data-confirmar='¿Estás seguro? Se borrarán los mensajes y todas las imágenes de Cloudinary permanentemente.'">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger btn-pill"
+                                        title="Eliminar definitivamente y limpiar Cloudinary">
+                                        🗑️ Eliminar definitivamente
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Hilo de mensajes -->
-                <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
-            </div>
+                    <!-- Hilo de mensajes -->
+                    <th:block th:replace="~{fragments/hilo :: hilo(${conv}, ${vistaGuarida}, ${accion})}"></th:block>
+                </div>
+            </main>
         </div>
-    </main>
+    </div>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 

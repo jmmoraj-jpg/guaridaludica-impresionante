@@ -6,200 +6,199 @@
 <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-    <main class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2 class="mb-0">Calculadora de Costes y Margen</h2>
-        </div>
+    <div class="container py-4">
+        <div class="admin-shell">
+            <aside th:replace="~{fragments/admin-layout :: sidebar('calculadora')}"></aside>
 
-        <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <span th:text="${exito}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <span th:text="${error}"></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-        </div>
+            <main class="admin-contenido">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="mb-0">Calculadora de Costes y Margen</h2>
+                </div>
 
-        <div class="row g-4">
-            <!-- Columna izquierda: Datos de la impresión -->
-            <div class="col-lg-7">
-                <div class="auth-card">
-                    <h5 class="mb-3">1. Datos de la pieza y material</h5>
+                <div th:if="${exito}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${exito}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
 
-                    <div class="row g-3 mb-3">
-                        <!-- Selector rápido de pieza existente -->
-                        <div class="col-md-7">
-                            <label for="selectPieza" class="form-label">Cargar pieza del catálogo (opcional)</label>
-                            <select id="selectPieza" class="form-select"
-                                th:data-preseleccionado="${productoIdSeleccionado}">
-                                <option value="" data-margen="100">-- Cálculo libre / manual --</option>
-                                <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"
-                                    th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}"
-                                    th:data-margen="${p.margenBeneficioAplicado != null ? p.margenBeneficioAplicado : 100}"
-                                    th:data-filamentos="${#aggregates.sum(p.filamentosUsados.![gramos]) != null ? 
-                #strings.listJoin(p.filamentosUsados.![filamento.id + ':' + gramos + ':' + (filamento.precioPorKg != null ? filamento.precioPorKg : 20)], ',') : ''}">
-                                    Torre de dados
-                                </option>
-                            </select>
-                        </div>
+                <div class="row g-4">
+                    <!-- Columna izquierda: Datos de la impresión -->
+                    <div class="col-xl-7">
+                        <div class="auth-card">
+                            <h5 class="mb-3">1. Datos de la pieza y material</h5>
 
-                        <!-- Tiempo de impresión -->
-                        <div class="col-md-5">
-                            <label for="minutos" class="form-label fw-semibold">Tiempo total (minutos)</label>
-                            <input type="number" id="minutos" class="form-control" min="0" step="5" value="0">
-                            <div class="form-text" id="textoHoras">Equivale a 2 h 0 min</div>
-                        </div>
-                    </div>
-
-                    <!-- Lista dinámica de filamentos (Monocolor o Multicolor) -->
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <label class="form-label fw-semibold mb-0">Filamentos utilizados</label>
-                        <button type="button" id="btnAnadirFilamento" class="btn btn-sm btn-pill btn-borde">
-                            + Añadir otro color
-                        </button>
-                    </div>
-
-                    <div id="listaFilamentos" class="d-flex flex-column gap-2">
-                        <!-- Fila base de filamento (se clona al añadir más colores) -->
-                        <div class="fila-filamento border rounded-3 p-2 bg-light">
-                            <div class="row g-2 align-items-end">
-                                <div class="col-md-5">
-                                    <label class="form-label small text-muted mb-1">Filamento</label>
-                                    <select class="form-select form-select-sm select-filamento">
-                                        <option value="" data-precio="20" disabled selected>-- Selecciona un filamento
-                                            --</option>
-                                        <option th:each="f : ${filamentos}" th:value="${f.id}"
-                                            th:text="${f.nombre} + (${f.precioPorKg != null} ? ' (' + ${#numbers.formatDecimal(f.precioPorKg, 1, 2)} + ' €/kg)' : '')"
-                                            th:data-precio="${f.precioPorKg != null ? f.precioPorKg : 20}">
-                                            PLA Negro
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-7">
+                                    <label for="selectPieza" class="form-label">Cargar pieza del catálogo (opcional)</label>
+                                    <select id="selectPieza" class="form-select"
+                                        th:data-preseleccionado="${productoIdSeleccionado}">
+                                        <option value="" data-margen="100">-- Cálculo libre / manual --</option>
+                                        <option th:each="p : ${productos}" th:value="${p.id}" th:text="${p.nombre}"
+                                            th:data-tiempo="${p.tiempoImpresionMinutos != null ? p.tiempoImpresionMinutos : 0}"
+                                            th:data-margen="${p.margenBeneficioAplicado != null ? p.margenBeneficioAplicado : 100}"
+                                            th:data-filamentos="${#aggregates.sum(p.filamentosUsados.![gramos]) != null ? 
+                        #strings.listJoin(p.filamentosUsados.![filamento.id + ':' + gramos + ':' + (filamento.precioPorKg != null ? filamento.precioPorKg : 20)], ',') : ''}">
+                                            Torre de dados
                                         </option>
                                     </select>
                                 </div>
 
-                                <div class="col-5 col-md-3">
-                                    <label class="form-label small text-muted mb-1">Gramos (g)</label>
-                                    <input type="number" class="form-control form-control-sm input-gramos" min="0"
-                                        step="0.1" value="0">
+                                <div class="col-md-5">
+                                    <label for="minutos" class="form-label fw-semibold">Tiempo total (minutos)</label>
+                                    <input type="number" id="minutos" class="form-control" min="0" step="5" value="0">
+                                    <div class="form-text" id="textoHoras">Equivale a 2 h 0 min</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label fw-semibold mb-0">Filamentos utilizados</label>
+                                <button type="button" id="btnAnadirFilamento" class="btn btn-sm btn-pill btn-borde">
+                                    + Añadir otro color
+                                </button>
+                            </div>
+
+                            <div id="listaFilamentos" class="d-flex flex-column gap-2">
+                                <div class="fila-filamento border rounded-3 p-2 bg-light">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-5">
+                                            <label class="form-label small text-muted mb-1">Filamento</label>
+                                            <select class="form-select form-select-sm select-filamento">
+                                                <option value="" data-precio="20" disabled selected>-- Selecciona un filamento
+                                                    --</option>
+                                                <option th:each="f : ${filamentos}" th:value="${f.id}"
+                                                    th:text="${f.nombre} + (${f.precioPorKg != null} ? ' (' + ${#numbers.formatDecimal(f.precioPorKg, 1, 2)} + ' €/kg)' : '')"
+                                                    th:data-precio="${f.precioPorKg != null ? f.precioPorKg : 20}">
+                                                    PLA Negro
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-5 col-md-3">
+                                            <label class="form-label small text-muted mb-1">Gramos (g)</label>
+                                            <input type="number" class="form-control form-control-sm input-gramos" min="0"
+                                                step="0.1" value="0">
+                                        </div>
+
+                                        <div class="col-5 col-md-3">
+                                            <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
+                                            <input type="number" class="form-control form-control-sm input-precio-kg" min="0"
+                                                step="0.5" value="0">
+                                        </div>
+
+                                        <div class="col-2 col-md-1 text-end">
+                                            <button type="button"
+                                                class="btn btn-sm btn-outline-danger btn-quitar-filamento d-none"
+                                                title="Quitar color">
+                                                ✕
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-text mt-1">
+                                Apunta los gramos de cada color según el laminador (incluyendo purgas o soportes).
+                            </div>
+
+                            <hr class="my-4">
+
+                            <h5 class="mb-3">2. Parámetros del taller y margen</h5>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="costeHora" class="form-label">Luz + desgaste (€/h)</label>
+                                    <input type="number" id="costeHora" class="form-control" min="0" step="0.05" value="0.25">
+                                    <div class="form-text">Luz (~0,05 €) + boquillas/cama.</div>
                                 </div>
 
-                                <div class="col-5 col-md-3">
-                                    <label class="form-label small text-muted mb-1">Precio (€/kg)</label>
-                                    <input type="number" class="form-control form-control-sm input-precio-kg" min="0"
-                                        step="0.5" value="0">
+                                <div class="col-md-4">
+                                    <label for="factorRiesgo" class="form-label">Colchón fallos (%)</label>
+                                    <input type="number" id="factorRiesgo" class="form-control" min="0" max="100" step="5"
+                                        value="10">
+                                    <div class="form-text">Cubre impresiones fallidas/purgas.</div>
                                 </div>
 
-                                <div class="col-2 col-md-1 text-end">
-                                    <button type="button"
-                                        class="btn btn-sm btn-outline-danger btn-quitar-filamento d-none"
-                                        title="Quitar color">
-                                        ✕
-                                    </button>
+                                <div class="col-md-4">
+                                    <label for="margenBeneficio" class="form-label fw-semibold">Margen beneficio (%)</label>
+                                    <input type="number" id="margenBeneficio" class="form-control" min="0" max="500" step="10"
+                                        value="100">
+                                    <div class="form-text">100% = duplicar el coste base.</div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="extras" class="form-label">Extras manuales (€) <span
+                                            class="text-muted fw-normal">(imanes, postprocesado, pintura...)</span></label>
+                                    <input type="number" id="extras" class="form-control" min="0" step="0.5" value="0">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-text mt-1">
-                        Apunta los gramos de cada color según el laminador (incluyendo purgas o soportes).
-                    </div>
 
-                    <hr class="my-4">
+                    <!-- Columna derecha: Resumen y desglose en vivo -->
+                    <div class="col-xl-5">
+                        <div class="auth-card h-100 d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="mb-3">Desglose de fabricación</h5>
 
-                    <h5 class="mb-3">2. Parámetros del taller y margen</h5>
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="costeHora" class="form-label">Luz + desgaste (€/h)</label>
-                            <input type="number" id="costeHora" class="form-control" min="0" step="0.05" value="0.25">
-                            <div class="form-text">Luz (~0,05 €) + boquillas/cama.</div>
-                        </div>
+                                <ul class="list-group list-group-flush mb-3">
+                                    <li class="list-group-item d-flex justify-content-between px-0">
+                                        <span class="text-secondary">Filamento total (<span id="resGramosTotales">50</span>
+                                            g):</span>
+                                        <strong id="resMaterial">1,00 €</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between px-0">
+                                        <span class="text-secondary">Electricidad y desgaste:</span>
+                                        <strong id="resEnergia">0,50 €</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between px-0">
+                                        <span class="text-secondary">Colchón por fallos/mermas:</span>
+                                        <strong id="resRiesgo">0,15 €</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between px-0">
+                                        <span class="text-secondary">Extras / accesorios:</span>
+                                        <strong id="resExtras">0,00 €</strong>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between px-0 bg-light rounded px-2 mt-2">
+                                        <span class="fw-bold">COSTE REAL DE PRODUCCIÓN:</span>
+                                        <strong class="text-danger" id="resCosteTotal">1,65 €</strong>
+                                    </li>
+                                </ul>
+                            </div>
 
-                        <div class="col-md-4">
-                            <label for="factorRiesgo" class="form-label">Colchón fallos (%)</label>
-                            <input type="number" id="factorRiesgo" class="form-control" min="0" max="100" step="5"
-                                value="10">
-                            <div class="form-text">Cubre impresiones fallidas/purgas.</div>
-                        </div>
+                            <div class="p-3 rounded-3 border bg-white text-center mt-2">
+                                <span class="text-uppercase text-muted small fw-bold d-block">Precio sugerido al público</span>
+                                <div class="display-5 fw-bold my-1" style="color: var(--menta-oscuro, #2a8c6a);"
+                                    id="resPrecioFinal">3,50 €</div>
+                                <div class="small text-secondary mb-2">
+                                    Exacto: <span id="resPrecioExacto">3,30 €</span> ·
+                                    Beneficio limpio: <strong class="text-success" id="resBeneficio">+1,85 €</strong>
+                                </div>
 
-                        <div class="col-md-4">
-                            <label for="margenBeneficio" class="form-label fw-semibold">Margen beneficio (%)</label>
-                            <input type="number" id="margenBeneficio" class="form-control" min="0" max="500" step="10"
-                                value="100">
-                            <div class="form-text">100% = duplicar el coste base.</div>
-                        </div>
+                                <div class="form-check form-switch d-inline-block text-start mt-1">
+                                    <input class="form-check-input" type="checkbox" id="redondear" checked>
+                                    <label class="form-check-label small" for="redondear">Redondear a múltiplos de 0,50
+                                        €</label>
+                                </div>
+                            </div>
 
-                        <div class="col-12">
-                            <label for="extras" class="form-label">Extras manuales (€) <span
-                                    class="text-muted fw-normal">(imanes, postprocesado, pintura...)</span></label>
-                            <input type="number" id="extras" class="form-control" min="0" step="0.5" value="0">
+                            <form th:action="@{/admin/calculadora/guardar-calculo}" method="post" id="formGuardarCalculo"
+                                class="mt-4">
+                                <input type="hidden" id="inputProductoId" name="productoId" value="">
+                                <input type="hidden" id="inputCosteProduccion" name="costeProduccion" value="">
+                                <input type="hidden" id="inputMargenBeneficio" name="margenBeneficio" value="">
+                                <input type="hidden" id="inputPrecioSugerido" name="precioSugerido" value="">
+
+                                <button type="submit" class="btn btn-success w-100" id="btnGuardarCalculo" disabled>
+                                    💾 Guardar cálculo en esta pieza
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Columna derecha: Resumen y desglose en vivo -->
-            <div class="col-lg-5">
-                <div class="auth-card h-100 d-flex flex-column justify-content-between">
-                    <div>
-                        <h5 class="mb-3">Desglose de fabricación</h5>
-
-                        <ul class="list-group list-group-flush mb-3">
-                            <li class="list-group-item d-flex justify-content-between px-0">
-                                <span class="text-secondary">Filamento total (<span id="resGramosTotales">50</span>
-                                    g):</span>
-                                <strong id="resMaterial">1,00 €</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between px-0">
-                                <span class="text-secondary">Electricidad y desgaste:</span>
-                                <strong id="resEnergia">0,50 €</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between px-0">
-                                <span class="text-secondary">Colchón por fallos/mermas:</span>
-                                <strong id="resRiesgo">0,15 €</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between px-0">
-                                <span class="text-secondary">Extras / accesorios:</span>
-                                <strong id="resExtras">0,00 €</strong>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between px-0 bg-light rounded px-2 mt-2">
-                                <span class="fw-bold">COSTE REAL DE PRODUCCIÓN:</span>
-                                <strong class="text-danger" id="resCosteTotal">1,65 €</strong>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="p-3 rounded-3 border bg-white text-center mt-2">
-                        <span class="text-uppercase text-muted small fw-bold d-block">Precio sugerido al público</span>
-                        <div class="display-5 fw-bold my-1" style="color: var(--menta-oscuro, #2a8c6a);"
-                            id="resPrecioFinal">3,50 €</div>
-                        <div class="small text-secondary mb-2">
-                            Exacto: <span id="resPrecioExacto">3,30 €</span> ·
-                            Beneficio limpio: <strong class="text-success" id="resBeneficio">+1,85 €</strong>
-                        </div>
-
-                        <div class="form-check form-switch d-inline-block text-start mt-1">
-                            <input class="form-check-input" type="checkbox" id="redondear" checked>
-                            <label class="form-check-label small" for="redondear">Redondear a múltiplos de 0,50
-                                €</label>
-                        </div>
-                    </div>
-
-                    <!-- Formulario para guardar el cálculo en la pieza seleccionada -->
-                    <form th:action="@{/admin/calculadora/guardar-calculo}" method="post" id="formGuardarCalculo"
-                        class="mt-4">
-                        <!-- Campos ocultos que recogerán los valores calculados por JavaScript -->
-                        <input type="hidden" id="inputProductoId" name="productoId" value="">
-                        <input type="hidden" id="inputCosteProduccion" name="costeProduccion" value="">
-                        <input type="hidden" id="inputMargenBeneficio" name="margenBeneficio" value="">
-                        <input type="hidden" id="inputPrecioSugerido" name="precioSugerido" value="">
-
-                        <button type="submit" class="btn btn-success w-100" id="btnGuardarCalculo" disabled>
-                            💾 Guardar cálculo en esta pieza
-                        </button>
-                    </form>
-
-                </div>
-            </div>
+            </main>
         </div>
-    </main>
+    </div>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
     <script th:src="@{/js/calculadora.js}"></script>

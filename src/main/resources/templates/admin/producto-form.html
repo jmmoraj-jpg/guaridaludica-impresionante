@@ -6,9 +6,11 @@
 <body>
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
-    <main class="container py-4">
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
+    <div class="container py-4">
+        <div class="admin-shell">
+            <aside th:replace="~{fragments/admin-layout :: sidebar('productos')}"></aside>
+
+            <main class="admin-contenido">
                 <div class="auth-card">
                     <h2 class="mb-3" th:text="${form.id == null} ? 'Nueva pieza' : 'Editar pieza'">Pieza</h2>
 
@@ -61,7 +63,6 @@
                             </div>
 
                             <div id="listaFilamentosForm" class="d-flex flex-column gap-2">
-                                <!-- Si ya tiene filamentos guardados, los iteramos -->
                                 <div class="fila-filamento-form border rounded-3 p-2 bg-light"
                                     th:each="item, stat : ${form.filamentosForm}">
                                     <div class="row g-2 align-items-end">
@@ -95,7 +96,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Si está vacío al crear una pieza nueva -->
                                 <div class="fila-filamento-form border rounded-3 p-2 bg-light"
                                     th:if="${#lists.isEmpty(form.filamentosForm)}">
                                     <div class="row g-2 align-items-end">
@@ -238,9 +238,9 @@
                         </div>
                     </form>
                 </div>
-            </div>
+            </main>
         </div>
-    </main>
+    </div>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
 
