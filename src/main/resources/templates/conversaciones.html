@@ -15,15 +15,20 @@
         <span class="deco deco-cuadro-2" aria-hidden="true"></span>
 
         <!-- Cabecera con título y botón para proponer idea a medida -->
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
             <h2 class="titulo-marcador marcador-lila mb-0">Mis mensajes</h2>
-            <a th:href="@{/conversaciones/personalizada}" class="btn btn-pill btn-menta shadow-sm">
-                💬 Proponer pieza a medida
-            </a>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <button type="button" class="btn btn-sm btn-pill btn-borde" onclick="activarNotificacionesPush()">
+                    🔔 Activar avisos
+                </button>
+                <a th:href="@{/conversaciones/personalizada}" class="btn btn-pill btn-menta shadow-sm">
+                    💬 Proponer pieza a medida
+                </a>
+            </div>
         </div>
 
         <a class="fila-conv" th:each="c : ${conversaciones}" th:href="@{/conversaciones/{id}(id=${c.id})}">
-            
+
             <!-- Si tiene producto y imagen -->
             <th:block th:if="${c.producto != null}">
                 <img th:if="${c.producto.imagenUrl != null}" th:src="${c.producto.imagenUrl}" class="fila-img" alt="">
@@ -56,7 +61,8 @@
 
         <div th:if="${conversaciones.isEmpty()}" class="text-center py-5">
             <p class="lead text-secondary">Todavía no tienes conversaciones 💜</p>
-            <p class="text-secondary">Guarda piezas en favoritos, escríbenos sobre la que te guste o propón tu propia idea.</p>
+            <p class="text-secondary">Guarda piezas en favoritos, escríbenos sobre la que te guste o propón tu propia
+                idea.</p>
             <div class="d-flex justify-content-center gap-2 mt-3">
                 <a th:href="@{/favoritos}" class="btn btn-pill btn-borde">Ver mis favoritos</a>
                 <a th:href="@{/conversaciones/personalizada}" class="btn btn-pill btn-menta">Proponer idea a medida</a>
@@ -69,6 +75,9 @@
     </main>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+
+    <script th:src="@{/js/push.js}"></script>
+
 </body>
 
 </html>

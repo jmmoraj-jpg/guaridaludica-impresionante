@@ -25,3 +25,8 @@ app:
     advertencia: "Esta web no es una tienda: las piezas se ofrecen como apoyo al creador para mantener la impresora."
   cloudinary:
     folder: guarida3d/productos
+  push:
+    vapid:
+      subject: mailto:laguaridaludica@gmail.com
+      public-key: ${VAPID_PUBLIC_KEY:BCEbp37W_whTmLp7Qcx-Fqsh_Ck01lJP9UpBCny4CRn6yBTch1c_jAjfAawlwZzKZB_cGSG36e2fQD6-KwWlPWM}
+      private-key: ${VAPID_PRIVATE_KEY:IKmQ01b1dfWg_i2TrX7YXNeQAZfhMJCuxVf2p8AgXeQ}

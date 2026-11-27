@@ -7,8 +7,12 @@
     <nav th:replace="~{fragments/layout :: navbar}"></nav>
 
     <main class="container py-4">
-        <h2 class="mb-3">Bandeja de mensajes</h2>
-
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+            <h2 class="mb-0">Bandeja de mensajes</h2>
+            <button type="button" class="btn btn-sm btn-pill btn-borde" onclick="activarNotificacionesPush()">
+                🔔 Activar avisos
+            </button>
+        </div>
         <nav class="filtros" aria-label="Filtro">
             <a class="filtro" th:classappend="${!pendientes} ? 'activo'" th:href="@{/admin/mensajes}">Todas</a>
             <a class="filtro" th:classappend="${pendientes} ? 'activo'"
@@ -62,6 +66,7 @@
     </main>
 
     <th:block th:replace="~{fragments/layout :: footer}"></th:block>
+    <script th:src="@{/js/push.js}"></script>
 </body>
 
 </html>
